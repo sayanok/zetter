@@ -29,5 +29,3 @@ export function App() {
         </Box>
     );
 }
-
-//
