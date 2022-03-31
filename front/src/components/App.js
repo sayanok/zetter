@@ -1,4 +1,3 @@
-import react, { useState } from 'react';
 import { BrowserRouter, Router, Route, Routes } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
@@ -17,7 +16,6 @@ export function App() {
             <CssBaseline />
             <Sidebar />
             <Box component="main" sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}>
-                {/* <Typography paragraph><Home />aaa</Typography> */}
                 <BrowserRouter>
                     <Routes>
                         <Route path="/" element={<Home />} />
