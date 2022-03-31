@@ -54,8 +54,7 @@ export function Sidebar() {
                         <ListItemText primary="search" />
                     </ListItem>
                 </Link>
-                <Link href="/notification">
-                    {/* notifications? */}
+                <Link href="/notifications">
                     <ListItem button>
                         <ListItemIcon>
                             <NotificationsIcon />

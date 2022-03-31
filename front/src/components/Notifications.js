@@ -1,3 +1,3 @@
-export function Notification() {
+export function Notifications() {
     return <p>通知画面だよ</p>;
 }

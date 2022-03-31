@@ -6,7 +6,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 
 import { Home } from './Home.js';
 import { Search } from './Search.js';
-import { Notification } from './Notification.js';
+import { Notifications } from './Notifications.js';
 import { Profile } from './Profile.js';
 import { Settings } from './Settings.js';
 import { Sidebar } from './Sidebar.js';
@@ -22,7 +22,7 @@ export function App() {
                     <Routes>
                         <Route path="/" element={<Home />} />
                         <Route path="/search" element={<Search />} />
-                        <Route path="/notification" element={<Notification />} />
+                        <Route path="/notifications" element={<Notifications />} />
                         <Route path="/userid" element={<Profile />} />
                         <Route path="/settings" element={<Settings />} />
                     </Routes>
