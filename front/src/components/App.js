@@ -34,13 +34,6 @@ export function App() {
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
-            <AppBar position="fixed" sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px` }}>
-                <Toolbar>
-                    <Typography variant="h6" noWrap component="div">
-                        aaa
-                    </Typography>
-                </Toolbar>
-            </AppBar>
             <Drawer
                 sx={{
                     width: drawerWidth,
@@ -106,7 +99,6 @@ export function App() {
                 <Button variant="contained">ツイートする</Button>
             </Drawer>
             <Box component="main" sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}>
-                <Toolbar />
                 {/* <Typography paragraph><Home />aaa</Typography> */}
                 <BrowserRouter>
                     <Routes>
