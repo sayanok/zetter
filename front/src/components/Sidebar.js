@@ -15,6 +15,33 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SettingsIcon from '@mui/icons-material/Settings';
 
 const drawerWidth = 240;
+const listContents = [
+    {
+        href: '/',
+        iconComponent: <HomeIcon />,
+        text: 'home',
+    },
+    {
+        href: '/search',
+        iconComponent: <TagIcon />,
+        text: 'search',
+    },
+    {
+        href: '/notifications',
+        iconComponent: <NotificationsIcon />,
+        text: 'notifications',
+    },
+    {
+        href: '/userid',
+        iconComponent: <AccountCircleIcon />,
+        text: 'profile',
+    },
+    {
+        href: '/settings',
+        iconComponent: <SettingsIcon />,
+        text: 'settings',
+    },
+];
 
 export function Sidebar() {
     return (
@@ -37,47 +64,14 @@ export function Sidebar() {
                 </Button>
             </Toolbar>
             <List>
-                {/* TODO: もっとシンプルにかけそう map使う */}
-                <Link href="/">
-                    <ListItem button>
-                        <ListItemIcon>
-                            <HomeIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="home" />
-                    </ListItem>
-                </Link>
-                <Link href="/search">
-                    <ListItem button>
-                        <ListItemIcon>
-                            <TagIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="search" />
-                    </ListItem>
-                </Link>
-                <Link href="/notifications">
-                    <ListItem button>
-                        <ListItemIcon>
-                            <NotificationsIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="通知" />
-                    </ListItem>
-                </Link>
-                <Link href="/userid">
-                    <ListItem button>
-                        <ListItemIcon>
-                            <AccountCircleIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="プロフィール" />
-                    </ListItem>
-                </Link>
-                <Link href="/settings">
-                    <ListItem button>
-                        <ListItemIcon>
-                            <SettingsIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="設定" />
-                    </ListItem>
-                </Link>
+                {listContents.map((content) => (
+                    <Link href={content.href}>
+                        <ListItem button>
+                            <ListItemIcon>{content.iconComponent}</ListItemIcon>
+                            <ListItemText primary={content.text} />
+                        </ListItem>
+                    </Link>
+                ))}
             </List>
             <Button variant="contained">ツイートする</Button>
         </Drawer>
