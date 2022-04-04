@@ -65,7 +65,7 @@ export function Sidebar() {
             </Toolbar>
             <List>
                 {listContents.map((content) => (
-                    <Link href={content.href}>
+                    <Link href={content.href} key={content.text}>
                         <ListItem button>
                             <ListItemIcon>{content.iconComponent}</ListItemIcon>
                             <ListItemText primary={content.text} />
