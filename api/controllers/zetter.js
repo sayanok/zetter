@@ -5,7 +5,6 @@ const getTweets = (req, res) => {
 };
 
 const createTweet = (req, res) => {
-    console.log(req.body);
     const newTweet = {
         id: tweets.length + 1,
         userName: req.body.userName,

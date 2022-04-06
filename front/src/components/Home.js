@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
+import { TweetForm } from './TweetForm.js';
 
 export function Home() {
     const [listTweets, setTweets] = useState([]);
@@ -17,6 +18,7 @@ export function Home() {
 
     return (
         <>
+            <TweetForm onClick={() => GetTweets()} />
             <List>
                 {listTweets.map((tweet) => (
                     <ListItem key={tweet.id}>
