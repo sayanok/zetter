@@ -18,7 +18,7 @@ export function Home() {
 
     return (
         <>
-            <TweetForm onClick={() => GetTweets()} />
+            <TweetForm getTweets={() => GetTweets()} />
             <List>
                 {listTweets.map((tweet) => (
                     <ListItem key={tweet.id}>

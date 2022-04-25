@@ -14,7 +14,7 @@ export function TweetForm(props) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ userName: userName, content: content }),
         });
-        props.onClick();
+        props.getTweets();
         CleanForm();
     }
 
