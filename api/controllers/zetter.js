@@ -1,3 +1,4 @@
+const { createHash } = require('crypto');
 const tweets = require('../data/tweets.js');
 const users = require('../data/users.js');
 
@@ -21,7 +22,9 @@ const login = (req, res) => {
 
     const user = users.find((user) => user.userName === input.userName);
 
-    if (user && user.password === input.password) {
+    const hashedInputPassword = createHash('sha256').update(input.password).digest('base64');
+
+    if (user && user.password === hashedInputPassword) {
         return res.json(user);
     }
 
