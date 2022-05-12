@@ -1,28 +1,10 @@
 const { createHash } = require('crypto');
 const { sign } = require('jsonwebtoken');
-const { verify } = require('jsonwebtoken');
 const tweets = require('../data/tweets.js');
 const users = require('../data/users.js');
 
 const getTweets = (req, res) => {
-    const authorization = req.headers.authorization;
-    const token = authorization.replace('Bearer ', '');
-    let verifyUser;
-    try {
-        verifyUser = verify(token, 'secret');
-    } catch (error) {
-        res.status(401).end();
-        // TODO: verify失敗理由によってかき分ける
-        return;
-    }
-
-    const user = users.find(({ id }) => id === verifyUser.userId);
-    if (user) {
-        res.json(tweets);
-    } else {
-        res.status(401).end();
-        return;
-    }
+    res.json(tweets);
 };
 
 const createTweet = (req, res) => {
@@ -50,7 +32,7 @@ const login = (req, res) => {
                 userName: user.userName,
                 email: user.email,
             },
-            'secret'
+            process.env.SECRET_KEY
             // { expiresIn: 60 * 60 }
         );
         return res.json(token);
