@@ -9,15 +9,18 @@ import { Notifications } from './Notifications.js';
 import { Profile } from './Profile.js';
 import { Settings } from './Settings.js';
 import { Sidebar } from './Sidebar.js';
+import { Login } from './Login.js';
 
 export function App() {
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
             <Sidebar />
+            {/* /loginでは表示しない */}
             <Box component="main" sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}>
                 <BrowserRouter>
                     <Routes>
+                        <Route path="/login" element={<Login />} />
                         <Route path="/" element={<Home />} />
                         <Route path="/search" element={<Search />} />
                         <Route path="/notifications" element={<Notifications />} />
