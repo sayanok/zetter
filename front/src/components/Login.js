@@ -9,6 +9,7 @@ export function Login() {
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const navigate = useNavigate();
+    let { token } = require('../api.js');
 
     function Login() {
         fetch('http://localhost:5000/api/zetter/login', {
@@ -19,7 +20,10 @@ export function Login() {
             if (response.status === 200) {
                 console.log('success');
                 setErrorMessage('');
-                navigate('/');
+                response.json().then((response) => {
+                    token.value = response;
+                    navigate('/');
+                });
             } else if (response.status === 400) {
                 console.log('fail');
                 setErrorMessage('ログインに失敗しました');
