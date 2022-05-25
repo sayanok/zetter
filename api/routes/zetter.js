@@ -14,8 +14,11 @@ router.post('/login', login);
 module.exports = router;
 
 function auth(req, res, next) {
-    const authorization = req.headers.authorization;
-    const token = authorization.replace('Bearer ', '');
+    // const authorization = req.headers.authorization;
+    // const token = authorization.replace('Bearer ', '');
+
+    const token = req.headers.cookie;
+    console.log(token);
     let verifyUser;
     try {
         verifyUser = verify(token, process.env.SECRET_KEY);

@@ -16,14 +16,15 @@ export function Login() {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ userName: userName, password: password }),
+            credentials: 'include',
         }).then((response) => {
-            if (response.status === 200) {
+            if (response.status === 200 || 204) {
                 console.log('success');
                 setErrorMessage('');
-                response.json().then((response) => {
-                    token.value = response;
-                    navigate('/');
-                });
+                // response.json().then((response) => {
+                // token.value = response;
+                navigate('/');
+                // });
             } else if (response.status === 400) {
                 console.log('fail');
                 setErrorMessage('ログインに失敗しました');

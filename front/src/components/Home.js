@@ -14,17 +14,18 @@ export function Home() {
     }, []);
 
     function GetTweets() {
-        const authorization = token.value;
-        if (authorization) {
-            return fetch('http://localhost:5000/api/zetter', {
-                headers: { Authorization: authorization },
-            })
-                .then((response) => response.json())
-                .then((data) => setTweets(data));
-        } else {
-            console.log('ログインしてください');
-            navigate('/login');
-        }
+        // const authorization = token.value;
+        // if (authorization) {
+        return fetch('http://localhost:5000/api/zetter', {
+            // headers: { Authorization: authorization },
+            credentials: 'include',
+        })
+            .then((response) => response.json())
+            .then((data) => setTweets(data));
+        // } else {
+        //     console.log('ログインしてください');
+        //     navigate('/login');
+        // }
     }
 
     return (

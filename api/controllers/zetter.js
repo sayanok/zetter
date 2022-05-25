@@ -35,7 +35,12 @@ const login = (req, res) => {
             process.env.SECRET_KEY
             // { expiresIn: 60 * 60 }
         );
-        return res.json(token);
+
+        // return res.json(token);
+
+        res.cookie('token', token);
+        res.sendStatus(204);
+        return;
     }
 
     return res.status(400).json({ code: 400 });
