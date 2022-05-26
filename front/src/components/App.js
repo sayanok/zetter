@@ -14,21 +14,21 @@ import { Login } from './Login.js';
 export function App() {
     return (
         <Box sx={{ display: 'flex' }}>
-            <CssBaseline />
-            <Sidebar />
-            {/* /loginでは表示しない */}
-            <Box component="main" sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}>
-                <BrowserRouter>
+            <BrowserRouter>
+                <CssBaseline />
+                <Sidebar />
+                {/* /loginでは表示しない */}
+                <Box component="main" sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}>
                     <Routes>
-                        <Route path="/login" element={<Login />} />
+                        <Route path="login" element={<Login />} />
                         <Route path="/" element={<Home />} />
-                        <Route path="/search" element={<Search />} />
-                        <Route path="/notifications" element={<Notifications />} />
-                        <Route path="/userid" element={<Profile />} />
-                        <Route path="/settings" element={<Settings />} />
+                        <Route path="search" element={<Search />} />
+                        <Route path="notifications" element={<Notifications />} />
+                        <Route path="profile" element={<Profile />} />
+                        <Route path="settings" element={<Settings />} />
                     </Routes>
-                </BrowserRouter>
-            </Box>
+                </Box>
+            </BrowserRouter>
         </Box>
     );
 }
