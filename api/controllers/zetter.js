@@ -10,7 +10,7 @@ const getTweets = (req, res) => {
 const createTweet = (req, res) => {
     const newTweet = {
         id: tweets.length + 1,
-        userName: req.body.userName,
+        userName: req.user.userName,
         content: req.body.content,
         time: new Date(),
     };

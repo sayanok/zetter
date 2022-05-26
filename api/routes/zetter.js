@@ -7,7 +7,7 @@ const { getTweets, createTweet, login } = require('../controllers/zetter.js');
 
 router.get('/', auth, getTweets);
 
-router.post('/', createTweet);
+router.post('/', auth, createTweet);
 
 router.post('/login', login);
 
