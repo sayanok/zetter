@@ -4,7 +4,7 @@ const users = [
         userName: 'mupi',
         password: '32HwN/80tyAeS3R+4I32BIGhVjblfWdxL79VfKtsnfc=',
         email: 'mupi@example.com',
-        introduction: '自己紹介文',
+        introduction: 'むーちゃんだよ',
         birthday: '1991-07-04',
     },
     {

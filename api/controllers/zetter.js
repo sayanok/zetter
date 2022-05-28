@@ -24,6 +24,14 @@ const getProfile = (req, res) => {
     res.json(user);
 };
 
+const updateProfile = (req, res) => {
+    const user = users.find((user) => user.userName === req.user.userName);
+    user.userName = req.body.userName;
+    user.introduction = req.body.introduction;
+    // もっとスマートにかけそう
+    res.status(200).json(user);
+};
+
 const login = (req, res) => {
     const input = req.body;
 
@@ -51,5 +59,6 @@ module.exports = {
     getTweets,
     createTweet,
     getProfile,
+    updateProfile,
     login,
 };

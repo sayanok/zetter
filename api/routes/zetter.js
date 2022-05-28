@@ -3,12 +3,13 @@ const router = express.Router();
 const { verify } = require('jsonwebtoken');
 const users = require('../data/users.js');
 
-const { getTweets, createTweet, getProfile, login } = require('../controllers/zetter.js');
+const { getTweets, createTweet, getProfile, updateProfile, login } = require('../controllers/zetter.js');
 
 router.get('/', auth, getTweets);
 router.post('/', auth, createTweet);
 
 router.get('/profile', auth, getProfile);
+router.post('/update/profile', auth, updateProfile);
 
 router.post('/login', login);
 

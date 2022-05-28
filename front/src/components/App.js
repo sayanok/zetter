@@ -8,6 +8,7 @@ import { Search } from './Search.js';
 import { Notifications } from './Notifications.js';
 import { Profile } from './Profile.js';
 import { Settings } from './Settings.js';
+import { SettingsProfile } from './SettingsProfile.js';
 import { Sidebar } from './Sidebar.js';
 import { Login } from './Login.js';
 
@@ -26,6 +27,7 @@ export function App() {
                         <Route path="notifications" element={<Notifications />} />
                         <Route path="profile" element={<Profile />} />
                         <Route path="settings" element={<Settings />} />
+                        <Route path="settings/profile" element={<SettingsProfile />} />
                     </Routes>
                 </Box>
             </BrowserRouter>

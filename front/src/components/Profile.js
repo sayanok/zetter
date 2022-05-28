@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+
 import { token } from '../api.js';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
+import Button from '@mui/material/Button';
 
 export function Profile() {
     const [profile, setProfile] = useState([]);
@@ -20,16 +23,21 @@ export function Profile() {
     }
 
     return (
-        <List>
-            <ListItem key={profile.id}>
-                <p>
-                    {profile.userName}
-                    <br />
-                    {profile.email}
-                    <br />
-                    {profile.introduction}
-                </p>
-            </ListItem>
-        </List>
+        <>
+            <Button variant="contained">
+                <Link to="/settings/profile">編集する</Link>
+            </Button>
+            <List>
+                <ListItem key={profile.id}>
+                    <p>
+                        {profile.userName}
+                        <br />
+                        {profile.introduction}
+                        <br />
+                        誕生日: {profile.birthday}
+                    </p>
+                </ListItem>
+            </List>
+        </>
     );
 }
