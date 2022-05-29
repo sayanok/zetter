@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
 import { token } from '../api.js';
@@ -8,6 +9,7 @@ import Button from '@mui/material/Button';
 
 export function Profile() {
     const [profile, setProfile] = useState([]);
+    const navigate = useNavigate();
     useEffect(() => {
         GetProfile();
     }, []);
@@ -15,11 +17,16 @@ export function Profile() {
     function GetProfile() {
         const authorization = token.value;
 
-        return fetch('http://localhost:5000/api/zetter/profile', {
-            headers: { Authorization: authorization },
-        })
-            .then((response) => response.json())
-            .then((data) => setProfile(data));
+        if (authorization) {
+            return fetch('http://localhost:5000/api/zetter/profile', {
+                headers: { Authorization: authorization },
+            })
+                .then((response) => response.json())
+                .then((data) => setProfile(data));
+        } else {
+            console.log('ログインしてください');
+            navigate('/login');
+        }
     }
 
     return (
@@ -33,6 +40,8 @@ export function Profile() {
                         {profile.userName}
                         <br />
                         {profile.introduction}
+                        <br />
+                        {profile.email}
                         <br />
                         誕生日: {profile.birthday}
                     </p>

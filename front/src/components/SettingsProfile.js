@@ -8,6 +8,7 @@ import { token } from '../api.js';
 export function SettingsProfile() {
     const [userName, setUserName] = useState('');
     const [introduction, setIntroduction] = useState('');
+    const [email, setEmail] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -17,37 +18,42 @@ export function SettingsProfile() {
     function GetProfile() {
         const authorization = token.value;
 
-        return fetch('http://localhost:5000/api/zetter/profile', {
-            headers: { Authorization: authorization },
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                setUserName(data.userName);
-                setIntroduction(data.introduction);
-            });
+        if (authorization) {
+            return fetch('http://localhost:5000/api/zetter/profile', {
+                headers: { Authorization: authorization },
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    setUserName(data.userName);
+                    setIntroduction(data.introduction);
+                    setEmail(data.email);
+                });
+        } else {
+            console.log('ログインしてください');
+            navigate('/login');
+        }
     }
 
     function UpdateProfile() {
         const authorization = token.value;
 
-        fetch('http://localhost:5000/api/zetter/update/profile', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', Authorization: authorization },
-            body: JSON.stringify({ userName: userName, introduction: introduction }),
-        }).then((response) => {
-            // TODO: このへんてきとうに書いてるのでなおす
-            if (response.status === 200) {
-                console.log('success');
-                navigate('/profile');
-            } else {
-                console.log('something wrong');
-            }
-        });
+        if (authorization) {
+            fetch('http://localhost:5000/api/zetter/update/profile', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Authorization: authorization },
+                body: JSON.stringify({ userName: userName, introduction: introduction, email: email }),
+            });
+            navigate('/profile');
+        } else {
+            console.log('ログインしてください');
+            navigate('/login');
+        }
     }
 
     return (
         <>
             <TextField
+                required
                 id="outlined-basic"
                 label="名前"
                 variant="outlined"
@@ -64,7 +70,15 @@ export function SettingsProfile() {
                 onChange={(e) => setIntroduction(e.target.value)}
             />
             <br />
-            <p>生年月日</p>
+            <TextField
+                required
+                id="outlined-basic"
+                label="email"
+                variant="outlined"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+            />
+            <br />
             <Button variant="contained" onClick={() => UpdateProfile(userName, introduction)}>
                 更新する
             </Button>
