@@ -50,6 +50,14 @@ export function SettingsProfile() {
         }
     }
 
+    function CanSubmit() {
+        if (userName.length === 0 || email.length === 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     return (
         <>
             <TextField
@@ -79,7 +87,7 @@ export function SettingsProfile() {
                 onChange={(e) => setEmail(e.target.value)}
             />
             <br />
-            <Button variant="contained" onClick={() => UpdateProfile(userName, introduction)}>
+            <Button variant="contained" disabled={!CanSubmit()} onClick={() => UpdateProfile(userName, introduction)}>
                 更新する
             </Button>
         </>
