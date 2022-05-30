@@ -39,7 +39,7 @@ export function SettingsProfile() {
 
         if (authorization) {
             fetch('http://localhost:5000/api/zetter/update/profile', {
-                method: 'POST',
+                method: 'PUT',
                 headers: { 'Content-Type': 'application/json', Authorization: authorization },
                 body: JSON.stringify({ userName: userName, introduction: introduction, email: email }),
             });
