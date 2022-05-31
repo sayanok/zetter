@@ -9,6 +9,7 @@ export function SettingsProfile() {
     const [userName, setUserName] = useState('');
     const [introduction, setIntroduction] = useState('');
     const [email, setEmail] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -87,6 +88,7 @@ export function SettingsProfile() {
                 onChange={(e) => setEmail(e.target.value)}
             />
             <br />
+            {errorMessage}
             <Button variant="contained" disabled={!CanSubmit()} onClick={() => UpdateProfile(userName, introduction)}>
                 更新する
             </Button>
