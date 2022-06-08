@@ -28,6 +28,7 @@ const updateProfile = (req, res) => {
     const user = users.find((user) => user.userName === req.user.userName);
     user.userName = req.body.userName;
     user.introduction = req.body.introduction;
+    user.email = req.body.email;
     // もっとスマートにかけそう
     res.status(200).json(user);
 };

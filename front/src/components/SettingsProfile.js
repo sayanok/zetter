@@ -89,7 +89,11 @@ export function SettingsProfile() {
             />
             <br />
             {errorMessage}
-            <Button variant="contained" disabled={!CanSubmit()} onClick={() => UpdateProfile(userName, introduction)}>
+            <Button
+                variant="contained"
+                disabled={!CanSubmit()}
+                onClick={() => UpdateProfile(userName, introduction, email)}
+            >
                 更新する
             </Button>
         </>
