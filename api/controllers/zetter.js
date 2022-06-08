@@ -10,7 +10,7 @@ const getTweets = (req, res) => {
 const createTweet = (req, res) => {
     const newTweet = {
         id: tweets.length + 1,
-        userName: req.user.userName,
+        username: req.user.username,
         content: req.body.content,
         time: new Date(),
     };
@@ -21,7 +21,7 @@ const createTweet = (req, res) => {
 const login = (req, res) => {
     const input = req.body;
 
-    const user = users.find((user) => user.userName === input.userName);
+    const user = users.find((user) => user.username === input.username);
 
     const hashedInputPassword = createHash('sha256').update(input.password).digest('base64');
 
@@ -29,7 +29,7 @@ const login = (req, res) => {
         const token = sign(
             {
                 userId: user.id,
-                userName: user.userName,
+                username: user.username,
                 email: user.email,
             },
             process.env.SECRET_KEY

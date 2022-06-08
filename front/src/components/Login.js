@@ -5,17 +5,17 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 
 export function Login() {
-    const [userName, setId] = useState('');
+    const [username, setId] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const navigate = useNavigate();
     let { token } = require('../api.js');
 
-    function Login() {
+    function login() {
         fetch('http://localhost:5000/api/zetter/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userName: userName, password: password }),
+            body: JSON.stringify({ username: username, password: password }),
         }).then((response) => {
             if (response.status === 200) {
                 console.log('success');
@@ -46,7 +46,7 @@ export function Login() {
                 <TextField
                     id="outlined-disabled"
                     placeholder="id"
-                    value={userName}
+                    value={username}
                     onChange={(e) => setId(e.target.value)}
                 />
                 <TextField
@@ -57,7 +57,7 @@ export function Login() {
                 />
             </Box>
             <div>{errorMessage}</div>
-            <Button variant="contained" onClick={() => Login(userName, password)}>
+            <Button variant="contained" onClick={() => login(username, password)}>
                 ログイン
             </Button>
         </>

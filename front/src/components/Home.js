@@ -34,7 +34,7 @@ export function Home() {
                 {listTweets.map((tweet) => (
                     <ListItem key={tweet.id}>
                         <p>
-                            {tweet.userName}
+                            {tweet.username}
                             <br />
                             {tweet.content}
                             <br />
