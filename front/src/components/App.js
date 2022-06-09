@@ -27,7 +27,7 @@ export function App() {
                         <Route path="notifications" element={<Notifications />} />
                         <Route path="profile" element={<Profile />} />
                         <Route path="settings" element={<Settings />} />
-                        <Route path="settings/:userName" element={<SettingsProfile />} />
+                        <Route path="settings/:username" element={<SettingsProfile />} />
                     </Routes>
                 </Box>
             </BrowserRouter>

@@ -32,12 +32,12 @@ export function Profile() {
     return (
         <>
             <Button variant="contained">
-                <Link to={'/settings/' + profile.userName}>編集する</Link>
+                <Link to={'/settings/' + profile.username}>編集する</Link>
             </Button>
             <List>
                 <ListItem key={profile.id}>
                     <p>
-                        {profile.userName}
+                        {profile.username}
                         <br />
                         {profile.introduction}
                         <br />

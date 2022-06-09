@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { token } from '../api.js';
 
 export function SettingsProfile() {
-    const [userName, setUserName] = useState('');
+    const [username, setUsername] = useState('');
     const [introduction, setIntroduction] = useState('');
     const [email, setEmail] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
@@ -25,7 +25,7 @@ export function SettingsProfile() {
             })
                 .then((response) => response.json())
                 .then((data) => {
-                    setUserName(data.userName);
+                    setUsername(data.username);
                     setIntroduction(data.introduction);
                     setEmail(data.email);
                 });
@@ -42,7 +42,7 @@ export function SettingsProfile() {
             fetch('http://localhost:5000/api/zetter/update/profile', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json', Authorization: authorization },
-                body: JSON.stringify({ userName: userName, introduction: introduction, email: email }),
+                body: JSON.stringify({ username: username, introduction: introduction, email: email }),
             });
             navigate('/profile');
         } else {
@@ -52,7 +52,7 @@ export function SettingsProfile() {
     }
 
     function CanSubmit() {
-        if (userName.length === 0 || email.length === 0) {
+        if (username.length === 0 || email.length === 0) {
             return false;
         } else {
             return true;
@@ -66,8 +66,8 @@ export function SettingsProfile() {
                 id="outlined-basic"
                 label="名前"
                 variant="outlined"
-                value={userName}
-                onChange={(e) => setUserName(e.target.value)}
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
             />
             <br />
             <TextField
@@ -92,7 +92,7 @@ export function SettingsProfile() {
             <Button
                 variant="contained"
                 disabled={!CanSubmit()}
-                onClick={() => UpdateProfile(userName, introduction, email)}
+                onClick={() => UpdateProfile(username, introduction, email)}
             >
                 更新する
             </Button>

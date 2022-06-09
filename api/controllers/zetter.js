@@ -19,14 +19,14 @@ const createTweet = (req, res) => {
 };
 
 const getProfile = (req, res) => {
-    const user = users.find((user) => user.userName === req.user.userName);
+    const user = users.find((user) => user.username === req.user.username);
 
     res.json(user);
 };
 
 const updateProfile = (req, res) => {
-    const user = users.find((user) => user.userName === req.user.userName);
-    user.userName = req.body.userName;
+    const user = users.find((user) => user.username === req.user.username);
+    user.username = req.body.username;
     user.introduction = req.body.introduction;
     user.email = req.body.email;
     // もっとスマートにかけそう
