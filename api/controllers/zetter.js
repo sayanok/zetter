@@ -1,4 +1,7 @@
-const tweets = require('../data.js');
+const { createHash } = require('crypto');
+const { sign } = require('jsonwebtoken');
+const tweets = require('../data/tweets.js');
+const users = require('../data/users.js');
 
 const getTweets = (req, res) => {
     res.json(tweets);
@@ -7,7 +10,7 @@ const getTweets = (req, res) => {
 const createTweet = (req, res) => {
     const newTweet = {
         id: tweets.length + 1,
-        userName: req.body.userName,
+        username: req.user.username,
         content: req.body.content,
         time: new Date(),
     };
@@ -15,7 +18,31 @@ const createTweet = (req, res) => {
     res.status(201).json(newTweet);
 };
 
+const login = (req, res) => {
+    const input = req.body;
+
+    const user = users.find((user) => user.username === input.username);
+
+    const hashedInputPassword = createHash('sha256').update(input.password).digest('base64');
+
+    if (user && user.password === hashedInputPassword) {
+        const token = sign(
+            {
+                userId: user.id,
+                username: user.username,
+                email: user.email,
+            },
+            process.env.SECRET_KEY
+            // { expiresIn: 60 * 60 }
+        );
+        return res.json(token);
+    }
+
+    return res.status(400).json({ code: 400 });
+};
+
 module.exports = {
     getTweets,
     createTweet,
+    login,
 };

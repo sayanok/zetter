@@ -1,21 +1,30 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import { token } from '../api.js';
 
 export function TweetForm(props) {
-    const [userName, setUserName] = useState('むー');
     // TODO ログインしているユーザーの名前を取得する
     const [content, setContent] = useState('');
+    const navigate = useNavigate();
 
     function PostTweet() {
-        fetch('http://localhost:5000/api/zetter', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userName: userName, content: content }),
-        });
-        props.getTweets();
-        CleanForm();
+        const authorization = token.value;
+
+        if (authorization) {
+            fetch('http://localhost:5000/api/zetter', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Authorization: authorization },
+                body: JSON.stringify({ content: content }),
+            });
+            props.getTweets();
+            CleanForm();
+        } else {
+            console.log('ログインしてください');
+            navigate('/login');
+        }
     }
 
     function CleanForm() {
@@ -32,7 +41,6 @@ export function TweetForm(props) {
                 noValidate
                 autoComplete="off"
             >
-                <TextField disabled id="outlined-disabled" defaultValue={userName} />
                 <TextField
                     id="outlined-multiline-static"
                     placeholder="今然ぴどうしてる？"
