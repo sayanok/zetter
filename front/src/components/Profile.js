@@ -11,10 +11,10 @@ export function Profile() {
     const [profile, setProfile] = useState([]);
     const navigate = useNavigate();
     useEffect(() => {
-        GetProfile();
+        getProfile();
     }, []);
 
-    function GetProfile() {
+    function getProfile() {
         const authorization = token.value;
 
         if (authorization) {

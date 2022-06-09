@@ -9,14 +9,15 @@ export function SettingsProfile() {
     const [username, setUsername] = useState('');
     const [introduction, setIntroduction] = useState('');
     const [email, setEmail] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
+    const [errorMessageForUsername, setErrorMessageForUsername] = useState('');
+    const [errorMessageForEmail, setErrorMessageForEmail] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
-        GetProfile();
+        getProfile();
     }, []);
 
-    function GetProfile() {
+    function getProfile() {
         const authorization = token.value;
 
         if (authorization) {
@@ -35,7 +36,7 @@ export function SettingsProfile() {
         }
     }
 
-    function UpdateProfile() {
+    function updateProfile() {
         const authorization = token.value;
 
         if (authorization) {
@@ -51,7 +52,7 @@ export function SettingsProfile() {
         }
     }
 
-    function CanSubmit() {
+    function canSubmit() {
         if (username.length === 0 || email.length === 0) {
             return false;
         } else {
@@ -68,7 +69,14 @@ export function SettingsProfile() {
                 variant="outlined"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
+                onBlur={
+                    username.length === 0
+                        ? () => setErrorMessageForUsername('名前を入力してください')
+                        : () => setErrorMessageForUsername('')
+                }
             />
+            <br />
+            {errorMessageForUsername}
             <br />
             <TextField
                 id="outlined-textarea"
@@ -86,13 +94,19 @@ export function SettingsProfile() {
                 variant="outlined"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                onBlur={
+                    email.length === 0
+                        ? () => setErrorMessageForEmail('emailを入力してください')
+                        : () => setErrorMessageForEmail('')
+                }
             />
             <br />
-            {errorMessage}
+            {errorMessageForEmail}
+            <br />
             <Button
                 variant="contained"
-                disabled={!CanSubmit()}
-                onClick={() => UpdateProfile(username, introduction, email)}
+                disabled={!canSubmit()}
+                onClick={() => updateProfile(username, introduction, email)}
             >
                 更新する
             </Button>
