@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import { useCallApi } from '../utils/api.js';
 import { useNavigate } from 'react-router-dom';
-import { token } from '../api.js';
 
 export function SettingsProfile() {
     const [username, setUsername] = useState('');
@@ -11,6 +11,7 @@ export function SettingsProfile() {
     const [email, setEmail] = useState('');
     const [errorMessageForUsername, setErrorMessageForUsername] = useState('');
     const [errorMessageForEmail, setErrorMessageForEmail] = useState('');
+    const callApi = useCallApi();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -18,38 +19,19 @@ export function SettingsProfile() {
     }, []);
 
     function getProfile() {
-        const authorization = token.value;
-
-        if (authorization) {
-            return fetch('http://localhost:5000/api/zetter/profile', {
-                headers: { Authorization: authorization },
-            })
-                .then((response) => response.json())
-                .then((data) => {
-                    setUsername(data.username);
-                    setIntroduction(data.introduction);
-                    setEmail(data.email);
-                });
-        } else {
-            console.log('ログインしてください');
-            navigate('/login');
-        }
+        callApi('http://localhost:5000/api/zetter/profile')?.then((data) => {
+            setUsername(data.username);
+            setIntroduction(data.introduction);
+            setEmail(data.email);
+        });
     }
 
     function updateProfile() {
-        const authorization = token.value;
-
-        if (authorization) {
-            fetch('http://localhost:5000/api/zetter/update/profile', {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json', Authorization: authorization },
-                body: JSON.stringify({ username: username, introduction: introduction, email: email }),
-            });
-            navigate('/profile');
-        } else {
-            console.log('ログインしてください');
-            navigate('/login');
-        }
+        callApi('http://localhost:5000/api/zetter/update/profile', {
+            method: 'PUT',
+            body: JSON.stringify({ username: username, introduction: introduction, email: email }),
+        });
+        navigate('/profile');
     }
 
     function canSubmit() {

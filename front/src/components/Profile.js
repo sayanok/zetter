@@ -1,32 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
-import { token } from '../api.js';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import Button from '@mui/material/Button';
+import { useCallApi } from '../utils/api.js';
 
 export function Profile() {
     const [profile, setProfile] = useState([]);
-    const navigate = useNavigate();
+    const callApi = useCallApi();
+
     useEffect(() => {
         getProfile();
     }, []);
 
     function getProfile() {
-        const authorization = token.value;
-
-        if (authorization) {
-            return fetch('http://localhost:5000/api/zetter/profile', {
-                headers: { Authorization: authorization },
-            })
-                .then((response) => response.json())
-                .then((data) => setProfile(data));
-        } else {
-            console.log('ログインしてください');
-            navigate('/login');
-        }
+        callApi('http://localhost:5000/api/zetter/profile', { headers: {} })?.then((data) => {
+            setProfile(data);
+        });
     }
 
     return (
