@@ -27,8 +27,8 @@ export function SettingsProfile() {
     }
 
     function updateProfile() {
-        callApi('http://localhost:5000/api/zetter/update/profile', {
-            method: 'PUT',
+        callApi('http://localhost:5000/api/zetter/profile', {
+            method: 'PATCH',
             body: JSON.stringify({ username: username, introduction: introduction, email: email }),
         });
         navigate('/profile');

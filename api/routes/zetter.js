@@ -9,7 +9,7 @@ router.get('/', auth, getTweets);
 router.post('/', auth, createTweet);
 
 router.get('/profile', auth, getProfile);
-router.put('/update/profile', auth, updateProfile);
+router.patch('/profile', auth, updateProfile);
 
 router.post('/login', login);
 
