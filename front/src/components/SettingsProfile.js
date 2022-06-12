@@ -50,15 +50,15 @@ export function SettingsProfile() {
                 label="名前"
                 variant="outlined"
                 value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                onBlur={
-                    username.length === 0
-                        ? () => setErrorMessageForUsername('名前を入力してください')
-                        : () => setErrorMessageForUsername('')
-                }
+                onChange={(e) => {
+                    setUsername(e.target.value);
+                    e.target.value.length === 0
+                        ? setErrorMessageForUsername('名前を入力してください')
+                        : setErrorMessageForUsername('');
+                }}
+                error={errorMessageForUsername ? true : false}
+                helperText={errorMessageForUsername}
             />
-            <br />
-            {errorMessageForUsername}
             <br />
             <TextField
                 id="outlined-textarea"
@@ -75,15 +75,15 @@ export function SettingsProfile() {
                 label="email"
                 variant="outlined"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                onBlur={
-                    email.length === 0
-                        ? () => setErrorMessageForEmail('emailを入力してください')
-                        : () => setErrorMessageForEmail('')
-                }
+                onChange={(e) => {
+                    setEmail(e.target.value);
+                    e.target.value.length === 0
+                        ? setErrorMessageForEmail('emailを入力してください')
+                        : setErrorMessageForEmail('');
+                }}
+                error={errorMessageForEmail ? true : false}
+                helperText={errorMessageForEmail}
             />
-            <br />
-            {errorMessageForEmail}
             <br />
             <Button
                 variant="contained"
