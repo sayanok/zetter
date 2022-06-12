@@ -1,35 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import { TweetForm } from './TweetForm.js';
-import { token } from '../api.js';
+import { useCallApi } from '../utils/api.js';
 
 export function Home() {
     const [listTweets, setTweets] = useState([]);
-    const navigate = useNavigate();
+    const callApi = useCallApi();
 
     useEffect(() => {
-        GetTweets();
+        getTweets();
     }, []);
 
-    function GetTweets() {
-        const authorization = token.value;
-        if (authorization) {
-            return fetch('http://localhost:5000/api/zetter', {
-                headers: { Authorization: authorization },
-            })
-                .then((response) => response.json())
-                .then((data) => setTweets(data));
-        } else {
-            console.log('ログインしてください');
-            navigate('/login');
-        }
+    function getTweets() {
+        callApi('http://localhost:5000/api/zetter')?.then((data) => {
+            setTweets(data);
+        });
     }
 
     return (
         <>
-            <TweetForm getTweets={() => GetTweets()} />
+            <TweetForm getTweets={() => getTweets()} />
             <List>
                 {listTweets.map((tweet) => (
                     <ListItem key={tweet.id}>

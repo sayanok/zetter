@@ -1,7 +1,8 @@
+import { Link } from 'react-router-dom';
+
 import Drawer from '@mui/material/Drawer';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
-import Link from '@mui/material/Link';
 import Button from '@mui/material/Button';
 
 import ListItem from '@mui/material/ListItem';
@@ -22,22 +23,22 @@ const listContents = [
         text: 'home',
     },
     {
-        href: '/search',
+        href: 'search',
         iconComponent: <TagIcon />,
         text: 'search',
     },
     {
-        href: '/notifications',
+        href: 'notifications',
         iconComponent: <NotificationsIcon />,
         text: 'notifications',
     },
     {
-        href: '/userid',
+        href: 'profile',
         iconComponent: <AccountCircleIcon />,
         text: 'profile',
     },
     {
-        href: '/settings',
+        href: 'settings',
         iconComponent: <SettingsIcon />,
         text: 'settings',
     },
@@ -65,7 +66,7 @@ export function Sidebar() {
             </Toolbar>
             <List>
                 {listContents.map((content) => (
-                    <Link href={content.href} key={content.text}>
+                    <Link to={content.href} key={content.text}>
                         <ListItem button>
                             <ListItemIcon>{content.iconComponent}</ListItemIcon>
                             <ListItemText primary={content.text} />
