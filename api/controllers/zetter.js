@@ -19,9 +19,7 @@ const createTweet = (req, res) => {
 };
 
 const getProfile = (req, res) => {
-    const user = users.find((user) => user.username === req.user.username);
-
-    res.json(user);
+    res.json(req.user);
 };
 
 const updateProfile = (req, res) => {
