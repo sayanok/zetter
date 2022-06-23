@@ -3,15 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import { token } from './api';
 
-export function Login() {
-    const [username, setId] = useState('');
-    const [password, setPassword] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
+const Login: React.FC = () => {
+    const [username, setId] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
+    const [errorMessage, setErrorMessage] = useState<string>('');
     const navigate = useNavigate();
-    let { token } = require('../api.js');
 
-    function login() {
+    function login(): void {
         fetch('http://localhost:5000/api/zetter/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -20,8 +20,8 @@ export function Login() {
             if (response.status === 200) {
                 console.log('success');
                 setErrorMessage('');
-                response.json().then((response) => {
-                    token.value = response;
+                response.json().then((body: string) => {
+                    token.value = body;
                     navigate('/');
                 });
             } else if (response.status === 400) {
@@ -33,7 +33,6 @@ export function Login() {
             }
         });
     }
-
     return (
         <>
             <Box
@@ -57,9 +56,11 @@ export function Login() {
                 />
             </Box>
             <div>{errorMessage}</div>
-            <Button variant="contained" onClick={() => login(username, password)}>
+            <Button variant="contained" onClick={() => login()}>
                 ログイン
             </Button>
         </>
     );
-}
+};
+
+export default Login;
