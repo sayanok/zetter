@@ -1,15 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
+import Box from '@mui/material/Box';
+import CssBaseline from '@mui/material/CssBaseline';
 
 import Sidebar from './Sidebar';
 import Login from './Login';
-
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-
-import Box from '@mui/material/Box';
-import CssBaseline from '@mui/material/CssBaseline';
+import Home from './Home';
+import Profile from './Profile';
+import SettingsProfile from './SettingsProfile';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
@@ -22,12 +23,9 @@ root.render(
                 <Box component="main" sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}>
                     <Routes>
                         <Route path="login" element={<Login />} />
-                        {/*                         <Route path="/" element={<Home />} />
-                        <Route path="search" element={<Search />} />
-                        <Route path="notifications" element={<Notifications />} />
+                        <Route path="/" element={<Home />} />
                         <Route path="profile" element={<Profile />} />
-                        <Route path="settings" element={<Settings />} />
-                        <Route path="settings/:username" element={<SettingsProfile />} /> */}
+                        <Route path="settings/:username" element={<SettingsProfile />} />
                     </Routes>
                 </Box>
             </BrowserRouter>
