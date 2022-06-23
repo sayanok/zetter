@@ -16,7 +16,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SettingsIcon from '@mui/icons-material/Settings';
 
 const drawerWidth = 240;
-const listContents = [
+const listContents: Array<{ href: string; iconComponent: JSX.Element; text: string }> = [
     {
         href: '/',
         iconComponent: <HomeIcon />,
@@ -44,7 +44,7 @@ const listContents = [
     },
 ];
 
-export function Sidebar() {
+const Sidebar: React.FC = () => {
     return (
         <Drawer
             sx={{
@@ -77,4 +77,6 @@ export function Sidebar() {
             <Button variant="contained">ツイートする</Button>
         </Drawer>
     );
-}
+};
+
+export default Sidebar;
