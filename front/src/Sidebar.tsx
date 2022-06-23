@@ -15,7 +15,7 @@ import PetsIcon from '@mui/icons-material/Pets';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SettingsIcon from '@mui/icons-material/Settings';
 
-const drawerWidth = 240;
+const drawerWidth: number = 240;
 const listContents: Array<{ href: string; iconComponent: JSX.Element; text: string }> = [
     {
         href: '/',

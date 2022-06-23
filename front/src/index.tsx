@@ -4,8 +4,9 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 
 import Sidebar from './Sidebar';
+import Login from './Login';
 
-import { BrowserRouter, Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -20,8 +21,8 @@ root.render(
                 {/* /loginでは表示しない */}
                 <Box component="main" sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}>
                     <Routes>
-                        {/* <Route path="login" element={<Login />} />
-                        <Route path="/" element={<Home />} />
+                        <Route path="login" element={<Login />} />
+                        {/*                         <Route path="/" element={<Home />} />
                         <Route path="search" element={<Search />} />
                         <Route path="notifications" element={<Notifications />} />
                         <Route path="profile" element={<Profile />} />
