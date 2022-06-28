@@ -20,7 +20,14 @@ const SettingsProfile: React.FC = () => {
 
     function getProfile(): void {
         callApi('http://localhost:5000/api/zetter/profile')?.then(
-            (data: { id: number; username: string; introduction: string; email: string; birthday: string }) => {
+            (data: {
+                id: number;
+                username: string;
+                icon: string;
+                introduction: string;
+                email: string;
+                birthday: string;
+            }) => {
                 setUsername(data.username);
                 setIntroduction(data.introduction);
                 setEmail(data.email);

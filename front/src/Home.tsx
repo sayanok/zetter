@@ -19,7 +19,15 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 
 const Home: React.FC = () => {
-    const [listTweets, setTweets] = useState<Array<{ id: number; username: string; content: string; date: Date }>>([]);
+    const [listTweets, setTweets] = useState<
+        Array<{
+            id: number;
+            username: string;
+            content: string;
+            date: Date;
+            user: { id: number; username: string; icon: string; introduction: string; email: string; birthday: string };
+        }>
+    >([]);
     const callApi = useCallApi();
 
     useEffect(() => {
@@ -28,7 +36,23 @@ const Home: React.FC = () => {
 
     function getTweets(): void {
         callApi('http://localhost:5000/api/zetter')?.then(
-            (data: Array<{ id: number; username: string; content: string; date: Date }>) => {
+            (
+                data: Array<{
+                    id: number;
+                    username: string;
+                    icon: string;
+                    content: string;
+                    date: Date;
+                    user: {
+                        id: number;
+                        username: string;
+                        icon: string;
+                        introduction: string;
+                        email: string;
+                        birthday: string;
+                    };
+                }>
+            ) => {
                 setTweets(data);
             }
         );
@@ -58,11 +82,10 @@ const Home: React.FC = () => {
                 {listTweets.map((tweet) => (
                     <ListItem key={tweet.id} alignItems="flex-start">
                         <ListItemAvatar>
-                            <Avatar alt={tweet.username} src="/static/images/avatar/1.jpg" />
+                            <Avatar alt={tweet.user.username} src={tweet.user.icon} />
                         </ListItemAvatar>
-
                         <ListItemText
-                            primary={tweet.username + '・' + formatDate(tweet.date)}
+                            primary={tweet.user.username + '・' + formatDate(tweet.date)}
                             secondary={
                                 <React.Fragment>
                                     {tweet.content}

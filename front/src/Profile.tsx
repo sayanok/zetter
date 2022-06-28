@@ -10,6 +10,7 @@ const Profile: React.FC = () => {
     const [profile, setProfile] = useState<{
         id: number;
         username: string;
+        icon: string;
         introduction: string;
         email: string;
         birthday: string;
@@ -23,7 +24,14 @@ const Profile: React.FC = () => {
 
     function getProfile(): void {
         callApi('http://localhost:5000/api/zetter/profile')?.then(
-            (data: { id: number; username: string; introduction: string; email: string; birthday: string }) => {
+            (data: {
+                id: number;
+                username: string;
+                icon: string;
+                introduction: string;
+                email: string;
+                birthday: string;
+            }) => {
                 setProfile(data);
             }
         );

@@ -1,4 +1,5 @@
 const { createHash } = require('crypto');
+const { readFile } = require('fs');
 const { sign } = require('jsonwebtoken');
 const tweets = require('../data/tweets.js');
 const users = require('../data/users.js');
@@ -12,6 +13,11 @@ const getTweets = (req, res) => {
         } else {
             return 1;
         }
+    });
+
+    tweets.forEach((tweet) => {
+        const user = users.find((user) => user.username === tweet.username);
+        tweet['user'] = user;
     });
     res.json(tweets.slice(0, limit));
 };
