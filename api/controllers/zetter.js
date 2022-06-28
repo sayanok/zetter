@@ -1,5 +1,4 @@
 const { createHash } = require('crypto');
-const { readFile } = require('fs');
 const { sign } = require('jsonwebtoken');
 const tweets = require('../data/tweets.js');
 const users = require('../data/users.js');
