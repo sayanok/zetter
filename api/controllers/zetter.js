@@ -16,7 +16,7 @@ const getTweets = (req, res) => {
     });
 
     tweets.forEach((tweet) => {
-        const user = users.find((user) => user.username === tweet.username);
+        const user = users.find((user) => user.id === tweet.userId);
         tweet['user'] = user;
     });
     res.json(tweets.slice(0, limit));
@@ -25,6 +25,7 @@ const getTweets = (req, res) => {
 const createTweet = (req, res) => {
     const newTweet = {
         id: tweets.length + 1,
+        userId: req.user.id,
         username: req.user.username,
         content: req.body.content,
         date: new Date(),

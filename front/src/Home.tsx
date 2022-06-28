@@ -22,10 +22,18 @@ const Home: React.FC = () => {
     const [listTweets, setTweets] = useState<
         Array<{
             id: number;
+            userId: number;
             username: string;
             content: string;
             date: Date;
-            user: { id: number; username: string; icon: string; introduction: string; email: string; birthday: string };
+            user: {
+                id: number;
+                username: string;
+                icon: string;
+                introduction: string;
+                email: string;
+                birthday: string;
+            };
         }>
     >([]);
     const callApi = useCallApi();
@@ -39,6 +47,7 @@ const Home: React.FC = () => {
             (
                 data: Array<{
                     id: number;
+                    userId: number;
                     username: string;
                     icon: string;
                     content: string;
