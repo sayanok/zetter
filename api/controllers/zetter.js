@@ -7,7 +7,7 @@ const getTweets = (req, res) => {
     const limit = 10;
 
     tweets.sort(function (a, b) {
-        if (a.date > b.date) {
+        if (a.createdAt > b.createdAt) {
             return -1;
         } else {
             return 1;
@@ -21,7 +21,7 @@ const createTweet = (req, res) => {
         id: tweets.length + 1,
         username: req.user.username,
         content: req.body.content,
-        date: new Date(),
+        createdAt: new Date(),
     };
     tweets.push(newTweet);
     res.status(201).json(newTweet);
