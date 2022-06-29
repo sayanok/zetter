@@ -55,7 +55,7 @@ const login = (req, res) => {
     if (user && user.password === hashedInputPassword) {
         const token = sign(
             {
-                ownerId: user.id,
+                userId: user.id,
                 username: user.username,
                 email: user.email,
             },
