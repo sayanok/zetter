@@ -5,37 +5,21 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import Button from '@mui/material/Button';
 import useCallApi from './utils/api';
+import { ProfileType } from './utils/types';
 
 const Profile: React.FC = () => {
-    const [profile, setProfile] = useState<{
-        id: number;
-        username: string;
-        icon: string;
-        introduction: string;
-        email: string;
-        birthday: string;
-    }>();
+    const [profile, setProfile] = useState<ProfileType>();
 
     const callApi = useCallApi();
 
     useEffect(() => {
-        getProfile();
+        getProfile()?.then(setProfile);
     }, []);
 
-    function getProfile(): void {
-        callApi('http://localhost:5000/api/zetter/profile')?.then(
-            (data: {
-                id: number;
-                username: string;
-                icon: string;
-                introduction: string;
-                email: string;
-                birthday: string;
-            }) => {
-                setProfile(data);
-            }
-        );
+    function getProfile(): Promise<ProfileType> | undefined {
+        return callApi('http://localhost:5000/api/zetter/profile');
     }
+
     return profile ? (
         <>
             <Button variant="contained">
