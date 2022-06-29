@@ -4,13 +4,14 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import useCallApi from './utils/api';
 import { useNavigate } from 'react-router-dom';
+import { ProfileType } from './utils/types';
 
 const SettingsProfile: React.FC = () => {
-    const [username, setUsername] = useState<String>('');
-    const [introduction, setIntroduction] = useState<String>('');
-    const [email, setEmail] = useState<String>('');
-    const [errorMessageForUsername, setErrorMessageForUsername] = useState<String>('');
-    const [errorMessageForEmail, setErrorMessageForEmail] = useState<String>('');
+    const [username, setUsername] = useState<string>('');
+    const [introduction, setIntroduction] = useState<string>('');
+    const [email, setEmail] = useState<string>('');
+    const [errorMessageForUsername, setErrorMessageForUsername] = useState<string>('');
+    const [errorMessageForEmail, setErrorMessageForEmail] = useState<string>('');
     const callApi = useCallApi();
     const navigate = useNavigate();
 
@@ -19,13 +20,11 @@ const SettingsProfile: React.FC = () => {
     }, []);
 
     function getProfile(): void {
-        callApi('http://localhost:5000/api/zetter/profile')?.then(
-            (data: { id: number; username: string; introduction: string; email: string; birthday: string }) => {
-                setUsername(data.username);
-                setIntroduction(data.introduction);
-                setEmail(data.email);
-            }
-        );
+        callApi('http://localhost:5000/api/zetter/profile')?.then((data: ProfileType) => {
+            setUsername(data.username);
+            setIntroduction(data.introduction);
+            setEmail(data.email);
+        });
     }
 
     function updateProfile(): void {
