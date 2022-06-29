@@ -15,7 +15,7 @@ const getTweets = (req, res) => {
     });
 
     tweets.forEach((tweet) => {
-        const user = users.find((user) => user.id === tweet.userId);
+        const user = users.find((user) => user.id === tweet.ownerId);
         tweet['user'] = user;
     });
     res.json(tweets.slice(0, limit));
@@ -24,8 +24,7 @@ const getTweets = (req, res) => {
 const createTweet = (req, res) => {
     const newTweet = {
         id: tweets.length + 1,
-        userId: req.user.id,
-        username: req.user.username,
+        ownerId: req.user.id,
         content: req.body.content,
         createdAt: new Date(),
     };
@@ -56,7 +55,7 @@ const login = (req, res) => {
     if (user && user.password === hashedInputPassword) {
         const token = sign(
             {
-                userId: user.id,
+                ownerId: user.id,
                 username: user.username,
                 email: user.email,
             },

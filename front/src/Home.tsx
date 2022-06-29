@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import TweetForm from './TweetForm';
 import useCallApi from './utils/api';
 import dayjs from 'dayjs';
+import { TweetType } from './utils/types';
 
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -19,48 +20,14 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 
 const Home: React.FC = () => {
-    const [listTweets, setTweets] = useState<
-        Array<{
-            id: number;
-            userId: number;
-            username: string;
-            content: string;
-            createdAt: Date;
-            user: {
-                id: number;
-                username: string;
-                icon: string;
-                introduction: string;
-                email: string;
-                birthday: string;
-            };
-        }>
-    >([]);
+    const [listTweets, setTweets] = useState<Array<TweetType>>([]);
     const callApi = useCallApi();
 
     useEffect(() => {
         getTweets()?.then((data) => setTweets(data));
     }, []);
 
-    function getTweets():
-        | Promise<
-              Array<{
-                  id: number;
-                  userId: number;
-                  username: string;
-                  content: string;
-                  createdAt: Date;
-                  user: {
-                      id: number;
-                      username: string;
-                      icon: string;
-                      introduction: string;
-                      email: string;
-                      birthday: string;
-                  };
-              }>
-          >
-        | undefined {
+    function getTweets(): Promise<Array<TweetType>> | undefined {
         return callApi('http://localhost:5000/api/zetter');
     }
 
