@@ -23,15 +23,11 @@ const Home: React.FC = () => {
     const callApi = useCallApi();
 
     useEffect(() => {
-        getTweets();
+        getTweets()?.then((data) => setTweets(data));
     }, []);
 
-    function getTweets(): void {
-        callApi('http://localhost:5000/api/zetter')?.then(
-            (data: Array<{ id: number; username: string; content: string; date: Date }>) => {
-                setTweets(data);
-            }
-        );
+    function getTweets(): Promise<Array<{ id: number; username: string; content: string; date: Date }>> | undefined {
+        return callApi('http://localhost:5000/api/zetter');
     }
 
     function formatDate(date: Date): string {
@@ -45,7 +41,7 @@ const Home: React.FC = () => {
 
     return (
         <>
-            <TweetForm getTweets={() => getTweets()} />
+            <TweetForm getTweets={() => getTweets()} setTweets={() => setTweets(listTweets)} />
             <Toolbar>
                 <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                     <Button variant="text">最新のツイートを表示する</Button>
