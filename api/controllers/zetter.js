@@ -1,5 +1,4 @@
 const { createHash } = require('crypto');
-const { readFile } = require('fs');
 const { sign } = require('jsonwebtoken');
 const tweets = require('../data/tweets.js');
 const users = require('../data/users.js');
@@ -8,7 +7,7 @@ const getTweets = (req, res) => {
     const limit = 10;
 
     tweets.sort(function (a, b) {
-        if (a.date > b.date) {
+        if (a.createdAt > b.createdAt) {
             return -1;
         } else {
             return 1;
@@ -16,7 +15,7 @@ const getTweets = (req, res) => {
     });
 
     tweets.forEach((tweet) => {
-        const user = users.find((user) => user.id === tweet.userId);
+        const user = users.find((user) => user.id === tweet.ownerId);
         tweet['user'] = user;
     });
     res.json(tweets.slice(0, limit));
@@ -25,10 +24,9 @@ const getTweets = (req, res) => {
 const createTweet = (req, res) => {
     const newTweet = {
         id: tweets.length + 1,
-        userId: req.user.id,
-        username: req.user.username,
+        ownerId: req.user.id,
         content: req.body.content,
-        date: new Date(),
+        createdAt: new Date(),
     };
     tweets.push(newTweet);
     res.status(201).json(newTweet);
