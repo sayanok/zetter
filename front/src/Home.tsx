@@ -3,12 +3,12 @@ import TweetForm from './TweetForm';
 import useCallApi from './utils/api';
 import dayjs from 'dayjs';
 import { TweetType } from './utils/types';
+import GoodButton from './GoodButton';
 
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
-import StarBorderIcon from '@mui/icons-material/StarBorder';
 import IosShareIcon from '@mui/icons-material/IosShare';
 import Divider from '@mui/material/Divider';
 import ListItemText from '@mui/material/ListItemText';
@@ -74,9 +74,7 @@ const Home: React.FC = () => {
                                         <Button variant="text">
                                             <CompareArrowsIcon />
                                         </Button>
-                                        <Button variant="text">
-                                            <StarBorderIcon />
-                                        </Button>
+                                        <GoodButton />
                                         <Button variant="text">
                                             <IosShareIcon />
                                         </Button>
