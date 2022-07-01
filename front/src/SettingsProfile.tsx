@@ -2,15 +2,16 @@ import React, { useEffect, useState } from 'react';
 
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import { useCallApi } from '../utils/api.js';
+import useCallApi from './utils/api';
 import { useNavigate } from 'react-router-dom';
+import { ProfileType } from './utils/types';
 
-export function SettingsProfile() {
-    const [username, setUsername] = useState('');
-    const [introduction, setIntroduction] = useState('');
-    const [email, setEmail] = useState('');
-    const [errorMessageForUsername, setErrorMessageForUsername] = useState('');
-    const [errorMessageForEmail, setErrorMessageForEmail] = useState('');
+const SettingsProfile: React.FC = () => {
+    const [username, setUsername] = useState<string>('');
+    const [introduction, setIntroduction] = useState<string>('');
+    const [email, setEmail] = useState<string>('');
+    const [errorMessageForUsername, setErrorMessageForUsername] = useState<string>('');
+    const [errorMessageForEmail, setErrorMessageForEmail] = useState<string>('');
     const callApi = useCallApi();
     const navigate = useNavigate();
 
@@ -18,15 +19,15 @@ export function SettingsProfile() {
         getProfile();
     }, []);
 
-    function getProfile() {
-        callApi('http://localhost:5000/api/zetter/profile')?.then((data) => {
+    function getProfile(): void {
+        callApi('http://localhost:5000/api/zetter/profile')?.then((data: ProfileType) => {
             setUsername(data.username);
             setIntroduction(data.introduction);
             setEmail(data.email);
         });
     }
 
-    function updateProfile() {
+    function updateProfile(): void {
         callApi('http://localhost:5000/api/zetter/profile', {
             method: 'PATCH',
             body: JSON.stringify({ username: username, introduction: introduction, email: email }),
@@ -34,7 +35,7 @@ export function SettingsProfile() {
         navigate('/profile');
     }
 
-    function canSubmit() {
+    function canSubmit(): boolean {
         if (username.length === 0 || email.length === 0) {
             return false;
         } else {
@@ -85,13 +86,11 @@ export function SettingsProfile() {
                 helperText={errorMessageForEmail}
             />
             <br />
-            <Button
-                variant="contained"
-                disabled={!canSubmit()}
-                onClick={() => updateProfile(username, introduction, email)}
-            >
+            <Button variant="contained" disabled={!canSubmit()} onClick={() => updateProfile()}>
                 更新する
             </Button>
         </>
     );
-}
+};
+
+export default SettingsProfile;

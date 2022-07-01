@@ -1,26 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-import { TweetForm } from './TweetForm.js';
-import { useCallApi } from '../utils/api.js';
+import TweetForm from './TweetForm';
+import useCallApi from './utils/api';
 
-export function Home() {
-    const [listTweets, setTweets] = useState([]);
+const Home: React.FC = () => {
+    const [listTweets, setTweets] = useState<Array<{ id: number; username: string; content: string; time: string }>>(
+        []
+    );
     const callApi = useCallApi();
 
     useEffect(() => {
-        getTweets();
+        getTweets()?.then(setTweets);
     }, []);
 
-    function getTweets() {
-        callApi('http://localhost:5000/api/zetter')?.then((data) => {
-            setTweets(data);
-        });
+    function getTweets(): Promise<Array<{ id: number; username: string; content: string; time: string }>> | undefined {
+        return callApi('http://localhost:5000/api/zetter');
+    }
+
+    function getAndSetTweets(): void {
+        getTweets()?.then(setTweets);
     }
 
     return (
         <>
-            <TweetForm getTweets={() => getTweets()} />
+            <TweetForm getAndSetTweets={() => getAndSetTweets()} />
             <List>
                 {listTweets.map((tweet) => (
                     <ListItem key={tweet.id}>
@@ -36,4 +40,6 @@ export function Home() {
             </List>
         </>
     );
-}
+};
+
+export default Home;

@@ -2,19 +2,20 @@ import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import { useCallApi } from '../utils/api.js';
+import useCallApi from './utils/api';
 
-export function TweetForm(props) {
-    // TODO ログインしているユーザーの名前を取得する
-    const [content, setContent] = useState('');
+type TweetFormProps = { getAndSetTweets: () => void };
+
+const TweetForm: React.FC<TweetFormProps> = (props) => {
+    const [content, setContent] = useState<string>('');
     const callApi = useCallApi();
 
-    function postTweet() {
+    function postTweet(): void {
         callApi('http://localhost:5000/api/zetter', {
             method: 'POST',
             body: JSON.stringify({ content: content }),
         });
-        props.getTweets();
+        props.getAndSetTweets();
         CleanForm();
     }
 
@@ -41,9 +42,11 @@ export function TweetForm(props) {
                     onChange={(e) => setContent(e.target.value)}
                 />
             </Box>
-            <Button variant="contained" onClick={() => postTweet(content)}>
+            <Button variant="contained" onClick={() => postTweet()}>
                 ツイートする
             </Button>
         </>
     );
-}
+};
+
+export default TweetForm;

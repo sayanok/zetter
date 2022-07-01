@@ -4,23 +4,22 @@ import { Link } from 'react-router-dom';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import Button from '@mui/material/Button';
-import { useCallApi } from '../utils/api.js';
+import useCallApi from './utils/api';
+import { ProfileType } from './utils/types';
 
-export function Profile() {
-    const [profile, setProfile] = useState([]);
+const Profile: React.FC = () => {
+    const [profile, setProfile] = useState<ProfileType>();
+
     const callApi = useCallApi();
 
     useEffect(() => {
-        getProfile();
+        getProfile()?.then(setProfile);
     }, []);
 
-    function getProfile() {
-        callApi('http://localhost:5000/api/zetter/profile', { headers: {} })?.then((data) => {
-            setProfile(data);
-        });
+    function getProfile(): Promise<ProfileType> | undefined {
+        return callApi('http://localhost:5000/api/zetter/profile');
     }
-
-    return (
+    return profile ? (
         <>
             <Button variant="contained">
                 <Link to={'/settings/' + profile.username}>編集する</Link>
@@ -39,5 +38,7 @@ export function Profile() {
                 </ListItem>
             </List>
         </>
-    );
-}
+    ) : null;
+};
+
+export default Profile;

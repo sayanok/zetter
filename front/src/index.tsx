@@ -1,19 +1,20 @@
-import { BrowserRouter, Router, Route, Routes } from 'react-router-dom';
-
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import './index.css';
+import reportWebVitals from './reportWebVitals';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 
-import { Home } from './Home.js';
-import { Search } from './Search.js';
-import { Notifications } from './Notifications.js';
-import { Profile } from './Profile.js';
-import { Settings } from './Settings.js';
-import { SettingsProfile } from './SettingsProfile.js';
-import { Sidebar } from './Sidebar.js';
-import { Login } from './Login.js';
+import Sidebar from './Sidebar';
+import Login from './Login';
+import Home from './Home';
+import Profile from './Profile';
+import SettingsProfile from './SettingsProfile';
 
-export function App() {
-    return (
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
+root.render(
+    <React.StrictMode>
         <Box sx={{ display: 'flex' }}>
             <BrowserRouter>
                 <CssBaseline />
@@ -23,14 +24,16 @@ export function App() {
                     <Routes>
                         <Route path="login" element={<Login />} />
                         <Route path="/" element={<Home />} />
-                        <Route path="search" element={<Search />} />
-                        <Route path="notifications" element={<Notifications />} />
                         <Route path="profile" element={<Profile />} />
-                        <Route path="settings" element={<Settings />} />
                         <Route path="settings/:username" element={<SettingsProfile />} />
                     </Routes>
                 </Box>
             </BrowserRouter>
         </Box>
-    );
-}
+    </React.StrictMode>
+);
+
+// If you want to start measuring performance in your app, pass a function
+// to log results (for example: reportWebVitals(console.log))
+// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+reportWebVitals();
