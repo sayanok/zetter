@@ -4,7 +4,7 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import useCallApi from './utils/api';
 
-type TweetFormProps = { getTweets: () => void; setTweets: () => void };
+type TweetFormProps = { getAndSetTweets: () => void };
 
 const TweetForm: React.FC<TweetFormProps> = (props) => {
     const [content, setContent] = useState<string>('');
@@ -15,8 +15,7 @@ const TweetForm: React.FC<TweetFormProps> = (props) => {
             method: 'POST',
             body: JSON.stringify({ content: content }),
         });
-        props.getTweets();
-        props.setTweets();
+        props.getAndSetTweets();
         CleanForm();
     }
 
