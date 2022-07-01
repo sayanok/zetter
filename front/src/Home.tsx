@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import TweetForm from './TweetForm';
 import useCallApi from './utils/api';
 import dayjs from 'dayjs';
+import { TweetType } from './utils/types';
 
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -19,18 +20,14 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 
 const Home: React.FC = () => {
-    const [listTweets, setTweets] = useState<Array<{ id: number; username: string; content: string; createdAt: Date }>>(
-        []
-    );
+    const [listTweets, setTweets] = useState<Array<TweetType>>([]);
     const callApi = useCallApi();
 
     useEffect(() => {
         getTweets()?.then(setTweets);
     }, []);
 
-    function getTweets():
-        | Promise<Array<{ id: number; username: string; content: string; createdAt: Date }>>
-        | undefined {
+    function getTweets(): Promise<Array<TweetType>> | undefined {
         return callApi('http://localhost:5000/api/zetter');
     }
 
@@ -62,11 +59,10 @@ const Home: React.FC = () => {
                 {listTweets.map((tweet) => (
                     <ListItem key={tweet.id} alignItems="flex-start">
                         <ListItemAvatar>
-                            <Avatar alt={tweet.username} src="/static/images/avatar/1.jpg" />
+                            <Avatar alt={tweet.user.username} src={tweet.user.icon} />
                         </ListItemAvatar>
-
                         <ListItemText
-                            primary={tweet.username + '・' + formatDate(tweet.createdAt)}
+                            primary={tweet.user.username + '・' + formatDate(tweet.createdAt)}
                             secondary={
                                 <React.Fragment>
                                     {tweet.content}
