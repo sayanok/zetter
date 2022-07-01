@@ -11,16 +11,20 @@ const Home: React.FC = () => {
     const callApi = useCallApi();
 
     useEffect(() => {
-        getTweets()?.then((data) => setTweets(data));
+        getTweets()?.then(setTweets);
     }, []);
 
     function getTweets(): Promise<Array<{ id: number; username: string; content: string; time: string }>> | undefined {
         return callApi('http://localhost:5000/api/zetter');
     }
 
+    function getAndSetTweets(): void {
+        getTweets()?.then(setTweets);
+    }
+
     return (
         <>
-            <TweetForm getTweets={() => getTweets()} setTweets={() => setTweets(listTweets)} />
+            <TweetForm getAndSetTweets={() => getAndSetTweets()} />
             <List>
                 {listTweets.map((tweet) => (
                     <ListItem key={tweet.id}>
