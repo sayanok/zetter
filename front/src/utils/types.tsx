@@ -13,4 +13,7 @@ export type TweetType = {
     content: string;
     createdAt: Date;
     user: ProfileType;
+    numberOfFavorite: number;
+    favoriteState: { id: number; tweetId: number; userId: number; createdAt: string } | boolean;
+    isFavorite: boolean;
 };

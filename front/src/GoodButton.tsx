@@ -16,13 +16,9 @@ const GoodButton: React.FC = () => {
     }
     return (
         <>
-<<<<<<< HEAD
-            <Button variant="text" onClick={() => changeGoodButtonState()}></Button>
-=======
             <Button variant="text" onClick={() => changeGoodButtonState()}>
                 {}
             </Button>
->>>>>>> fb357cc... wip
         </>
     );
 };
