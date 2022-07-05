@@ -12,3 +12,4 @@ app.listen(5000, () => {
 app.use(express.json());
 app.use(cors());
 app.use('/api/zetter', zetter_routes);
+app.use(express.static('public'));
