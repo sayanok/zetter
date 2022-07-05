@@ -3,6 +3,7 @@ import TweetForm from './TweetForm';
 import useCallApi from './utils/api';
 import dayjs from 'dayjs';
 import GoodButton from './GoodButton';
+import { TweetType } from './utils/types';
 
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -19,30 +20,14 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 
 const Home: React.FC = () => {
-    const [listTweets, setTweets] = useState<
-        Array<{
-            id: number;
-            userId: number;
-            username: string;
-            content: string;
-            date: Date;
-            user: {
-                id: number;
-                username: string;
-                icon: string;
-                introduction: string;
-                email: string;
-                birthday: string;
-            };
-        }>
-    >([]);
+    const [listTweets, setTweets] = useState<Array<TweetType>>([]);
     const callApi = useCallApi();
 
     useEffect(() => {
         getTweets()?.then(setTweets);
     }, []);
 
-    function getTweets(): Promise<Array<{ id: number; username: string; content: string; time: string }>> | undefined {
+    function getTweets(): Promise<Array<TweetType>> | undefined {
         return callApi('http://localhost:5000/api/zetter');
     }
 
@@ -50,12 +35,12 @@ const Home: React.FC = () => {
         getTweets()?.then(setTweets);
     }
 
-    function formatDate(date: Date): string {
+    function formatDate(createdAt: Date): string {
         const now: dayjs.Dayjs = dayjs();
-        if (dayjs(date).isBefore(now.subtract(1, 'd'))) {
-            return dayjs(date).format('M月DD日');
+        if (dayjs(createdAt).isBefore(now.subtract(1, 'd'))) {
+            return dayjs(createdAt).format('M月DD日');
         } else {
-            return String(now.diff(date, 'hour')) + '時間前';
+            return String(now.diff(createdAt, 'hour')) + '時間前';
         }
     }
 
@@ -77,7 +62,7 @@ const Home: React.FC = () => {
                             <Avatar alt={tweet.user.username} src={tweet.user.icon} />
                         </ListItemAvatar>
                         <ListItemText
-                            primary={tweet.user.username + '・' + formatDate(tweet.date)}
+                            primary={tweet.user.username + '・' + formatDate(tweet.createdAt)}
                             secondary={
                                 <React.Fragment>
                                     {tweet.content}
