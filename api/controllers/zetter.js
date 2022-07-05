@@ -13,13 +13,18 @@ const getTweets = (req, res) => {
             return 1;
         }
     });
+
+    tweets.forEach((tweet) => {
+        const user = users.find((user) => user.id === tweet.ownerId);
+        tweet['user'] = user;
+    });
     res.json(tweets.slice(0, limit));
 };
 
 const createTweet = (req, res) => {
     const newTweet = {
         id: tweets.length + 1,
-        username: req.user.username,
+        ownerId: req.user.id,
         content: req.body.content,
         createdAt: new Date(),
     };
