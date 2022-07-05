@@ -4,7 +4,16 @@ const tweets = require('../data/tweets.js');
 const users = require('../data/users.js');
 
 const getTweets = (req, res) => {
-    res.json(tweets);
+    const limit = 10;
+
+    tweets.sort(function (a, b) {
+        if (a.createdAt > b.createdAt) {
+            return -1;
+        } else {
+            return 1;
+        }
+    });
+    res.json(tweets.slice(0, limit));
 };
 
 const createTweet = (req, res) => {
@@ -12,7 +21,7 @@ const createTweet = (req, res) => {
         id: tweets.length + 1,
         username: req.user.username,
         content: req.body.content,
-        time: new Date(),
+        createdAt: new Date(),
     };
     tweets.push(newTweet);
     res.status(201).json(newTweet);
