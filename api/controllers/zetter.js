@@ -27,10 +27,8 @@ const getTweets = (req, res) => {
         tweet['numberOfFavorite'] = numberOfFavorite.length;
 
         if (favoriteTweetIds.includes(tweet.id)) {
-            tweet['favoriteState'] = usersFavoriteTweets.find((favoriteTweet) => favoriteTweet.tweetId === tweet.id);
             tweet.isFavorite = true;
         } else {
-            tweet['favoriteState'] = false;
             tweet.isFavorite = false;
         }
     });
@@ -53,15 +51,20 @@ const updateTweet = (req, res) => {
 
     if (req.body.order === 'add') {
         favorities.push({
-            id: favorities.slice(-1)[0].id + 1,
+            id: favorities.length + 1,
+            // TODO: DBとつなぐときなおしたい
             tweetId: tweet.id,
             userId: req.user.id,
             createdAt: new Date(),
         });
         tweet.isFavorite = true;
+        tweet.numberOfFavorite++;
     } else {
-        favorities = favorities.filter((favorite) => favorite.id !== req.body.tweet.favoriteState.id);
+        favorities = favorities.filter(
+            (favorite) => favorite.tweetId !== req.body.tweet.id || favorite.userId !== req.user.id
+        );
         tweet.isFavorite = false;
+        tweet.numberOfFavorite--;
     }
     res.status(200).json(tweet);
 };
