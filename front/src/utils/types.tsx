@@ -14,6 +14,5 @@ export type TweetType = {
     createdAt: Date;
     user: ProfileType;
     numberOfFavorite: number;
-    favoriteState: { id: number; tweetId: number; userId: number; createdAt: string } | boolean;
     isFavorite: boolean;
 };
