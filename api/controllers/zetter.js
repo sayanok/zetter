@@ -20,11 +20,14 @@ const getTweets = (req, res) => {
     const favoriteTweetIds = usersFavoriteTweets.map((obj) => obj.tweetId);
 
     tweets.forEach((tweet) => {
-        const user = users.find(({ id }) => id === tweet.ownerId);
+        const user = users.find(({ id }) => id === tweet.createdBy);
         tweet['user'] = user;
 
         const numberOfFavorite = favorities.filter((favorite) => favorite.tweetId === tweet.id);
         tweet['numberOfFavorite'] = numberOfFavorite.length;
+
+        const numberOfReply = tweets.filter((replyTweet) => replyTweet.replyTo === tweet.id);
+        tweet['numberOfReply'] = numberOfReply.length;
 
         if (favoriteTweetIds.includes(tweet.id)) {
             tweet.isFavorite = true;
@@ -38,7 +41,8 @@ const getTweets = (req, res) => {
 const createTweet = (req, res) => {
     const newTweet = {
         id: tweets.length + 1,
-        ownerId: req.user.id,
+        createdBy: req.user.id,
+        replyTo: req.body.replyTo,
         content: req.body.content,
         createdAt: new Date(),
     };
