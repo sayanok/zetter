@@ -18,10 +18,29 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
+import Modal from '@mui/material/Modal';
+import Box from '@mui/material/Box';
 
 const Home: React.FC = () => {
     const [tweetsList, setTweets] = useState<Array<TweetType>>([]);
     const callApi = useCallApi();
+    const [modalTweet, setModalTweet] = useState<TweetType>();
+
+    const [open, setOpen] = React.useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+
+    const style = {
+        position: 'absolute' as 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: 'background.paper',
+        border: '2px solid #000',
+        boxShadow: 24,
+        p: 4,
+    };
 
     useEffect(() => {
         getTweets()?.then(setTweets);
@@ -69,6 +88,11 @@ const Home: React.FC = () => {
         getTweets()?.then(setTweets);
     }
 
+    function setModalTweetAndHandleOpen(tweet: TweetType): void {
+        setModalTweet(tweet);
+        handleOpen();
+    }
+
     function formatDate(createdAt: Date): string {
         const now: dayjs.Dayjs = dayjs();
         if (dayjs(createdAt).isBefore(now.subtract(1, 'd'))) {
@@ -80,7 +104,7 @@ const Home: React.FC = () => {
 
     return (
         <>
-            <TweetForm getAndSetTweets={() => getAndSetTweets()} />
+            <TweetForm getAndSetTweets={() => getAndSetTweets()} caller={'Home'} replyTo={null} />
             <Toolbar>
                 <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                     <Button variant="text">最新のツイートを表示する</Button>
@@ -102,9 +126,40 @@ const Home: React.FC = () => {
                                     {tweet.content}
                                     <br />
                                     <ListItemIcon>
-                                        <Button variant="text">
+                                        <Button onClick={() => setModalTweetAndHandleOpen(tweet)}>
                                             <ChatBubbleOutlineIcon />
                                         </Button>
+                                        <Modal
+                                            open={open}
+                                            onClose={handleClose}
+                                            aria-labelledby="modal-modal-title"
+                                            aria-describedby="modal-modal-description"
+                                            className="Modal"
+                                        >
+                                            <Box sx={style}>
+                                                {modalTweet ? (
+                                                    <>
+                                                        <Typography id="modal-modal-title" variant="h6" component="h2">
+                                                            <Avatar
+                                                                alt={modalTweet.user.username}
+                                                                src={modalTweet.user.icon}
+                                                            />
+                                                            {modalTweet.user.username}
+                                                            <br />
+                                                            {modalTweet.content}
+                                                        </Typography>
+                                                        <TweetForm
+                                                            getAndSetTweets={() => getAndSetTweets()}
+                                                            caller={'reply'}
+                                                            replyTo={modalTweet.id}
+                                                        />
+                                                    </>
+                                                ) : (
+                                                    'ツイートを取得できませんでした'
+                                                )}
+                                            </Box>
+                                        </Modal>
+                                        {tweet.numberOfReply}
                                         <Button variant="text">
                                             <CompareArrowsIcon />
                                         </Button>
@@ -117,6 +172,12 @@ const Home: React.FC = () => {
                                             <IosShareIcon />
                                         </Button>
                                     </ListItemIcon>
+                                    <br />
+                                    {tweet.numberOfReply > 0 ? (
+                                        <Button variant="text" onClick={() => getTweets()}>
+                                            返信を表示する
+                                        </Button>
+                                    ) : null}
                                     <Divider />
                                 </React.Fragment>
                             }
