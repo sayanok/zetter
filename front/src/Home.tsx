@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import TweetForm from './TweetForm';
 import useCallApi from './utils/api';
 import dayjs from 'dayjs';
 import { TweetType } from './utils/types';
 import FavButton from './FavButton';
+import './Home.css';
 
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -88,8 +90,8 @@ const Home: React.FC = () => {
         getTweets()?.then(setTweets);
     }
 
-    function setModalTweetAndHandleOpen(tweet: TweetType): void {
-        setModalTweet(tweet);
+    function setModalTweetAndHandleOpen(modalTweet: TweetType): void {
+        setModalTweet(modalTweet);
         handleOpen();
     }
 
@@ -116,14 +118,23 @@ const Home: React.FC = () => {
             <List sx={{ width: '100%', maxWidth: 1000, bgcolor: 'background.paper' }}>
                 {tweetsList.map((tweet, index) => (
                     <ListItem key={tweet.id} alignItems="flex-start">
-                        <ListItemAvatar>
-                            <Avatar alt={tweet.user.username} src={tweet.user.icon} />
-                        </ListItemAvatar>
+                        {/* Linkになってる範囲が良くないので改良したい */}
+                        <Link to={'/tweet/' + tweet.id}>
+                            <ListItemAvatar>
+                                <Avatar alt={tweet.user.username} src={tweet.user.icon} />
+                            </ListItemAvatar>
+                        </Link>
                         <ListItemText
-                            primary={tweet.user.username + '・' + formatDate(tweet.createdAt)}
+                            primary={
+                                <React.Fragment>
+                                    <Link to={'/tweet/' + tweet.id}>
+                                        {tweet.user.username + '・' + formatDate(tweet.createdAt)}
+                                    </Link>
+                                </React.Fragment>
+                            }
                             secondary={
                                 <React.Fragment>
-                                    {tweet.content}
+                                    <Link to={'/tweet/' + tweet.id}>{tweet.content}</Link>
                                     <br />
                                     <ListItemIcon>
                                         <Button onClick={() => setModalTweetAndHandleOpen(tweet)}>
@@ -182,6 +193,7 @@ const Home: React.FC = () => {
                                 </React.Fragment>
                             }
                         />
+                        {/* </Link> */}
                     </ListItem>
                 ))}
             </List>
