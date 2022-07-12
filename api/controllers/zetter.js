@@ -38,6 +38,43 @@ const getTweets = (req, res) => {
     res.json(tweets.slice(0, limit));
 };
 
+const getTweet = (req, res) => {
+    const tweet = tweets.find((tweet) => tweet.id === parseInt(req.params.tweetId));
+    res.json(tweet);
+};
+
+const getReplys = (req, res) => {
+    let replys = [];
+    tweets.forEach((tweet) => {
+        if (tweet.replyTo === parseInt(req.params.tweetId)) {
+            replys.push(tweet);
+        }
+    });
+
+    // ツイートに自分がfavしているかの情報を付加するための準備
+    const usersFavoriteTweets = favorities.filter((favorite) => favorite.userId === req.user.id);
+    const favoriteTweetIds = usersFavoriteTweets.map((obj) => obj.tweetId);
+
+    replys.forEach((reply) => {
+        const user = users.find(({ id }) => id === reply.createdBy);
+        reply['user'] = user;
+
+        const numberOfFavorite = favorities.filter((favorite) => favorite.tweetId === reply.id);
+        reply['numberOfFavorite'] = numberOfFavorite.length;
+
+        const numberOfReply = tweets.filter((replyTweet) => replyTweet.replyTo === reply.id);
+        reply['numberOfReply'] = numberOfReply.length;
+
+        if (favoriteTweetIds.includes(reply.id)) {
+            reply.isFavorite = true;
+        } else {
+            reply.isFavorite = false;
+        }
+    });
+
+    res.json(replys);
+};
+
 const createTweet = (req, res) => {
     const newTweet = {
         id: tweets.length + 1,
@@ -111,6 +148,8 @@ const login = (req, res) => {
 
 module.exports = {
     getTweets,
+    getTweet,
+    getReplys,
     createTweet,
     updateTweet,
     getProfile,
