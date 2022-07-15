@@ -20,8 +20,8 @@ import Button from '@mui/material/Button';
 const Tweet: React.FC = () => {
     const callApi = useCallApi();
     const params = useParams();
-    const [tweetsList, setTweets] = useState<Array<TweetType>>([]);
     const [tweet, setTweet] = useState<TweetType>();
+    const [tweetsList, setTweets] = useState<Array<TweetType>>([]);
 
     useEffect(() => {
         getTweet()?.then(setTweet);
@@ -34,6 +34,10 @@ const Tweet: React.FC = () => {
 
     function getReplys(): Promise<Array<TweetType>> | undefined {
         return callApi('http://localhost:5000/api/zetter/replys/' + params.tweetId);
+    }
+
+    function getAndSetTweets(): void {
+        getReplys()?.then(setTweets);
     }
 
     function updateFavoriteState(tweet: TweetType): void {
@@ -54,10 +58,6 @@ const Tweet: React.FC = () => {
                 setTweet(data);
             });
         }
-    }
-
-    function getAndSetTweets(): void {
-        getReplys()?.then(setTweets);
     }
 
     function formatDate(createdAt: Date): string {
@@ -98,7 +98,7 @@ const Tweet: React.FC = () => {
                     </React.Fragment>
                 }
             />
-            {tweet.numberOfReply > 0 ? (
+            {tweetsList.length ? (
                 <List sx={{ width: '100%', maxWidth: 1000, bgcolor: 'background.paper' }}>
                     {tweetsList.map((tweet, index) => (
                         <ListItem key={tweet.id} alignItems="flex-start">
