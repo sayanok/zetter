@@ -10,7 +10,6 @@ import Typography from '@mui/material/Typography';
 import Avatar from '@mui/material/Avatar';
 
 type ReplyButtonProps = {
-    numberOfReply: number;
     tweet: TweetType;
     getAndSetTweets: () => void;
 };
@@ -64,7 +63,7 @@ const ReplyButton: React.FC<ReplyButtonProps> = (props) => {
                     )}
                 </Box>
             </Modal>
-            {props.numberOfReply}
+            {props.tweet.numberOfReply}
         </>
     );
 };

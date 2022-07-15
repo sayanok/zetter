@@ -113,11 +113,7 @@ const Home: React.FC = () => {
                                     <Link to={'/tweet/' + tweet.id}>{tweet.content}</Link>
                                     <br />
                                     <ListItemIcon>
-                                        <ReplyButton
-                                            tweet={tweet}
-                                            numberOfReply={tweet.numberOfReply}
-                                            getAndSetTweets={() => getAndSetTweets()}
-                                        />
+                                        <ReplyButton tweet={tweet} getAndSetTweets={() => getAndSetTweets()} />
                                         <Button variant="text">
                                             <CompareArrowsIcon />
                                         </Button>
