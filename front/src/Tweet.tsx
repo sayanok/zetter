@@ -4,11 +4,10 @@ import { TweetType } from './utils/types';
 import useCallApi from './utils/api';
 import dayjs from 'dayjs';
 import FavButton from './FavButton';
-import TweetForm from './TweetForm';
+import ReplyButton from './ReplyButton';
 
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
 import IosShareIcon from '@mui/icons-material/IosShare';
 import Divider from '@mui/material/Divider';
@@ -17,33 +16,12 @@ import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Modal from '@mui/material/Modal';
-import Box from '@mui/material/Box';
 
 const Tweet: React.FC = () => {
     const callApi = useCallApi();
     const params = useParams();
     const [tweetsList, setTweets] = useState<Array<TweetType>>([]);
     const [tweet, setTweet] = useState<TweetType>();
-    const [modalTweet, setModalTweet] = useState<TweetType>();
-
-    const [open, setOpen] = React.useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
-
-    const style = {
-        position: 'absolute' as 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: 400,
-        bgcolor: 'background.paper',
-        border: '2px solid #000',
-        boxShadow: 24,
-        p: 4,
-    };
 
     useEffect(() => {
         getTweet()?.then(setTweet);
@@ -78,11 +56,6 @@ const Tweet: React.FC = () => {
         }
     }
 
-    function setModalTweetAndHandleOpen(modalTweet: TweetType): void {
-        setModalTweet(modalTweet);
-        handleOpen();
-    }
-
     function getAndSetTweets(): void {
         getReplys()?.then(setTweets);
     }
@@ -108,37 +81,7 @@ const Tweet: React.FC = () => {
                         {tweet.content}
                         <br />
                         <ListItemIcon>
-                            <Button onClick={() => setModalTweetAndHandleOpen(tweet)}>
-                                <ChatBubbleOutlineIcon />
-                            </Button>
-                            <Modal
-                                open={open}
-                                onClose={handleClose}
-                                aria-labelledby="modal-modal-title"
-                                aria-describedby="modal-modal-description"
-                                className="Modal"
-                            >
-                                <Box sx={style}>
-                                    {modalTweet ? (
-                                        <>
-                                            <Typography id="modal-modal-title" variant="h6" component="h2">
-                                                <Avatar alt={modalTweet.user.username} src={modalTweet.user.icon} />
-                                                {modalTweet.user.username}
-                                                <br />
-                                                {modalTweet.content}
-                                            </Typography>
-                                            <TweetForm
-                                                getAndSetTweets={() => getAndSetTweets()}
-                                                caller={'reply'}
-                                                replyTo={modalTweet.id}
-                                            />
-                                        </>
-                                    ) : (
-                                        'ツイートを取得できませんでした'
-                                    )}
-                                </Box>
-                            </Modal>
-                            {tweet.numberOfReply}
+                            <ReplyButton tweet={tweet} getAndSetTweets={() => getAndSetTweets()} />
                             <Button variant="text">
                                 <CompareArrowsIcon />
                             </Button>
@@ -178,44 +121,7 @@ const Tweet: React.FC = () => {
                                         <Link to={'/tweet/' + tweet.id}>{tweet.content}</Link>
                                         <br />
                                         <ListItemIcon>
-                                            <Button onClick={() => setModalTweetAndHandleOpen(tweet)}>
-                                                <ChatBubbleOutlineIcon />
-                                            </Button>
-                                            <Modal
-                                                open={open}
-                                                onClose={handleClose}
-                                                aria-labelledby="modal-modal-title"
-                                                aria-describedby="modal-modal-description"
-                                                className="Modal"
-                                            >
-                                                <Box sx={style}>
-                                                    {modalTweet ? (
-                                                        <>
-                                                            <Typography
-                                                                id="modal-modal-title"
-                                                                variant="h6"
-                                                                component="h2"
-                                                            >
-                                                                <Avatar
-                                                                    alt={modalTweet.user.username}
-                                                                    src={modalTweet.user.icon}
-                                                                />
-                                                                {modalTweet.user.username}
-                                                                <br />
-                                                                {modalTweet.content}
-                                                            </Typography>
-                                                            <TweetForm
-                                                                getAndSetTweets={() => getAndSetTweets()}
-                                                                caller={'reply'}
-                                                                replyTo={modalTweet.id}
-                                                            />
-                                                        </>
-                                                    ) : (
-                                                        'ツイートを取得できませんでした'
-                                                    )}
-                                                </Box>
-                                            </Modal>
-                                            {tweet.numberOfReply}
+                                            <ReplyButton tweet={tweet} getAndSetTweets={() => getAndSetTweets()} />
                                             <Button variant="text">
                                                 <CompareArrowsIcon />
                                             </Button>
