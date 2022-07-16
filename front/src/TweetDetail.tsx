@@ -5,6 +5,7 @@ import useCallApi from './utils/api';
 import dayjs from 'dayjs';
 import FavButton from './FavButton';
 import ReplyButton from './ReplyButton';
+import SingleTweet from './SingleTweet';
 
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -93,85 +94,22 @@ const TweetDetail: React.FC = () => {
         }
     }
 
-    function formatDate(createdAt: Date): string {
-        const now: dayjs.Dayjs = dayjs();
-        if (dayjs(createdAt).isBefore(now.subtract(1, 'd'))) {
-            return dayjs(createdAt).format('M月DD日');
-        } else {
-            return String(now.diff(createdAt, 'hour')) + '時間前';
-        }
-    }
-
     return tweet ? (
         <>
-            <ListItemAvatar>
-                <Avatar alt={tweet.user.username} src={tweet.user.icon} />
-            </ListItemAvatar>
-            <ListItemText
-                primary={tweet.user.username + '・' + formatDate(tweet.createdAt)}
-                secondary={
-                    <React.Fragment>
-                        {tweet.content}
-                        <br />
-                        <ListItemIcon>
-                            <ReplyButton tweet={tweet} getAndSetTweets={() => getAndSetTweets()} />
-                            <Button variant="text">
-                                <CompareArrowsIcon />
-                            </Button>
-                            <FavButton
-                                numberOfFavorite={tweet.numberOfFavorite}
-                                isFavorite={tweet.isFavorite}
-                                onClick={() => updateFavoriteState(tweet)}
-                            />
-                            <Button variant="text">
-                                <IosShareIcon />
-                            </Button>
-                        </ListItemIcon>
-                        <Divider />
-                    </React.Fragment>
-                }
+            <SingleTweet
+                tweet={tweet}
+                getAndSetTweets={() => getAndSetTweets()}
+                updateFavoriteState={() => updateFavoriteState(tweet)}
             />
             {tweetsList.length ? (
                 <List sx={{ width: '100%', maxWidth: 1000, bgcolor: 'background.paper' }}>
                     {tweetsList.map((replyTweet, index) => (
                         <ListItem key={replyTweet.id} alignItems="flex-start">
-                            {/* Linkになってる範囲が良くないので改良したい */}
-                            <Link to={'/tweet/' + replyTweet.id}>
-                                <ListItemAvatar>
-                                    <Avatar alt={replyTweet.user.username} src={replyTweet.user.icon} />
-                                </ListItemAvatar>
-                            </Link>
-                            <ListItemText
-                                primary={
-                                    <React.Fragment>
-                                        <Link to={'/tweet/' + replyTweet.id}>
-                                            {replyTweet.user.username + '・' + formatDate(replyTweet.createdAt)}
-                                        </Link>
-                                    </React.Fragment>
-                                }
-                                secondary={
-                                    <React.Fragment>
-                                        <Link to={'/tweet/' + replyTweet.id}>{replyTweet.content}</Link>
-                                        <br />
-                                        <ListItemIcon>
-                                            <ReplyButton tweet={replyTweet} getAndSetTweets={() => getAndSetTweets()} />
-                                            <Button variant="text">
-                                                <CompareArrowsIcon />
-                                            </Button>
-                                            <FavButton
-                                                numberOfFavorite={replyTweet.numberOfFavorite}
-                                                isFavorite={replyTweet.isFavorite}
-                                                onClick={() => updateReplyFavoriteState(replyTweet)}
-                                            />
-                                            <Button variant="text">
-                                                <IosShareIcon />
-                                            </Button>
-                                        </ListItemIcon>
-                                        <Divider />
-                                    </React.Fragment>
-                                }
+                            <SingleTweet
+                                tweet={replyTweet}
+                                getAndSetTweets={() => getAndSetTweets()}
+                                updateFavoriteState={() => updateReplyFavoriteState(replyTweet)}
                             />
-                            {/* </Link> */}
                         </ListItem>
                     ))}
                 </List>
