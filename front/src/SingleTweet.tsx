@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { TweetType } from './utils/types';
 import useCallApi from './utils/api';
 import ReplyButton from './ReplyButton';
@@ -24,6 +24,7 @@ type SingleTweetProps = {
 
 const SingleTweet: React.FC<SingleTweetProps> = (props) => {
     const callApi = useCallApi();
+    const location = useLocation();
 
     function formatDate(createdAt: Date): string {
         const now: dayjs.Dayjs = dayjs();
@@ -73,7 +74,7 @@ const SingleTweet: React.FC<SingleTweetProps> = (props) => {
                             </Button>
                         </ListItemIcon>
                         <br />
-                        {props.tweet.numberOfReply > 0 ? (
+                        {props.tweet.numberOfReply > 0 && location.pathname === '/' ? (
                             <Button variant="text" onClick={() => getTweets()}>
                                 返信を表示する
                             </Button>

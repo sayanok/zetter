@@ -40,6 +40,23 @@ const getTweets = (req, res) => {
 
 const getTweet = (req, res) => {
     const tweet = tweets.find((tweet) => tweet.id === parseInt(req.params.tweetId));
+
+    const numberOfFavorite = favorities.filter((favorite) => favorite.tweetId === tweet.id);
+    tweet['numberOfFavorite'] = numberOfFavorite.length;
+
+    const numberOfReply = tweets.filter((replyTweet) => replyTweet.replyTo === tweet.id);
+    tweet['numberOfReply'] = numberOfReply.length;
+
+    // ツイートに自分がfavしているかの情報を付加するための準備
+    const usersFavoriteTweets = favorities.filter((favorite) => favorite.userId === req.user.id);
+    const favoriteTweetIds = usersFavoriteTweets.map((obj) => obj.tweetId);
+
+    if (favoriteTweetIds.includes(tweet.id)) {
+        tweet.isFavorite = true;
+    } else {
+        tweet.isFavorite = false;
+    }
+
     res.json(tweet);
 };
 

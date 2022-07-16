@@ -1,22 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { TweetType } from './utils/types';
 import useCallApi from './utils/api';
-import dayjs from 'dayjs';
-import FavButton from './FavButton';
-import ReplyButton from './ReplyButton';
 import SingleTweet from './SingleTweet';
 
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
-import IosShareIcon from '@mui/icons-material/IosShare';
-import Divider from '@mui/material/Divider';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
 
 const TweetDetail: React.FC = () => {
     const callApi = useCallApi();
@@ -38,6 +27,7 @@ const TweetDetail: React.FC = () => {
     }
 
     function getAndSetTweets(): void {
+        getTweet()?.then(setTweet);
         getReplys()?.then(setTweets);
     }
 
