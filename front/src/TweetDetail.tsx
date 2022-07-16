@@ -17,7 +17,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 
-const Tweet: React.FC = () => {
+const TweetDetail: React.FC = () => {
     const callApi = useCallApi();
     const params = useParams();
     const [tweet, setTweet] = useState<TweetType>();
@@ -56,6 +56,39 @@ const Tweet: React.FC = () => {
                 body: JSON.stringify({ tweet: tweet, order: 'add' }),
             })?.then((data) => {
                 setTweet(data);
+            });
+        }
+    }
+
+    function updateReplyFavoriteState(reply: TweetType): void {
+        if (reply.isFavorite) {
+            callApi('http://localhost:5000/api/zetter', {
+                method: 'PATCH',
+                body: JSON.stringify({ tweet: reply, order: 'delete' }),
+            })?.then((data) => {
+                let result = tweetsList.map(function (value: TweetType): TweetType {
+                    if (reply.id === value.id) {
+                        return data;
+                    } else {
+                        return value;
+                    }
+                });
+                setTweets(result);
+            });
+        } else {
+            // favに追加する
+            callApi('http://localhost:5000/api/zetter', {
+                method: 'PATCH',
+                body: JSON.stringify({ tweet: reply, order: 'add' }),
+            })?.then((data) => {
+                let result = tweetsList.map(function (value: TweetType): TweetType {
+                    if (reply.id === value.id) {
+                        return data;
+                    } else {
+                        return value;
+                    }
+                });
+                setTweets(result);
             });
         }
     }
@@ -100,35 +133,35 @@ const Tweet: React.FC = () => {
             />
             {tweetsList.length ? (
                 <List sx={{ width: '100%', maxWidth: 1000, bgcolor: 'background.paper' }}>
-                    {tweetsList.map((tweet, index) => (
-                        <ListItem key={tweet.id} alignItems="flex-start">
+                    {tweetsList.map((replyTweet, index) => (
+                        <ListItem key={replyTweet.id} alignItems="flex-start">
                             {/* Linkになってる範囲が良くないので改良したい */}
-                            <Link to={'/tweet/' + tweet.id}>
+                            <Link to={'/tweet/' + replyTweet.id}>
                                 <ListItemAvatar>
-                                    <Avatar alt={tweet.user.username} src={tweet.user.icon} />
+                                    <Avatar alt={replyTweet.user.username} src={replyTweet.user.icon} />
                                 </ListItemAvatar>
                             </Link>
                             <ListItemText
                                 primary={
                                     <React.Fragment>
-                                        <Link to={'/tweet/' + tweet.id}>
-                                            {tweet.user.username + '・' + formatDate(tweet.createdAt)}
+                                        <Link to={'/tweet/' + replyTweet.id}>
+                                            {replyTweet.user.username + '・' + formatDate(replyTweet.createdAt)}
                                         </Link>
                                     </React.Fragment>
                                 }
                                 secondary={
                                     <React.Fragment>
-                                        <Link to={'/tweet/' + tweet.id}>{tweet.content}</Link>
+                                        <Link to={'/tweet/' + replyTweet.id}>{replyTweet.content}</Link>
                                         <br />
                                         <ListItemIcon>
-                                            <ReplyButton tweet={tweet} getAndSetTweets={() => getAndSetTweets()} />
+                                            <ReplyButton tweet={replyTweet} getAndSetTweets={() => getAndSetTweets()} />
                                             <Button variant="text">
                                                 <CompareArrowsIcon />
                                             </Button>
                                             <FavButton
-                                                numberOfFavorite={tweet.numberOfFavorite}
-                                                isFavorite={tweet.isFavorite}
-                                                onClick={() => updateFavoriteState(tweet)}
+                                                numberOfFavorite={replyTweet.numberOfFavorite}
+                                                isFavorite={replyTweet.isFavorite}
+                                                onClick={() => updateReplyFavoriteState(replyTweet)}
                                             />
                                             <Button variant="text">
                                                 <IosShareIcon />
@@ -147,4 +180,4 @@ const Tweet: React.FC = () => {
     ) : null;
 };
 
-export default Tweet;
+export default TweetDetail;

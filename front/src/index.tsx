@@ -9,7 +9,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Sidebar from './Sidebar';
 import Login from './Login';
 import Home from './Home';
-import Tweet from './Tweet';
+import Tweet from './TweetDetail';
 import Profile from './Profile';
 import SettingsProfile from './SettingsProfile';
 
