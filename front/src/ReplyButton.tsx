@@ -33,7 +33,12 @@ const ReplyButton: React.FC<ReplyButtonProps> = (props) => {
 
     return (
         <>
-            <Button onClick={handleOpen}>
+            <Button
+                onClick={(e) => {
+                    e.preventDefault();
+                    handleOpen();
+                }}
+            >
                 <ChatBubbleOutlineIcon />
             </Button>
             <Modal

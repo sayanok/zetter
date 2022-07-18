@@ -11,12 +11,12 @@ const TweetDetail: React.FC = () => {
     const callApi = useCallApi();
     const params = useParams();
     const [tweet, setTweet] = useState<TweetType>();
-    const [tweetsList, setTweets] = useState<Array<TweetType>>([]);
+    const [replyTweetsList, setReplyTweetsList] = useState<Array<TweetType>>([]);
 
     useEffect(() => {
         getTweet()?.then(setTweet);
-        getReplys()?.then(setTweets);
-    }, []);
+        getReplys()?.then(setReplyTweetsList);
+    }, [params.tweetId]);
 
     function getTweet(): Promise<TweetType> | undefined {
         return callApi('http://localhost:5000/api/zetter/' + params.tweetId);
@@ -28,7 +28,7 @@ const TweetDetail: React.FC = () => {
 
     function getAndSetTweets(): void {
         getTweet()?.then(setTweet);
-        getReplys()?.then(setTweets);
+        getReplys()?.then(setReplyTweetsList);
     }
 
     function updateFavoriteState(tweet: TweetType): void {
@@ -57,14 +57,14 @@ const TweetDetail: React.FC = () => {
                 method: 'PATCH',
                 body: JSON.stringify({ tweet: reply, order: 'delete' }),
             })?.then((data) => {
-                let result = tweetsList.map(function (value: TweetType): TweetType {
+                let result = replyTweetsList.map(function (value: TweetType): TweetType {
                     if (reply.id === value.id) {
                         return data;
                     } else {
                         return value;
                     }
                 });
-                setTweets(result);
+                setReplyTweetsList(result);
             });
         } else {
             // favに追加する
@@ -72,14 +72,14 @@ const TweetDetail: React.FC = () => {
                 method: 'PATCH',
                 body: JSON.stringify({ tweet: reply, order: 'add' }),
             })?.then((data) => {
-                let result = tweetsList.map(function (value: TweetType): TweetType {
+                let result = replyTweetsList.map(function (value: TweetType): TweetType {
                     if (reply.id === value.id) {
                         return data;
                     } else {
                         return value;
                     }
                 });
-                setTweets(result);
+                setReplyTweetsList(result);
             });
         }
     }
@@ -91,9 +91,9 @@ const TweetDetail: React.FC = () => {
                 getAndSetTweets={() => getAndSetTweets()}
                 updateFavoriteState={() => updateFavoriteState(tweet)}
             />
-            {tweetsList.length ? (
+            {replyTweetsList.length ? (
                 <List sx={{ width: '100%', maxWidth: 1000, bgcolor: 'background.paper' }}>
-                    {tweetsList.map((replyTweet, index) => (
+                    {replyTweetsList.map((replyTweet, index) => (
                         <ListItem key={replyTweet.id} alignItems="flex-start">
                             <SingleTweet
                                 tweet={replyTweet}

@@ -15,6 +15,9 @@ import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
 
 type SingleTweetProps = {
     tweet: TweetType;
@@ -35,10 +38,6 @@ const SingleTweet: React.FC<SingleTweetProps> = (props) => {
         }
     }
 
-    function getTweets(): Promise<Array<TweetType>> | undefined {
-        return callApi('http://localhost:5000/api/zetter');
-    }
-
     return (
         <>
             {/* Linkになってる範囲が良くないので改良したい */}
@@ -46,43 +45,87 @@ const SingleTweet: React.FC<SingleTweetProps> = (props) => {
                 <ListItemAvatar>
                     <Avatar alt={props.tweet.user.username} src={props.tweet.user.icon} />
                 </ListItemAvatar>
+                <ListItemText
+                    primary={
+                        <React.Fragment>
+                            <Link to={'/tweet/' + props.tweet.id}>
+                                {props.tweet.user.username + '・' + formatDate(props.tweet.createdAt)}
+                            </Link>
+                        </React.Fragment>
+                    }
+                    secondary={
+                        <React.Fragment>
+                            <Link to={'/tweet/' + props.tweet.id}>{props.tweet.content}</Link>
+                            <br />
+                            <ListItemIcon>
+                                <ReplyButton tweet={props.tweet} getAndSetTweets={() => props.getAndSetTweets()} />
+                                <Button variant="text">
+                                    <CompareArrowsIcon />
+                                </Button>
+                                <FavButton
+                                    numberOfFavorite={props.tweet.numberOfFavorite}
+                                    isFavorite={props.tweet.isFavorite}
+                                    onClick={() => props.updateFavoriteState(props.tweet)}
+                                />
+                                <Button variant="text">
+                                    <IosShareIcon />
+                                </Button>
+                            </ListItemIcon>
+                            <br />
+                            {props.tweet.numberOfReply > 0 && location.pathname === '/' ? (
+                                <Accordion>
+                                    <AccordionSummary aria-controls="panel1a-content" id="panel1a-header">
+                                        返信を表示する
+                                    </AccordionSummary>
+                                    <AccordionDetails>
+                                        <Link to={'/tweet/' + props.tweet.id}>
+                                            <ListItemAvatar>
+                                                <Avatar alt={props.tweet.user.username} src={props.tweet.user.icon} />
+                                            </ListItemAvatar>
+                                        </Link>
+                                        <ListItemText
+                                            primary={
+                                                <React.Fragment>
+                                                    <Link to={'/tweet/' + props.tweet.id}>
+                                                        {props.tweet.user.username +
+                                                            '・' +
+                                                            formatDate(props.tweet.createdAt)}
+                                                    </Link>
+                                                </React.Fragment>
+                                            }
+                                            secondary={
+                                                <React.Fragment>
+                                                    <Link to={'/tweet/' + props.tweet.id}>{props.tweet.content}</Link>
+                                                    <br />
+                                                    <ListItemIcon>
+                                                        <ReplyButton
+                                                            tweet={props.tweet}
+                                                            getAndSetTweets={() => props.getAndSetTweets()}
+                                                        />
+                                                        <Button variant="text">
+                                                            <CompareArrowsIcon />
+                                                        </Button>
+                                                        <FavButton
+                                                            numberOfFavorite={props.tweet.numberOfFavorite}
+                                                            isFavorite={props.tweet.isFavorite}
+                                                            onClick={() => props.updateFavoriteState(props.tweet)}
+                                                        />
+                                                        <Button variant="text">
+                                                            <IosShareIcon />
+                                                        </Button>
+                                                    </ListItemIcon>
+                                                    <Divider />
+                                                </React.Fragment>
+                                            }
+                                        />
+                                    </AccordionDetails>
+                                </Accordion>
+                            ) : null}
+                            <Divider />
+                        </React.Fragment>
+                    }
+                />
             </Link>
-            <ListItemText
-                primary={
-                    <React.Fragment>
-                        <Link to={'/tweet/' + props.tweet.id}>
-                            {props.tweet.user.username + '・' + formatDate(props.tweet.createdAt)}
-                        </Link>
-                    </React.Fragment>
-                }
-                secondary={
-                    <React.Fragment>
-                        <Link to={'/tweet/' + props.tweet.id}>{props.tweet.content}</Link>
-                        <br />
-                        <ListItemIcon>
-                            <ReplyButton tweet={props.tweet} getAndSetTweets={() => props.getAndSetTweets()} />
-                            <Button variant="text">
-                                <CompareArrowsIcon />
-                            </Button>
-                            <FavButton
-                                numberOfFavorite={props.tweet.numberOfFavorite}
-                                isFavorite={props.tweet.isFavorite}
-                                onClick={() => props.updateFavoriteState(props.tweet)}
-                            />
-                            <Button variant="text">
-                                <IosShareIcon />
-                            </Button>
-                        </ListItemIcon>
-                        <br />
-                        {props.tweet.numberOfReply > 0 && location.pathname === '/' ? (
-                            <Button variant="text" onClick={() => getTweets()}>
-                                返信を表示する
-                            </Button>
-                        ) : null}
-                        <Divider />
-                    </React.Fragment>
-                }
-            />
         </>
     );
 };

@@ -9,7 +9,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Sidebar from './Sidebar';
 import Login from './Login';
 import Home from './Home';
-import Tweet from './TweetDetail';
+import TweetDetail from './TweetDetail';
 import Profile from './Profile';
 import SettingsProfile from './SettingsProfile';
 
@@ -25,7 +25,7 @@ root.render(
                     <Routes>
                         <Route path="login" element={<Login />} />
                         <Route path="/" element={<Home />} />
-                        <Route path="tweet/:tweetId" element={<Tweet />} />
+                        <Route path="tweet/:tweetId" element={<TweetDetail />} />
                         <Route path="profile" element={<Profile />} />
                         <Route path="settings/:username" element={<SettingsProfile />} />
                     </Routes>
