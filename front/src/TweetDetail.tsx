@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { TweetType } from './utils/types';
 import useCallApi from './utils/api';
+import TweetTree from './TweetTree';
 import SingleTweet from './SingleTweet';
 
 import List from '@mui/material/List';
@@ -95,7 +96,7 @@ const TweetDetail: React.FC = () => {
                 <List sx={{ width: '100%', maxWidth: 1000, bgcolor: 'background.paper' }}>
                     {replyTweetsList.map((replyTweet, index) => (
                         <ListItem key={replyTweet.id} alignItems="flex-start">
-                            <SingleTweet
+                            <TweetTree
                                 tweet={replyTweet}
                                 getAndSetTweets={() => getAndSetTweets()}
                                 updateFavoriteState={() => updateReplyFavoriteState(replyTweet)}

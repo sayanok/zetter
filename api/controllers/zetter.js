@@ -7,7 +7,7 @@ const users = require('../data/users.js');
 const getTweets = (req, res) => {
     const limit = 10;
 
-    tweets.sort(function (a, b) {
+    const sortedTweets = tweets.sort(function (a, b) {
         if (a.createdAt > b.createdAt) {
             return -1;
         } else {
@@ -15,7 +15,7 @@ const getTweets = (req, res) => {
         }
     });
 
-    const result = addInformationToTweet(tweets, req);
+    const result = addInformationToTweet(sortedTweets, req);
     res.json(result.slice(0, limit));
 };
 
@@ -124,12 +124,12 @@ const login = (req, res) => {
     return res.status(400).json({ code: 400 });
 };
 
-function addInformationToTweet(tweets, req) {
+function addInformationToTweet(tweetList, req) {
     // ツイートに自分がfavしているかの情報を付加するための準備
     const usersFavoriteTweets = favorities.filter((favorite) => favorite.userId === req.user.id);
     const favoriteTweetIds = usersFavoriteTweets.map((obj) => obj.tweetId);
 
-    tweets.forEach((tweet) => {
+    tweetList.forEach((tweet) => {
         const user = users.find(({ id }) => id === tweet.createdBy);
         tweet['user'] = user;
 
@@ -146,7 +146,7 @@ function addInformationToTweet(tweets, req) {
         }
     });
 
-    return tweets;
+    return tweetList;
 }
 
 module.exports = {

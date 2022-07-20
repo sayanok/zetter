@@ -43,7 +43,10 @@ const ReplyButton: React.FC<ReplyButtonProps> = (props) => {
             </Button>
             <Modal
                 open={open}
-                onClose={handleClose}
+                onClose={(e: Event) => {
+                    e.preventDefault();
+                    handleClose();
+                }}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
                 className="Modal"

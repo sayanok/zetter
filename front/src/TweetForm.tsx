@@ -51,10 +51,19 @@ const TweetForm: React.FC<TweetFormProps> = (props) => {
                     multiline
                     rows={4}
                     value={content}
-                    onChange={(e) => setContent(e.target.value)}
+                    onClick={(e) => e.preventDefault()}
+                    onChange={(e) => {
+                        setContent(e.target.value);
+                    }}
                 />
             </Box>
-            <Button variant="contained" onClick={() => postTweet()}>
+            <Button
+                variant="contained"
+                onClick={(e) => {
+                    e.preventDefault();
+                    postTweet();
+                }}
+            >
                 ツイートする
             </Button>
         </>
