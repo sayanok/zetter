@@ -22,7 +22,7 @@ const Home: React.FC = () => {
 
     return (
         <>
-            <TweetForm getAndSetTweets={() => getAndSetTweets()} caller={'Home'} replySourceTweet={null} />
+            <TweetForm getAndSetTweets={() => getAndSetTweets()} replySourceTweet={null} />
             <Toolbar>
                 <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                     <Button variant="text">最新のツイートを表示する</Button>

@@ -61,11 +61,7 @@ const ReplyButton: React.FC<ReplyButtonProps> = (props) => {
                                 <br />
                                 {props.tweet.content}
                             </Typography>
-                            <TweetForm
-                                getAndSetTweets={() => props.getAndSetTweets()}
-                                caller={'reply'}
-                                replySourceTweet={props.tweet}
-                            />
+                            <TweetForm getAndSetTweets={() => props.getAndSetTweets()} replySourceTweet={props.tweet} />
                         </>
                     ) : (
                         'ツイートを取得できませんでした'

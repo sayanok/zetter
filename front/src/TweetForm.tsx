@@ -5,7 +5,7 @@ import Button from '@mui/material/Button';
 import useCallApi from './utils/api';
 import { TweetType } from './utils/types';
 
-type TweetFormProps = { getAndSetTweets: () => void; caller: string; replySourceTweet: null | TweetType };
+type TweetFormProps = { getAndSetTweets: () => void; replySourceTweet: null | TweetType };
 
 const TweetForm: React.FC<TweetFormProps> = (props) => {
     const [content, setContent] = useState<string>(
@@ -16,9 +16,9 @@ const TweetForm: React.FC<TweetFormProps> = (props) => {
     const callApi = useCallApi();
 
     useEffect(() => {
-        if (props.caller === 'Home') {
+        if (props.replySourceTweet === null) {
             setPlaceholder('今然ぴどうしてる？');
-        } else if (props.caller === 'reply') {
+        } else {
             setPlaceholder('返信をツイートする');
             props.replySourceTweet ? setReplyTo(props.replySourceTweet.id) : setReplyTo(null);
             // replySourceTweetがnullならエラー返したほうがよいかも
