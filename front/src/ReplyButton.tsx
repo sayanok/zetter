@@ -63,7 +63,7 @@ const ReplyButton: React.FC<ReplyButtonProps> = (props) => {
                             <TweetForm
                                 getAndSetTweets={() => props.getAndSetTweets()}
                                 caller={'reply'}
-                                replyTo={props.tweet.id}
+                                replySourceTweet={props.tweet}
                             />
                         </>
                     ) : (

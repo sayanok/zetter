@@ -3,11 +3,14 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import useCallApi from './utils/api';
+import { TweetType } from './utils/types';
 
-type TweetFormProps = { getAndSetTweets: () => void; caller: string; replyTo: null | number };
+type TweetFormProps = { getAndSetTweets: () => void; caller: string; replySourceTweet: null | TweetType };
 
 const TweetForm: React.FC<TweetFormProps> = (props) => {
-    const [content, setContent] = useState<string>('');
+    const [content, setContent] = useState<string>(
+        props.replySourceTweet ? '@' + props.replySourceTweet?.user.username : ''
+    );
     const [replyTo, setReplyTo] = useState<null | number>();
     const [placeholder, setPlaceholder] = useState<string>('今然ぴどうしてる？');
     const callApi = useCallApi();
@@ -17,8 +20,8 @@ const TweetForm: React.FC<TweetFormProps> = (props) => {
             setPlaceholder('今然ぴどうしてる？');
         } else if (props.caller === 'reply') {
             setPlaceholder('返信をツイートする');
-            props.replyTo ? setReplyTo(props.replyTo) : setReplyTo(null);
-            // replyToがnullならエラー返したほうがよいかも
+            props.replySourceTweet ? setReplyTo(props.replySourceTweet.id) : setReplyTo(null);
+            // replySourceTweetがnullならエラー返したほうがよいかも
         }
     }, []);
 
