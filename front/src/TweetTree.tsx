@@ -3,7 +3,6 @@ import { useLocation } from 'react-router-dom';
 import useCallApi from './utils/api';
 import { TweetType } from './utils/types';
 import SingleTweet from './SingleTweet';
-import './Home.css';
 
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';

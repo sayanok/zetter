@@ -3,7 +3,6 @@ import TweetForm from './TweetForm';
 import useCallApi from './utils/api';
 import { TweetType } from './utils/types';
 import TweetTrees from './TweetTrees';
-import './Home.css';
 
 import Button from '@mui/material/Button';
 import Toolbar from '@mui/material/Toolbar';

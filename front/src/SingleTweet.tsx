@@ -4,7 +4,7 @@ import { TweetType } from './utils/types';
 import ReplyButton from './ReplyButton';
 import FavButton from './FavButton';
 import dayjs from 'dayjs';
-import './Home.css';
+import './SingleTweet.css';
 
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Avatar from '@mui/material/Avatar';
