@@ -14,7 +14,6 @@ const Home: React.FC = () => {
     const callApi = useCallApi();
 
     function getTweets(): Promise<Array<TweetType>> | undefined {
-        // SingleTweetComponentにうつす？
         return callApi('http://localhost:5000/api/zetter');
     }
 
@@ -33,7 +32,7 @@ const Home: React.FC = () => {
             {/* 今の実装だと、最新の10件しか表示されてない
             今まで表示してる10件＋最新のn件のツイートを取得する方法を検討する必要がある */}
             {/* 表示していない最新のツイートがあるときのみ表示する */}
-            <TweetTrees />
+            <TweetTrees tweetsList={tweetsList} setTweets={setTweets} getTweets={getTweets} />
         </>
     );
 };

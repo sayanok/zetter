@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Dispatch, SetStateAction } from 'react';
 import useCallApi from './utils/api';
 import { TweetType } from './utils/types';
 import TweetTree from './TweetTree';
@@ -6,13 +6,18 @@ import TweetTree from './TweetTree';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 
-const TweetTrees: React.FC = () => {
+type TweetTreeProps = {
+    tweetsList: Array<TweetType>;
+    setTweets: Dispatch<SetStateAction<TweetType[]>>;
+    getTweets: () => Promise<Array<TweetType>> | undefined;
+};
+
+const TweetTrees: React.FC<TweetTreeProps> = (props) => {
     const callApi = useCallApi();
-    const [tweetsList, setTweets] = useState<Array<TweetType>>([]);
 
     useEffect(() => {
-        getTweets()?.then(setTweets);
-    }, [tweetsList]);
+        props.getTweets()?.then(props.setTweets);
+    }, [props.tweetsList]);
 
     function updateFavoriteState(tweet: TweetType): void {
         if (tweet.isFavorite) {
@@ -21,14 +26,14 @@ const TweetTrees: React.FC = () => {
                 method: 'PATCH',
                 body: JSON.stringify({ tweet: tweet, order: 'delete' }),
             })?.then((data) => {
-                let result = tweetsList.map(function (value: TweetType): TweetType {
+                let result = props.tweetsList.map(function (value: TweetType): TweetType {
                     if (tweet.id === value.id) {
                         return data;
                     } else {
                         return value;
                     }
                 });
-                setTweets(result);
+                props.setTweets(result);
             });
         } else {
             // favに追加する
@@ -36,30 +41,26 @@ const TweetTrees: React.FC = () => {
                 method: 'PATCH',
                 body: JSON.stringify({ tweet: tweet, order: 'add' }),
             })?.then((data) => {
-                let result = tweetsList.map(function (value: TweetType): TweetType {
+                let result = props.tweetsList.map(function (value: TweetType): TweetType {
                     if (tweet.id === value.id) {
                         return data;
                     } else {
                         return value;
                     }
                 });
-                setTweets(result);
+                props.setTweets(result);
             });
         }
     }
 
-    function getTweets(): Promise<Array<TweetType>> | undefined {
-        return callApi('http://localhost:5000/api/zetter');
-    }
-
     function getAndSetTweets(): void {
-        getTweets()?.then(setTweets);
+        props.getTweets()?.then(props.setTweets);
     }
 
     return (
         <>
             <List sx={{ width: '100%', maxWidth: 1000, bgcolor: 'background.paper' }}>
-                {tweetsList.map((tweet, index) => (
+                {props.tweetsList.map((tweet, index) => (
                     <ListItem key={tweet.id} alignItems="flex-start">
                         <TweetTree
                             tweet={tweet}
