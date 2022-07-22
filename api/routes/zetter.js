@@ -5,6 +5,7 @@ const users = require('../data/users.js');
 
 const {
     getTweets,
+    getSpecificUsersTweets,
     getTweet,
     getReplys,
     createTweet,
@@ -15,6 +16,7 @@ const {
 } = require('../controllers/zetter.js');
 
 router.get('/', auth, getTweets);
+router.get('/specificUsersTweets', auth, getSpecificUsersTweets);
 router.get('/tweet/:tweetId', auth, getTweet);
 router.get('/replys/:tweetId', auth, getReplys);
 router.post('/', auth, createTweet);

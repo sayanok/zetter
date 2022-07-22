@@ -1,10 +1,12 @@
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import useCallApi from './utils/api';
+import { ProfileType } from './utils/types';
 
 import Drawer from '@mui/material/Drawer';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
 import Button from '@mui/material/Button';
-
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
@@ -15,36 +17,51 @@ import PetsIcon from '@mui/icons-material/Pets';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SettingsIcon from '@mui/icons-material/Settings';
 
-const drawerWidth: number = 240;
-const listContents: Array<{ href: string; iconComponent: JSX.Element; text: string }> = [
-    {
-        href: '/',
-        iconComponent: <HomeIcon />,
-        text: 'home',
-    },
-    {
-        href: 'search',
-        iconComponent: <TagIcon />,
-        text: 'search',
-    },
-    {
-        href: 'notifications',
-        iconComponent: <NotificationsIcon />,
-        text: 'notifications',
-    },
-    {
-        href: 'profile',
-        iconComponent: <AccountCircleIcon />,
-        text: 'profile',
-    },
-    {
-        href: 'settings',
-        iconComponent: <SettingsIcon />,
-        text: 'settings',
-    },
-];
-
 const Sidebar: React.FC = () => {
+    const [profile, setProfile] = useState<ProfileType>();
+    const callApi = useCallApi();
+    const drawerWidth: number = 240;
+    const listContents: Array<{ href: string; iconComponent: JSX.Element; text: string }> = [
+        {
+            href: '/',
+            iconComponent: <HomeIcon />,
+            text: 'home',
+        },
+        {
+            href: 'search',
+            iconComponent: <TagIcon />,
+            text: 'search',
+        },
+        {
+            href: 'notifications',
+            iconComponent: <NotificationsIcon />,
+            text: 'notifications',
+        },
+        {
+            href: setUsername(),
+            iconComponent: <AccountCircleIcon />,
+            text: 'profile',
+        },
+        {
+            href: 'settings',
+            iconComponent: <SettingsIcon />,
+            text: 'settings',
+        },
+    ];
+
+    function setUsername() {
+        getProfile()?.then(setProfile);
+        if (profile) {
+            return profile.username;
+        } else {
+            return '';
+        }
+    }
+
+    function getProfile(): Promise<ProfileType> | undefined {
+        return callApi('http://localhost:5000/api/zetter/profile');
+    }
+
     return (
         <Drawer
             sx={{

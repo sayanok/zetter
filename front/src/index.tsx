@@ -10,7 +10,7 @@ import Sidebar from './Sidebar';
 import Login from './Login';
 import Home from './Home';
 import TweetDetail from './TweetDetail';
-import Profile from './Profile';
+import ProfilePage from './ProfilePage';
 import SettingsProfile from './SettingsProfile';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
@@ -26,7 +26,7 @@ root.render(
                         <Route path="login" element={<Login />} />
                         <Route path="/" element={<Home />} />
                         <Route path="tweet/:tweetId" element={<TweetDetail />} />
-                        <Route path="profile" element={<Profile />} />
+                        <Route path=":username" element={<ProfilePage />} />
                         <Route path="settings/:username" element={<SettingsProfile />} />
                     </Routes>
                 </Box>
