@@ -20,7 +20,7 @@ const TweetDetail: React.FC = () => {
     }, [params.tweetId]);
 
     function getTweet(): Promise<TweetType> | undefined {
-        return callApi('http://localhost:5000/api/zetter/' + params.tweetId);
+        return callApi('http://localhost:5000/api/zetter/tweet/' + params.tweetId);
     }
 
     function getReplys(): Promise<Array<TweetType>> | undefined {

@@ -15,7 +15,7 @@ const {
 } = require('../controllers/zetter.js');
 
 router.get('/', auth, getTweets);
-router.get('/:tweetId', auth, getTweet);
+router.get('/tweet/:tweetId', auth, getTweet);
 router.get('/replys/:tweetId', auth, getReplys);
 router.post('/', auth, createTweet);
 router.patch('/', auth, updateTweet);
