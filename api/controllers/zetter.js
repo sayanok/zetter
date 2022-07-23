@@ -22,7 +22,7 @@ const getTweets = (req, res) => {
 const getSpecificUsersTweets = (req, res) => {
     const limit = 10;
 
-    const userId = req.user.id;
+    const user = users.find(({ username }) => username === req.params.username);
     const sortedTweets = tweets.sort(function (a, b) {
         if (a.createdAt > b.createdAt) {
             return -1;
@@ -30,7 +30,7 @@ const getSpecificUsersTweets = (req, res) => {
             return 1;
         }
     });
-    const specificUsersTweets = sortedTweets.filter((tweet) => tweet.createdBy === userId);
+    const specificUsersTweets = sortedTweets.filter((tweet) => tweet.createdBy === user.id);
 
     const result = addInformationToTweet(specificUsersTweets, req);
     res.json(result.slice(0, limit));
@@ -106,7 +106,15 @@ const updateTweet = (req, res) => {
 };
 
 const getProfile = (req, res) => {
-    res.json(req.user);
+    let username;
+    if (req.params.username === 'login') {
+        username = req.user.username;
+    } else {
+        username = req.params.username;
+    }
+
+    const user = users.find((user) => user.username === username);
+    res.json(user);
 };
 
 const updateProfile = (req, res) => {
