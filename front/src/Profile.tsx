@@ -11,7 +11,9 @@ import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
-const Profile: React.FC = () => {
+type ProfileProps = { myProfile: ProfileType | undefined };
+
+const Profile: React.FC<ProfileProps> = (props) => {
     const [profile, setProfile] = useState<ProfileType>();
     const callApi = useCallApi();
     const params = useParams();
@@ -24,7 +26,7 @@ const Profile: React.FC = () => {
         return callApi('http://localhost:5000/api/zetter/profile/' + params.username);
     }
 
-    return profile ? (
+    return profile && props.myProfile ? (
         <>
             <Card sx={{ maxWidth: 500 }}>
                 <CardMedia component="img" height="200" image={profile.header} alt={profile.username} />
@@ -39,11 +41,13 @@ const Profile: React.FC = () => {
                         誕生日：{profile.birthday}
                     </Typography>
                 </CardContent>
-                <CardActions>
-                    <Button size="small">
-                        <Link to={'/settings/' + profile.username}>編集する</Link>
-                    </Button>
-                </CardActions>
+                {props.myProfile.id === profile.id ? (
+                    <CardActions>
+                        <Button size="small">
+                            <Link to={'/settings/' + profile.username}>編集する</Link>
+                        </Button>
+                    </CardActions>
+                ) : null}
             </Card>
         </>
     ) : null;

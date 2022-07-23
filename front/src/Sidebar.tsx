@@ -16,7 +16,7 @@ import PetsIcon from '@mui/icons-material/Pets';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SettingsIcon from '@mui/icons-material/Settings';
 
-type SidebarProps = { profile: ProfileType };
+type SidebarProps = { myProfile: ProfileType };
 
 const Sidebar: React.FC<SidebarProps> = (props) => {
     const drawerWidth: number = 240;
@@ -37,7 +37,7 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
             text: 'notifications',
         },
         {
-            href: props.profile.username,
+            href: props.myProfile.username,
             iconComponent: <AccountCircleIcon />,
             text: 'profile',
         },

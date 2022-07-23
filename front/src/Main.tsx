@@ -14,10 +14,10 @@ import SettingsProfile from './SettingsProfile';
 
 const Main: React.FC = () => {
     const callApi = useCallApi();
-    const [profile, setProfile] = useState<ProfileType>();
+    const [myProfile, setMyProfile] = useState<ProfileType>();
 
     function getAndSetProfile() {
-        getProfile()?.then(setProfile);
+        getProfile()?.then(setMyProfile);
     }
 
     function getProfile(): Promise<ProfileType> | undefined {
@@ -27,13 +27,13 @@ const Main: React.FC = () => {
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
-            {profile ? <Sidebar profile={profile} /> : <></>}
+            {myProfile ? <Sidebar myProfile={myProfile} /> : <></>}
             <Box component="main" sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}>
                 <Routes>
                     <Route path="login" element={<Login afterLogin={() => getAndSetProfile()} />} />
                     <Route path="/" element={<Home />} />
                     <Route path="tweet/:tweetId" element={<TweetDetail />} />
-                    <Route path=":username" element={<ProfilePage />} />
+                    <Route path=":username" element={<ProfilePage myProfile={myProfile} />} />
                     <Route path="settings/:username" element={<SettingsProfile />} />
                 </Routes>
             </Box>

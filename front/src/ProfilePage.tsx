@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import useCallApi from './utils/api';
-import { TweetType } from './utils/types';
+import { TweetType, ProfileType } from './utils/types';
 import Profile from './Profile';
 import TweetTrees from './TweetTrees';
 
-const ProfilePage: React.FC = () => {
+type ProfilePageProps = { myProfile: ProfileType | undefined };
+
+const ProfilePage: React.FC<ProfilePageProps> = (props) => {
     const [tweetsListOfSpecificUser, setTweetsListOfSpecificUser] = useState<Array<TweetType>>([]);
     const callApi = useCallApi();
     const params = useParams();
@@ -16,7 +18,7 @@ const ProfilePage: React.FC = () => {
 
     return (
         <>
-            <Profile />
+            <Profile myProfile={props.myProfile} />
             <TweetTrees
                 tweetsList={tweetsListOfSpecificUser}
                 setTweets={setTweetsListOfSpecificUser}
