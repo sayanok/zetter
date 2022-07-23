@@ -6,7 +6,12 @@ import useCallApi from './utils/api';
 import { useNavigate } from 'react-router-dom';
 import { ProfileType } from './utils/types';
 
-const SettingsProfile: React.FC = () => {
+type SettingsProfileType = {
+    myProfile: ProfileType | undefined;
+    afterUpdateProfile: () => void;
+};
+
+const SettingsProfile: React.FC<SettingsProfileType> = (props) => {
     const [username, setUsername] = useState<string>('');
     const [introduction, setIntroduction] = useState<string>('');
     const [email, setEmail] = useState<string>('');
@@ -16,23 +21,20 @@ const SettingsProfile: React.FC = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        getProfile();
+        if (props.myProfile) {
+            setUsername(props.myProfile.username);
+            setIntroduction(props.myProfile.introduction);
+            setEmail(props.myProfile.email);
+        }
     }, []);
-
-    function getProfile(): void {
-        callApi('http://localhost:5000/api/zetter/profile')?.then((data: ProfileType) => {
-            setUsername(data.username);
-            setIntroduction(data.introduction);
-            setEmail(data.email);
-        });
-    }
 
     function updateProfile(): void {
         callApi('http://localhost:5000/api/zetter/profile', {
             method: 'PATCH',
             body: JSON.stringify({ username: username, introduction: introduction, email: email }),
         });
-        navigate('/profile');
+        props.afterUpdateProfile();
+        navigate('/' + username);
     }
 
     function canSubmit(): boolean {

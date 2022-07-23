@@ -42,7 +42,7 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
             text: 'profile',
         },
         {
-            href: 'settings',
+            href: 'settings/' + props.myProfile.username,
             iconComponent: <SettingsIcon />,
             text: 'settings',
         },

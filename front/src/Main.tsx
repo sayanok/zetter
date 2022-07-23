@@ -34,7 +34,12 @@ const Main: React.FC = () => {
                     <Route path="/" element={<Home />} />
                     <Route path="tweet/:tweetId" element={<TweetDetail />} />
                     <Route path=":username" element={<ProfilePage myProfile={myProfile} />} />
-                    <Route path="settings/:username" element={<SettingsProfile />} />
+                    <Route
+                        path="settings/:username"
+                        element={
+                            <SettingsProfile myProfile={myProfile} afterUpdateProfile={() => getAndSetProfile()} />
+                        }
+                    />
                 </Routes>
             </Box>
         </Box>
