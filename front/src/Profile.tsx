@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import useCallApi from './utils/api';
 import { ProfileType } from './utils/types';
 
@@ -13,13 +14,14 @@ import Typography from '@mui/material/Typography';
 const Profile: React.FC = () => {
     const [profile, setProfile] = useState<ProfileType>();
     const callApi = useCallApi();
+    const params = useParams();
 
     useEffect(() => {
         getProfile()?.then(setProfile);
-    }, []);
+    }, [params.username]);
 
     function getProfile(): Promise<ProfileType> | undefined {
-        return callApi('http://localhost:5000/api/zetter/profile');
+        return callApi('http://localhost:5000/api/zetter/profile/' + params.username);
     }
 
     return profile ? (
