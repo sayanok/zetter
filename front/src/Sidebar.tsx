@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import useCallApi from './utils/api';
 import { ProfileType } from './utils/types';
 
 import Drawer from '@mui/material/Drawer';
@@ -17,9 +16,9 @@ import PetsIcon from '@mui/icons-material/Pets';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SettingsIcon from '@mui/icons-material/Settings';
 
-const Sidebar: React.FC = () => {
-    const [profile, setProfile] = useState<ProfileType>();
-    const callApi = useCallApi();
+type SidebarProps = { profile: ProfileType };
+
+const Sidebar: React.FC<SidebarProps> = (props) => {
     const drawerWidth: number = 240;
     const listContents: Array<{ href: string; iconComponent: JSX.Element; text: string }> = [
         {
@@ -38,7 +37,7 @@ const Sidebar: React.FC = () => {
             text: 'notifications',
         },
         {
-            href: setUsername(),
+            href: props.profile.username,
             iconComponent: <AccountCircleIcon />,
             text: 'profile',
         },
@@ -48,19 +47,6 @@ const Sidebar: React.FC = () => {
             text: 'settings',
         },
     ];
-
-    function setUsername() {
-        getProfile()?.then(setProfile);
-        if (profile) {
-            return profile.username;
-        } else {
-            return '';
-        }
-    }
-
-    function getProfile(): Promise<ProfileType> | undefined {
-        return callApi('http://localhost:5000/api/zetter/profile');
-    }
 
     return (
         <Drawer
