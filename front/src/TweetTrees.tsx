@@ -15,9 +15,7 @@ type TweetTreeProps = {
 const TweetTrees: React.FC<TweetTreeProps> = (props) => {
     const callApi = useCallApi();
 
-    useEffect(() => {
-        props.getTweets()?.then(props.setTweets);
-    }, [props.tweetsList]);
+    useEffect(() => {}, [props.tweetsList]);
 
     function updateFavoriteState(tweet: TweetType): void {
         if (tweet.isFavorite) {

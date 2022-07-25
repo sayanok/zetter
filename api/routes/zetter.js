@@ -6,6 +6,7 @@ const users = require('../data/users.js');
 const {
     getTweets,
     getSpecificUsersTweets,
+    getSpecificUsersFavoriteTweets,
     getTweet,
     getReplys,
     createTweet,
@@ -17,6 +18,7 @@ const {
 
 router.get('/', auth, getTweets);
 router.get('/specificUsersTweets/:username', auth, getSpecificUsersTweets);
+router.get('/specificUsersFavoriteTweets/:username', auth, getSpecificUsersFavoriteTweets);
 router.get('/tweet/:tweetId', auth, getTweet);
 router.get('/replys/:tweetId', auth, getReplys);
 router.post('/', auth, createTweet);

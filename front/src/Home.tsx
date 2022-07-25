@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import TweetForm from './TweetForm';
 import useCallApi from './utils/api';
 import { TweetType } from './utils/types';
@@ -11,6 +11,10 @@ import Typography from '@mui/material/Typography';
 const Home: React.FC = () => {
     const [tweetsList, setTweets] = useState<Array<TweetType>>([]);
     const callApi = useCallApi();
+
+    useEffect(() => {
+        getTweets()?.then(setTweets);
+    }, []);
 
     function getTweets(): Promise<Array<TweetType>> | undefined {
         return callApi('http://localhost:5000/api/zetter');
