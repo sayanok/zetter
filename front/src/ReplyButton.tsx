@@ -12,7 +12,7 @@ import Avatar from '@mui/material/Avatar';
 
 type ReplyButtonProps = {
     tweet: TweetType;
-    getAndSetTweets: () => void;
+    afterPostTweet: () => void;
 };
 
 const ReplyButton: React.FC<ReplyButtonProps> = (props) => {
@@ -61,7 +61,7 @@ const ReplyButton: React.FC<ReplyButtonProps> = (props) => {
                                 <br />
                                 {props.tweet.content}
                             </Typography>
-                            <TweetForm getAndSetTweets={() => props.getAndSetTweets()} replySourceTweet={props.tweet} />
+                            <TweetForm afterPostTweet={() => props.afterPostTweet()} replySourceTweet={props.tweet} />
                         </>
                     ) : (
                         'ツイートを取得できませんでした'
