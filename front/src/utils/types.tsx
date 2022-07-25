@@ -13,4 +13,6 @@ export type TweetType = {
     content: string;
     createdAt: Date;
     user: ProfileType;
+    numberOfFavorite: number;
+    isFavorite: boolean;
 };

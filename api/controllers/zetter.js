@@ -1,6 +1,7 @@
 const { createHash } = require('crypto');
 const { sign } = require('jsonwebtoken');
 const tweets = require('../data/tweets.js');
+let favorities = require('../data/favorities.js');
 const users = require('../data/users.js');
 
 const getTweets = (req, res) => {
@@ -14,9 +15,22 @@ const getTweets = (req, res) => {
         }
     });
 
+    // ツイートに自分がfavしているかの情報を付加するための準備
+    const usersFavoriteTweets = favorities.filter((favorite) => favorite.userId === req.user.id);
+    const favoriteTweetIds = usersFavoriteTweets.map((obj) => obj.tweetId);
+
     tweets.forEach((tweet) => {
-        const user = users.find((user) => user.id === tweet.ownerId);
+        const user = users.find(({ id }) => id === tweet.ownerId);
         tweet['user'] = user;
+
+        const numberOfFavorite = favorities.filter((favorite) => favorite.tweetId === tweet.id);
+        tweet['numberOfFavorite'] = numberOfFavorite.length;
+
+        if (favoriteTweetIds.includes(tweet.id)) {
+            tweet.isFavorite = true;
+        } else {
+            tweet.isFavorite = false;
+        }
     });
     res.json(tweets.slice(0, limit));
 };
@@ -30,6 +44,29 @@ const createTweet = (req, res) => {
     };
     tweets.push(newTweet);
     res.status(201).json(newTweet);
+};
+
+const updateTweet = (req, res) => {
+    const tweet = req.body.tweet;
+
+    if (req.body.order === 'add') {
+        favorities.push({
+            id: favorities.length + 1,
+            // TODO: DBとつなぐときなおしたい
+            tweetId: tweet.id,
+            userId: req.user.id,
+            createdAt: new Date(),
+        });
+        tweet.isFavorite = true;
+        tweet.numberOfFavorite++;
+    } else {
+        favorities = favorities.filter(
+            (favorite) => favorite.tweetId !== req.body.tweet.id || favorite.userId !== req.user.id
+        );
+        tweet.isFavorite = false;
+        tweet.numberOfFavorite--;
+    }
+    res.status(200).json(tweet);
 };
 
 const getProfile = (req, res) => {
@@ -71,6 +108,7 @@ const login = (req, res) => {
 module.exports = {
     getTweets,
     createTweet,
+    updateTweet,
     getProfile,
     updateProfile,
     login,
