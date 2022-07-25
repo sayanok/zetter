@@ -36,6 +36,32 @@ const getSpecificUsersTweets = (req, res) => {
     res.json(result.slice(0, limit));
 };
 
+const getSpecificUsersFavoriteTweets = (req, res) => {
+    const limit = 10;
+    const user = users.find(({ username }) => username === req.params.username);
+    const favoriteTweets = favorities.filter((favorite) => favorite.userId === user.id);
+    const favoriteTweetIds = favoriteTweets.map((obj) => obj.tweetId);
+
+    let favoriteTweetList = [];
+
+    tweets.forEach((tweet) => {
+        if (favoriteTweetIds.includes(tweet.id)) {
+            favoriteTweetList.push(tweet);
+        }
+    });
+
+    const sortedFavoriteTweetList = favoriteTweetList.sort(function (a, b) {
+        if (a.createdAt > b.createdAt) {
+            return -1;
+        } else {
+            return 1;
+        }
+    });
+
+    const result = addInformationToTweet(sortedFavoriteTweetList, req);
+    res.json(result.slice(0, limit));
+};
+
 const getTweet = (req, res) => {
     const tweet = tweets.find((tweet) => tweet.id === parseInt(req.params.tweetId));
 
@@ -177,6 +203,7 @@ function addInformationToTweet(tweetList, req) {
 module.exports = {
     getTweets,
     getSpecificUsersTweets,
+    getSpecificUsersFavoriteTweets,
     getTweet,
     getReplys,
     createTweet,
