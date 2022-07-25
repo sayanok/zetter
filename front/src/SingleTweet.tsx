@@ -17,7 +17,7 @@ import Button from '@mui/material/Button';
 
 type SingleTweetProps = {
     tweet: TweetType;
-    getAndSetTweets: () => void;
+    afterPostTweet: () => void;
     updateFavoriteState: (tweet: TweetType) => void;
 };
 
@@ -48,7 +48,7 @@ const SingleTweet: React.FC<SingleTweetProps> = (props) => {
                             {props.tweet.content}
                             <br />
                             <ListItemIcon>
-                                <ReplyButton tweet={props.tweet} getAndSetTweets={() => props.getAndSetTweets()} />
+                                <ReplyButton tweet={props.tweet} afterPostTweet={() => props.afterPostTweet()} />
                                 <Button variant="text">
                                     <CompareArrowsIcon />
                                 </Button>
