@@ -1,19 +1,34 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import useCallApi from './utils/api';
+import { TweetType } from './utils/types';
 
-type TweetFormProps = { getAndSetTweets: () => void };
+type TweetFormProps = { getAndSetTweets: () => void; replySourceTweet: null | TweetType };
 
 const TweetForm: React.FC<TweetFormProps> = (props) => {
-    const [content, setContent] = useState<string>('');
+    const [content, setContent] = useState<string>(
+        props.replySourceTweet ? '@' + props.replySourceTweet?.user.username : ''
+    );
+    const [replyTo, setReplyTo] = useState<null | number>();
+    const [placeholder, setPlaceholder] = useState<string>('今然ぴどうしてる？');
     const callApi = useCallApi();
+
+    useEffect(() => {
+        if (props.replySourceTweet === null) {
+            setPlaceholder('今然ぴどうしてる？');
+        } else {
+            setPlaceholder('返信をツイートする');
+            props.replySourceTweet ? setReplyTo(props.replySourceTweet.id) : setReplyTo(null);
+            // replySourceTweetがnullならエラー返したほうがよいかも
+        }
+    }, []);
 
     function postTweet(): void {
         callApi('http://localhost:5000/api/zetter', {
             method: 'POST',
-            body: JSON.stringify({ content: content }),
+            body: JSON.stringify({ content: content, replyTo: replyTo }),
         });
         props.getAndSetTweets();
         CleanForm();
@@ -35,14 +50,23 @@ const TweetForm: React.FC<TweetFormProps> = (props) => {
             >
                 <TextField
                     id="outlined-multiline-static"
-                    placeholder="今然ぴどうしてる？"
+                    placeholder={placeholder}
                     multiline
                     rows={4}
                     value={content}
-                    onChange={(e) => setContent(e.target.value)}
+                    onClick={(e) => e.preventDefault()}
+                    onChange={(e) => {
+                        setContent(e.target.value);
+                    }}
                 />
             </Box>
-            <Button variant="contained" onClick={() => postTweet()}>
+            <Button
+                variant="contained"
+                onClick={(e) => {
+                    e.preventDefault();
+                    postTweet();
+                }}
+            >
                 ツイートする
             </Button>
         </>

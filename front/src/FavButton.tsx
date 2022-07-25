@@ -13,7 +13,13 @@ const FavButton: React.FC<FavButtonProps> = (props) => {
 
     return (
         <>
-            <Button variant="text" onClick={onClick}>
+            <Button
+                variant="text"
+                onClick={(e) => {
+                    e.preventDefault();
+                    onClick();
+                }}
+            >
                 {props.isFavorite ? <StarIcon /> : <StarBorderIcon />}
             </Button>
             {props.numberOfFavorite}

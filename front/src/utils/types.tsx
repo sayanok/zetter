@@ -9,10 +9,12 @@ export type ProfileType = {
 
 export type TweetType = {
     id: number;
-    ownerId: number;
+    createdBy: number;
+    replyTo: null | number;
     content: string;
     createdAt: Date;
     user: ProfileType;
+    numberOfReply: number;
     numberOfFavorite: number;
     isFavorite: boolean;
 };
