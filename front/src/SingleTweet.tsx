@@ -33,14 +33,20 @@ const SingleTweet: React.FC<SingleTweetProps> = (props) => {
 
     return (
         <>
-            <Link to={'/tweet/' + props.tweet.id}>
+            <Link to={'/' + props.tweet.user.username}>
                 <ListItemAvatar>
                     <Avatar alt={props.tweet.user.username} src={props.tweet.user.icon} />
                 </ListItemAvatar>
+            </Link>
+            <Link to={'/tweet/' + props.tweet.id}>
                 <ListItemText
                     primary={
                         <React.Fragment>
-                            {props.tweet.user.username + '・' + formatDate(props.tweet.createdAt)}
+                            <>
+                                <Link to={'/' + props.tweet.user.username}>{props.tweet.user.username}</Link>
+                                <br />
+                                {formatDate(props.tweet.createdAt)}
+                            </>
                         </React.Fragment>
                     }
                     secondary={

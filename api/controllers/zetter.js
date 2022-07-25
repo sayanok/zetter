@@ -19,6 +19,23 @@ const getTweets = (req, res) => {
     res.json(result.slice(0, limit));
 };
 
+const getSpecificUsersTweets = (req, res) => {
+    const limit = 10;
+
+    const user = users.find(({ username }) => username === req.params.username);
+    const sortedTweets = tweets.sort(function (a, b) {
+        if (a.createdAt > b.createdAt) {
+            return -1;
+        } else {
+            return 1;
+        }
+    });
+    const specificUsersTweets = sortedTweets.filter((tweet) => tweet.createdBy === user.id);
+
+    const result = addInformationToTweet(specificUsersTweets, req);
+    res.json(result.slice(0, limit));
+};
+
 const getTweet = (req, res) => {
     const tweet = tweets.find((tweet) => tweet.id === parseInt(req.params.tweetId));
 
@@ -89,7 +106,15 @@ const updateTweet = (req, res) => {
 };
 
 const getProfile = (req, res) => {
-    res.json(req.user);
+    let username;
+    if (req.params.username === 'login') {
+        username = req.user.username;
+    } else {
+        username = req.params.username;
+    }
+
+    const user = users.find((user) => user.username === username);
+    res.json(user);
 };
 
 const updateProfile = (req, res) => {
@@ -151,6 +176,7 @@ function addInformationToTweet(tweetList, req) {
 
 module.exports = {
     getTweets,
+    getSpecificUsersTweets,
     getTweet,
     getReplys,
     createTweet,

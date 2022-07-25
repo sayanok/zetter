@@ -2,6 +2,7 @@ export type ProfileType = {
     id: number;
     username: string;
     icon: string;
+    header: string;
     introduction: string;
     email: string;
     birthday: string;

@@ -3,6 +3,7 @@ const users = [
         id: 1,
         username: 'mupi',
         icon: 'http://localhost:5000/avatars/mupi.jpg',
+        header: 'http://localhost:5000/headers/mupiheader.jpeg',
         password: '32HwN/80tyAeS3R+4I32BIGhVjblfWdxL79VfKtsnfc=',
         email: 'mupi@example.com',
         introduction: 'むーちゃんだよ',
@@ -11,6 +12,7 @@ const users = [
     {
         id: 2,
         username: 'mipi',
+        header: 'http://localhost:5000/headers/mipiheader.jpeg',
         icon: 'http://localhost:5000/avatars/mipi.jpg',
         password: 'OGQmpwfD/lBk8rCNTdJbOar2PqfUstFF3lEat3z3Cic=',
         email: 'mipi@example.cpm',
@@ -20,6 +22,7 @@ const users = [
     {
         id: 3,
         username: 'zepi',
+        header: 'http://localhost:5000/headers/zepiheader.png',
         icon: 'http://localhost:5000/avatars/zepi.jpg',
         password: 'RFwA1n7ucYA3PJRjv7jVoPC4cvb2nP2eEIDU8fjNyY0=',
         email: 'zepi@example.com',

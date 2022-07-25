@@ -5,7 +5,11 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { token } from './api';
 
-const Login: React.FC = () => {
+type LoginType = {
+    afterLogin: () => void;
+};
+
+const Login: React.FC<LoginType> = (props) => {
     const [username, setId] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [errorMessage, setErrorMessage] = useState<string>('');
@@ -22,6 +26,7 @@ const Login: React.FC = () => {
                 setErrorMessage('');
                 response.json().then((response) => {
                     token.value = response;
+                    props.afterLogin();
                     navigate('/');
                 });
             } else if (response.status === 400) {
