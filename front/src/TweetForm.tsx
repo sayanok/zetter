@@ -5,7 +5,7 @@ import Button from '@mui/material/Button';
 import useCallApi from './utils/api';
 import { TweetType } from './utils/types';
 
-type TweetFormProps = { getAndSetTweets: () => void; replySourceTweet: null | TweetType };
+type TweetFormProps = { afterPostTweet: () => void; replySourceTweet: null | TweetType };
 
 const TweetForm: React.FC<TweetFormProps> = (props) => {
     const [content, setContent] = useState<string>(
@@ -30,7 +30,7 @@ const TweetForm: React.FC<TweetFormProps> = (props) => {
             method: 'POST',
             body: JSON.stringify({ content: content, replyTo: replyTo }),
         });
-        props.getAndSetTweets();
+        props.afterPostTweet();
         CleanForm();
     }
 

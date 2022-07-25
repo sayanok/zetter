@@ -26,7 +26,7 @@ const Home: React.FC = () => {
 
     return (
         <>
-            <TweetForm getAndSetTweets={() => getAndSetTweets()} replySourceTweet={null} />
+            <TweetForm afterPostTweet={() => getAndSetTweets()} replySourceTweet={null} />
             <Toolbar>
                 <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                     <Button variant="text">最新のツイートを表示する</Button>
@@ -35,7 +35,7 @@ const Home: React.FC = () => {
             {/* 今の実装だと、最新の10件しか表示されてない
             今まで表示してる10件＋最新のn件のツイートを取得する方法を検討する必要がある */}
             {/* 表示していない最新のツイートがあるときのみ表示する */}
-            <TweetTrees tweetsList={tweetsList} setTweets={setTweets} getTweets={getTweets} />
+            <TweetTrees tweetsList={tweetsList} setTweets={setTweets} afterPostTweet={() => getAndSetTweets()} />
         </>
     );
 };

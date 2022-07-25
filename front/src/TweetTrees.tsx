@@ -9,7 +9,7 @@ import ListItem from '@mui/material/ListItem';
 type TweetTreeProps = {
     tweetsList: Array<TweetType>;
     setTweets: Dispatch<SetStateAction<TweetType[]>>;
-    getTweets: () => Promise<Array<TweetType>> | undefined;
+    afterPostTweet: () => void;
 };
 
 const TweetTrees: React.FC<TweetTreeProps> = (props) => {
@@ -51,18 +51,14 @@ const TweetTrees: React.FC<TweetTreeProps> = (props) => {
         }
     }
 
-    function getAndSetTweets(): void {
-        props.getTweets()?.then(props.setTweets);
-    }
-
     return (
         <>
             <List sx={{ width: '100%', maxWidth: 1000, bgcolor: 'background.paper' }}>
-                {props.tweetsList.map((tweet, index) => (
+                {props.tweetsList.map((tweet: TweetType, index) => (
                     <ListItem key={tweet.id} alignItems="flex-start">
                         <TweetTree
                             tweet={tweet}
-                            getAndSetTweets={() => getAndSetTweets()}
+                            afterPostTweet={() => props.afterPostTweet()}
                             updateFavoriteState={() => updateFavoriteState(tweet)}
                         />
                     </ListItem>

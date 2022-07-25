@@ -89,7 +89,7 @@ const TweetDetail: React.FC = () => {
         <>
             <SingleTweet
                 tweet={tweet}
-                getAndSetTweets={() => getAndSetTweets()}
+                afterPostTweet={() => getAndSetTweets()}
                 updateFavoriteState={() => updateFavoriteState(tweet)}
             />
             {replyTweetsList.length ? (
@@ -98,7 +98,7 @@ const TweetDetail: React.FC = () => {
                         <ListItem key={replyTweet.id} alignItems="flex-start">
                             <TweetTree
                                 tweet={replyTweet}
-                                getAndSetTweets={() => getAndSetTweets()}
+                                afterPostTweet={() => getAndSetTweets()}
                                 updateFavoriteState={() => updateReplyFavoriteState(replyTweet)}
                             />
                         </ListItem>

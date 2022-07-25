@@ -30,9 +30,9 @@ const ProfilePage: React.FC<ProfilePageProps> = (props) => {
 
     useEffect(() => {
         getProfile()?.then(setProfile);
-        getSpecificUsersTweets()?.then(setTweetsListOfSpecificUser);
-        getFavoriteTweets()?.then(setFavoriteTweetList);
-    }, [params.username]);
+        getAndSetTweetsListOfSpecificUser();
+        getAndSetFavoriteTweetList();
+    }, [params.username, value]);
 
     function getProfile(): Promise<ProfileType> | undefined {
         return callApi('http://localhost:5000/api/zetter/profile/' + params.username);
@@ -45,6 +45,15 @@ const ProfilePage: React.FC<ProfilePageProps> = (props) => {
     function getFavoriteTweets(): Promise<Array<TweetType>> | undefined {
         return callApi('http://localhost:5000/api/zetter/specificUsersFavoriteTweets/' + params.username);
     }
+
+    function getAndSetTweetsListOfSpecificUser(): void {
+        getSpecificUsersTweets()?.then(setTweetsListOfSpecificUser);
+    }
+
+    function getAndSetFavoriteTweetList(): void {
+        getFavoriteTweets()?.then(setFavoriteTweetList);
+    }
+
     // タブ関連のメソッドなど
     interface TabPanelProps {
         children?: React.ReactNode;
@@ -112,14 +121,14 @@ const ProfilePage: React.FC<ProfilePageProps> = (props) => {
                         <TweetTrees
                             tweetsList={tweetsListOfSpecificUser}
                             setTweets={setTweetsListOfSpecificUser}
-                            getTweets={getSpecificUsersTweets}
+                            afterPostTweet={getAndSetTweetsListOfSpecificUser}
                         />
                     </TabPanel>
                     <TabPanel value={value} index={1}>
                         <TweetTrees
                             tweetsList={favoriteTweetList}
                             setTweets={setFavoriteTweetList}
-                            getTweets={getFavoriteTweets}
+                            afterPostTweet={getAndSetFavoriteTweetList}
                         />
                     </TabPanel>
                 </Box>
