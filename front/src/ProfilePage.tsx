@@ -12,8 +12,10 @@ const ProfilePage: React.FC<ProfilePageProps> = (props) => {
     const callApi = useCallApi();
     const params = useParams();
 
-    function getTweets(): Promise<Array<TweetType>> | undefined {
-        return callApi('http://localhost:5000/api/zetter/specificUsersTweets/' + params.username);
+    function getAndSetTweets(): void {
+        callApi('http://localhost:5000/api/zetter/specificUsersTweets/' + params.username)?.then(
+            setTweetsListOfSpecificUser
+        );
     }
 
     return (
@@ -22,7 +24,7 @@ const ProfilePage: React.FC<ProfilePageProps> = (props) => {
             <TweetTrees
                 tweetsList={tweetsListOfSpecificUser}
                 setTweets={setTweetsListOfSpecificUser}
-                getTweets={getTweets}
+                afterPostTweet={getAndSetTweets}
             />
         </>
     );
