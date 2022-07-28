@@ -9,6 +9,7 @@ import Sidebar from './Sidebar';
 import Login from './Login';
 import Home from './Home';
 import TweetDetail from './TweetDetail';
+import Notifications from './Notifications';
 import ProfilePage from './ProfilePage';
 import SettingsProfile from './SettingsProfile';
 
@@ -33,6 +34,7 @@ const Main: React.FC = () => {
                     <Route path="login" element={<Login afterLogin={() => getAndSetProfile()} />} />
                     <Route path="/" element={<Home />} />
                     <Route path="tweet/:tweetId" element={<TweetDetail />} />
+                    <Route path="notifications" element={<Notifications />} />
                     <Route path=":username" element={<ProfilePage myProfile={myProfile} />} />
                     <Route
                         path="settings/:username"
