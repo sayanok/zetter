@@ -18,4 +18,13 @@ export type TweetType = {
     numberOfReply: number;
     numberOfFavorite: number;
     isFavorite: boolean;
+    favoriteNotification: FavoriteType;
+};
+
+export type FavoriteType = {
+    id: number;
+    tweetId: number;
+    userId: number;
+    createdAt: string;
+    user: ProfileType;
 };
