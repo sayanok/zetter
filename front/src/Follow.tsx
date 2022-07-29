@@ -40,7 +40,7 @@ const Follow: React.FC = () => {
                 <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
                     {/* 修正の必要あり */}
                     <Link to="/followings">
-                        <Tab label="フォロー" />
+                        <Tab label="フォロー中" />
                     </Link>
                     <Link to="/followers">
                         <Tab label="フォロワー" />
