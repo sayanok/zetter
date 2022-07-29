@@ -198,9 +198,52 @@ const updateProfile = (req, res) => {
     res.status(200).json(user);
 };
 
-// フォローしているuser
-const getFollowingUsers = (req, res) => {
-    res.status(200).json(followers);
+// フォローしているユーザー
+const getFollowings = (req, res) => {
+    let specificUserFollowingUsersList = [];
+    let specificUserFollowingUsersListWithUserInformation = [];
+    followers.forEach((follower) => {
+        if (follower.followedUserId === req.user.id) {
+            specificUserFollowingUsersList.push(follower);
+        }
+    });
+
+    specificUserFollowingUsersList.forEach((specificUserFollowingUser) => {
+        let valueOfInsert = [];
+        users.forEach((user) => {
+            if (specificUserFollowingUser.userIdBeingFollowed === user.id) {
+                specificUserFollowingUser['user'] = user;
+
+                valueOfInsert = JSON.parse(JSON.stringify(specificUserFollowingUser));
+                specificUserFollowingUsersListWithUserInformation.push(valueOfInsert);
+            }
+        });
+    });
+    res.json(specificUserFollowingUsersList);
+};
+
+// 自分のフォロワー
+const getFollowers = (req, res) => {
+    let specificUserFollowersUsersList = [];
+    let specificUserFollowersUsersListWithUserInformation = [];
+    followers.forEach((follower) => {
+        if (follower.userIdBeingFollowed === req.user.id) {
+            specificUserFollowersUsersList.push(follower);
+        }
+    });
+
+    specificUserFollowersUsersList.forEach((specificUserFollowerdUser) => {
+        let valueOfInsert = [];
+        users.forEach((user) => {
+            if (specificUserFollowerdUser.followedUserId === user.id) {
+                specificUserFollowerdUser['user'] = user;
+
+                valueOfInsert = JSON.parse(JSON.stringify(specificUserFollowerdUser));
+                specificUserFollowersUsersListWithUserInformation.push(valueOfInsert);
+            }
+        });
+    });
+    res.json(specificUserFollowersUsersList);
 };
 
 const login = (req, res) => {
@@ -262,6 +305,7 @@ module.exports = {
     getNotifications,
     getProfile,
     updateProfile,
-    getFollowingUsers,
+    getFollowings,
+    getFollowers,
     login,
 };

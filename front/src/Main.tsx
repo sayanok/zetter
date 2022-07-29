@@ -37,7 +37,7 @@ const Main: React.FC = () => {
                     <Route path="tweet/:tweetId" element={<TweetDetail />} />
                     <Route path="notifications" element={<Notifications />} />
                     <Route path=":username" element={<ProfilePage myProfile={myProfile} />} />
-                    <Route path="following" element={<Follow />} />
+                    <Route path="followings" element={<Follow />} />
                     <Route path="followers" element={<Follow />} />
                     <Route
                         path="settings/:username"
