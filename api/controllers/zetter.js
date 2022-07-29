@@ -3,6 +3,7 @@ const { sign } = require('jsonwebtoken');
 const tweets = require('../data/tweets.js');
 let favorities = require('../data/favorities.js');
 const users = require('../data/users.js');
+const followers = require('../data/followers.js');
 
 const getTweets = (req, res) => {
     const limit = 10;
@@ -197,6 +198,11 @@ const updateProfile = (req, res) => {
     res.status(200).json(user);
 };
 
+// フォローしているuser
+const getFollowingUsers = (req, res) => {
+    res.status(200).json(followers);
+};
+
 const login = (req, res) => {
     const input = req.body;
 
@@ -256,5 +262,6 @@ module.exports = {
     getNotifications,
     getProfile,
     updateProfile,
+    getFollowingUsers,
     login,
 };

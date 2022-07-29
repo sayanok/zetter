@@ -14,6 +14,7 @@ const {
     getNotifications,
     getProfile,
     updateProfile,
+    getFollowingUsers,
     login,
 } = require('../controllers/zetter.js');
 
@@ -29,6 +30,8 @@ router.get('/notifications', auth, getNotifications);
 
 router.get('/profile/:username', auth, getProfile);
 router.patch('/profile', auth, updateProfile);
+
+router.get('/followingUsers', auth, getFollowingUsers);
 
 router.post('/login', login);
 
