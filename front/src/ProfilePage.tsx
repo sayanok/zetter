@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import useCallApi from './utils/api';
-import { ProfileType, TweetType } from './utils/types';
+import { FollowerType, ProfileType, TweetType } from './utils/types';
 import TweetTrees from './TweetTrees';
 
 import Card from '@mui/material/Card';
@@ -22,6 +22,8 @@ const ProfilePage: React.FC<ProfilePageProps> = (props) => {
     const [profile, setProfile] = useState<ProfileType>();
     const [tweetsListOfSpecificUser, setTweetsListOfSpecificUser] = useState<Array<TweetType>>([]);
     const [favoriteTweetList, setFavoriteTweetList] = useState<Array<TweetType>>([]);
+    const [followingsNumber, setFollowingsNumber] = useState<number>();
+    const [followersNumber, setFollowersNumber] = useState<number>();
     // タブ関連のstate
     const [value, setValue] = React.useState(0);
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -32,6 +34,8 @@ const ProfilePage: React.FC<ProfilePageProps> = (props) => {
         getProfile()?.then(setProfile);
         getAndSetTweetsListOfSpecificUser();
         getAndSetFavoriteTweetList();
+        getFollowingsNumber()?.then(setFollowingsNumber);
+        getFollowersNumber()?.then(setFollowersNumber);
     }, [params.username, value]);
 
     function getProfile(): Promise<ProfileType> | undefined {
@@ -52,6 +56,22 @@ const ProfilePage: React.FC<ProfilePageProps> = (props) => {
 
     function getAndSetFavoriteTweetList(): void {
         getFavoriteTweets()?.then(setFavoriteTweetList);
+    }
+
+    function getFollowingsNumber(): Promise<number> | undefined {
+        return callApi('http://localhost:5000/api/zetter/followings')?.then((data) => data.length);
+    }
+
+    function getFollowersNumber(): Promise<number> | undefined {
+        return callApi('http://localhost:5000/api/zetter/followers')?.then((data) => data.length);
+    }
+
+    function follow(): void {
+        console.log('フォローする');
+    }
+
+    function unFollow(): void {
+        console.log('フォロー解除する');
     }
 
     // タブ関連のメソッドなど
@@ -98,9 +118,15 @@ const ProfilePage: React.FC<ProfilePageProps> = (props) => {
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
                         {profile.introduction}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
+                        <br />
                         誕生日：{profile.birthday}
+                        <br />
+                        <Link to="/followings">
+                            <>フォロー: {followingsNumber}人</>
+                        </Link>
+                        <Link to="/followers">
+                            <>フォロー: {followersNumber}人</>
+                        </Link>
                     </Typography>
                 </CardContent>
                 {props.myProfile.id === profile.id ? (
@@ -109,7 +135,17 @@ const ProfilePage: React.FC<ProfilePageProps> = (props) => {
                             <Link to={'/settings/' + profile.username}>編集する</Link>
                         </Button>
                     </CardActions>
-                ) : null}
+                ) : (
+                    <CardActions>
+                        {/* 出し分けする */}
+                        <Button size="small" onClick={follow}>
+                            フォローする
+                        </Button>
+                        <Button size="small" onClick={unFollow}>
+                            フォローを解除する
+                        </Button>
+                    </CardActions>
+                )}
                 <Box sx={{ width: '100%' }}>
                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">

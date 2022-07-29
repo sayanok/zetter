@@ -47,25 +47,29 @@ const Follow: React.FC = () => {
                     </Link>
                 </Tabs>
             </Box>
-            <List sx={{ width: '100%', maxWidth: 1000, bgcolor: 'background.paper' }}>
-                {usersList.map((user, index) => (
-                    <ListItem key={index} alignItems="flex-start">
-                        <ListItemText
-                            primary={
-                                <React.Fragment>
-                                    <Link to={'/' + user.user.username}>
-                                        <Stack direction="row" spacing={2}>
-                                            <Avatar alt={user.user.username} src={user.user.icon} />
-                                            <p>{user.user.username}</p>
-                                        </Stack>
-                                    </Link>
-                                </React.Fragment>
-                            }
-                            secondary={<React.Fragment>{user.user.introduction}</React.Fragment>}
-                        />
-                    </ListItem>
-                ))}
-            </List>
+            {usersList.length ? (
+                <List sx={{ width: '100%', maxWidth: 1000, bgcolor: 'background.paper' }}>
+                    {usersList.map((user, index) => (
+                        <ListItem key={index} alignItems="flex-start">
+                            <ListItemText
+                                primary={
+                                    <React.Fragment>
+                                        <Link to={'/' + user.user.username}>
+                                            <Stack direction="row" spacing={2}>
+                                                <Avatar alt={user.user.username} src={user.user.icon} />
+                                                <p>{user.user.username}</p>
+                                            </Stack>
+                                        </Link>
+                                    </React.Fragment>
+                                }
+                                secondary={<React.Fragment>{user.user.introduction}</React.Fragment>}
+                            />
+                        </ListItem>
+                    ))}
+                </List>
+            ) : (
+                <p>やーいぼっち！</p>
+            )}
         </>
     );
 };
