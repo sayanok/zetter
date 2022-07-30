@@ -1,5 +1,5 @@
-import React, { useState, useEffect, SetStateAction } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useLocation, Link, useParams } from 'react-router-dom';
 import useCallApi from './utils/api';
 import { FollowerType } from './utils/types';
 
@@ -15,6 +15,7 @@ import Box from '@mui/material/Box';
 const Follow: React.FC = () => {
     const callApi = useCallApi();
     const location = useLocation();
+    const params = useParams();
     const [usersList, setUsersList] = useState<Array<FollowerType>>([]);
     // タブのためのstate
     const [value, setValue] = React.useState(0);
@@ -23,15 +24,17 @@ const Follow: React.FC = () => {
     };
 
     useEffect(() => {
-        location.pathname === '/followings' ? getFollowings()?.then(setUsersList) : getFollowers()?.then(setUsersList);
+        location.pathname === '/' + params.username + '/followings'
+            ? getFollowings()?.then(setUsersList)
+            : getFollowers()?.then(setUsersList);
     }, [location]);
 
     function getFollowings(): Promise<Array<FollowerType>> | undefined {
-        return callApi('http://localhost:5000/api/zetter/followings');
+        return callApi('http://localhost:5000/api/zetter/' + params.username + '/followings');
     }
 
     function getFollowers(): Promise<Array<FollowerType>> | undefined {
-        return callApi('http://localhost:5000/api/zetter/followers');
+        return callApi('http://localhost:5000/api/zetter/' + params.username + '/followers');
     }
 
     return (
@@ -39,10 +42,10 @@ const Follow: React.FC = () => {
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                 <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
                     {/* 修正の必要あり */}
-                    <Link to="/followings">
+                    <Link to={'/' + params.username + '/followings'}>
                         <Tab label="フォロー中" />
                     </Link>
-                    <Link to="/followers">
+                    <Link to={'/' + params.username + '/followers'}>
                         <Tab label="フォロワー" />
                     </Link>
                 </Tabs>

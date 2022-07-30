@@ -200,10 +200,11 @@ const updateProfile = (req, res) => {
 
 // フォローしているユーザー
 const getFollowings = (req, res) => {
+    const requestUser = users.find(({ username }) => username === req.params.username);
     let specificUserFollowingUsersList = [];
     let specificUserFollowingUsersListWithUserInformation = [];
     followers.forEach((follower) => {
-        if (follower.followedUserId === req.user.id) {
+        if (follower.followedUserId === requestUser.id) {
             specificUserFollowingUsersList.push(follower);
         }
     });
@@ -224,10 +225,11 @@ const getFollowings = (req, res) => {
 
 // 自分のフォロワー
 const getFollowers = (req, res) => {
+    const requestUser = users.find(({ username }) => username === req.params.username);
     let specificUserFollowersUsersList = [];
     let specificUserFollowersUsersListWithUserInformation = [];
     followers.forEach((follower) => {
-        if (follower.userIdBeingFollowed === req.user.id) {
+        if (follower.userIdBeingFollowed === requestUser.id) {
             specificUserFollowersUsersList.push(follower);
         }
     });
@@ -244,6 +246,28 @@ const getFollowers = (req, res) => {
         });
     });
     res.json(specificUserFollowersUsersList);
+};
+
+const updateFollowings = (req, res) => {
+    const followings = req.body.followings;
+    // 変数名かえたい
+    const user = req.user;
+    const userToEdit = req.body.user;
+
+    if (req.body.order === 'follow') {
+        followers.push({
+            id: follows.length + 1,
+            // TODO: DBとつなぐときなおしたい
+            userIdBeingFollowed: userToEdit.id,
+            followedUserId: user.id,
+            createdAt: new Date(),
+        });
+    } else {
+        followings = followers.filter(
+            (follower) => follower.userIdBeingFollowed !== userToEdit.id || follower.followedUserId !== user.id
+        );
+    }
+    res.status(200).json(followings);
 };
 
 const login = (req, res) => {
@@ -307,5 +331,6 @@ module.exports = {
     updateProfile,
     getFollowings,
     getFollowers,
+    updateFollowings,
     login,
 };

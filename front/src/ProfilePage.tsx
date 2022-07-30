@@ -23,6 +23,7 @@ const ProfilePage: React.FC<ProfilePageProps> = (props) => {
     const [tweetsListOfSpecificUser, setTweetsListOfSpecificUser] = useState<Array<TweetType>>([]);
     const [favoriteTweetList, setFavoriteTweetList] = useState<Array<TweetType>>([]);
     const [followingsNumber, setFollowingsNumber] = useState<number>();
+    const [followings, setFollowings] = useState<Array<ProfileType>>();
     const [followersNumber, setFollowersNumber] = useState<number>();
     // タブ関連のstate
     const [value, setValue] = React.useState(0);
@@ -35,6 +36,7 @@ const ProfilePage: React.FC<ProfilePageProps> = (props) => {
         getAndSetTweetsListOfSpecificUser();
         getAndSetFavoriteTweetList();
         getFollowingsNumber()?.then(setFollowingsNumber);
+        getFollowings()?.then(setFollowings);
         getFollowersNumber()?.then(setFollowersNumber);
     }, [params.username, value]);
 
@@ -59,15 +61,26 @@ const ProfilePage: React.FC<ProfilePageProps> = (props) => {
     }
 
     function getFollowingsNumber(): Promise<number> | undefined {
-        return callApi('http://localhost:5000/api/zetter/followings')?.then((data) => data.length);
+        return callApi('http://localhost:5000/api/zetter/' + params.username + '/followings')?.then(
+            (data) => data.length
+        );
+    }
+
+    function getFollowings(): Promise<Array<ProfileType>> | undefined {
+        return callApi('http://localhost:5000/api/zetter/' + params.username + '/followings');
     }
 
     function getFollowersNumber(): Promise<number> | undefined {
-        return callApi('http://localhost:5000/api/zetter/followers')?.then((data) => data.length);
+        return callApi('http://localhost:5000/api/zetter/' + params.username + '/followers')?.then(
+            (data) => data.length
+        );
     }
 
     function follow(): void {
-        console.log('フォローする');
+        callApi('http://localhost:5000/api/zetter/updateFollowings', {
+            method: 'PATCH',
+            body: JSON.stringify({ followings: followings, user: 'zepi' }),
+        });
     }
 
     function unFollow(): void {
@@ -121,11 +134,11 @@ const ProfilePage: React.FC<ProfilePageProps> = (props) => {
                         <br />
                         誕生日：{profile.birthday}
                         <br />
-                        <Link to="/followings">
-                            <>フォロー: {followingsNumber}人</>
+                        <Link to={'/' + profile.username + '/followings'}>
+                            <>フォロー中: {followingsNumber}人</>
                         </Link>
-                        <Link to="/followers">
-                            <>フォロー: {followersNumber}人</>
+                        <Link to={'/' + profile.username + '/followers'}>
+                            <>フォロワー: {followersNumber}人</>
                         </Link>
                     </Typography>
                 </CardContent>
@@ -138,7 +151,12 @@ const ProfilePage: React.FC<ProfilePageProps> = (props) => {
                 ) : (
                     <CardActions>
                         {/* 出し分けする */}
-                        <Button size="small" onClick={follow}>
+                        <Button
+                            size="small"
+                            onClick={() => {
+                                follow();
+                            }}
+                        >
                             フォローする
                         </Button>
                         <Button size="small" onClick={unFollow}>
