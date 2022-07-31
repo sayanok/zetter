@@ -3,7 +3,7 @@ const { sign } = require('jsonwebtoken');
 const tweets = require('../data/tweets.js');
 let favorities = require('../data/favorities.js');
 const users = require('../data/users.js');
-const followers = require('../data/followers.js');
+let followers = require('../data/followers.js');
 
 const getTweets = (req, res) => {
     const limit = 10;
@@ -250,20 +250,19 @@ const getFollowers = (req, res) => {
 
 const updateFollowings = (req, res) => {
     const followings = req.body.followings;
-    // 変数名かえたい
     const user = req.user;
-    const userToEdit = req.body.user;
+    const userToEdit = users.find(({ username }) => username === req.body.followingUsername);
 
     if (req.body.order === 'follow') {
         followers.push({
-            id: follows.length + 1,
+            id: followers.length + 1,
             // TODO: DBとつなぐときなおしたい
             userIdBeingFollowed: userToEdit.id,
             followedUserId: user.id,
             createdAt: new Date(),
         });
     } else {
-        followings = followers.filter(
+        followers = followers.filter(
             (follower) => follower.userIdBeingFollowed !== userToEdit.id || follower.followedUserId !== user.id
         );
     }

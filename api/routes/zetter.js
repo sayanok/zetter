@@ -35,7 +35,7 @@ router.patch('/profile', auth, updateProfile);
 
 router.get('/:username/followings', auth, getFollowings);
 router.get('/:username/followers', auth, getFollowers);
-router.get('/updateFollowings', auth, updateFollowings);
+router.patch('/updateFollowings', auth, updateFollowings);
 
 router.post('/login', login);
 

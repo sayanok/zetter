@@ -23,8 +23,9 @@ const ProfilePage: React.FC<ProfilePageProps> = (props) => {
     const [tweetsListOfSpecificUser, setTweetsListOfSpecificUser] = useState<Array<TweetType>>([]);
     const [favoriteTweetList, setFavoriteTweetList] = useState<Array<TweetType>>([]);
     const [followingsNumber, setFollowingsNumber] = useState<number>();
-    const [followings, setFollowings] = useState<Array<ProfileType>>();
     const [followersNumber, setFollowersNumber] = useState<number>();
+    const [followings, setFollowings] = useState<Array<FollowerType>>();
+    const [followers, setFollowers] = useState<Array<FollowerType>>();
     // タブ関連のstate
     const [value, setValue] = React.useState(0);
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -35,9 +36,14 @@ const ProfilePage: React.FC<ProfilePageProps> = (props) => {
         getProfile()?.then(setProfile);
         getAndSetTweetsListOfSpecificUser();
         getAndSetFavoriteTweetList();
-        getFollowingsNumber()?.then(setFollowingsNumber);
-        getFollowings()?.then(setFollowings);
-        getFollowersNumber()?.then(setFollowersNumber);
+        getFollowings()?.then((data) => {
+            setFollowings(data);
+            setFollowingsNumber(data.length);
+        });
+        getFollowers()?.then((data) => {
+            setFollowers(data);
+            setFollowersNumber(data.length);
+        });
     }, [params.username, value]);
 
     function getProfile(): Promise<ProfileType> | undefined {
@@ -60,31 +66,19 @@ const ProfilePage: React.FC<ProfilePageProps> = (props) => {
         getFavoriteTweets()?.then(setFavoriteTweetList);
     }
 
-    function getFollowingsNumber(): Promise<number> | undefined {
-        return callApi('http://localhost:5000/api/zetter/' + params.username + '/followings')?.then(
-            (data) => data.length
-        );
-    }
-
-    function getFollowings(): Promise<Array<ProfileType>> | undefined {
+    function getFollowings(): Promise<Array<FollowerType>> | undefined {
         return callApi('http://localhost:5000/api/zetter/' + params.username + '/followings');
     }
 
-    function getFollowersNumber(): Promise<number> | undefined {
-        return callApi('http://localhost:5000/api/zetter/' + params.username + '/followers')?.then(
-            (data) => data.length
-        );
+    function getFollowers(): Promise<Array<FollowerType>> | undefined {
+        return callApi('http://localhost:5000/api/zetter/' + params.username + '/followers');
     }
 
-    function follow(): void {
+    function updateFollowings(order: string): void {
         callApi('http://localhost:5000/api/zetter/updateFollowings', {
             method: 'PATCH',
-            body: JSON.stringify({ followings: followings, user: 'zepi' }),
+            body: JSON.stringify({ followings: followings, followingUsername: params.username, order: order }),
         });
-    }
-
-    function unFollow(): void {
-        console.log('フォロー解除する');
     }
 
     // タブ関連のメソッドなど
@@ -150,18 +144,25 @@ const ProfilePage: React.FC<ProfilePageProps> = (props) => {
                     </CardActions>
                 ) : (
                     <CardActions>
-                        {/* 出し分けする */}
-                        <Button
-                            size="small"
-                            onClick={() => {
-                                follow();
-                            }}
-                        >
-                            フォローする
-                        </Button>
-                        <Button size="small" onClick={unFollow}>
-                            フォローを解除する
-                        </Button>
+                        {followers?.find((follower) => follower.user.username === props.myProfile?.username) ? (
+                            <Button
+                                size="small"
+                                onClick={() => {
+                                    updateFollowings('unFollow');
+                                }}
+                            >
+                                フォローを解除する
+                            </Button>
+                        ) : (
+                            <Button
+                                size="small"
+                                onClick={() => {
+                                    updateFollowings('follow');
+                                }}
+                            >
+                                フォローする
+                            </Button>
+                        )}
                     </CardActions>
                 )}
                 <Box sx={{ width: '100%' }}>
