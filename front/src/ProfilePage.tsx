@@ -79,6 +79,14 @@ const ProfilePage: React.FC<ProfilePageProps> = (props) => {
             method: 'PATCH',
             body: JSON.stringify({ followings: followings, followingUsername: params.username, order: order }),
         });
+        afterUpdateFollowings();
+    }
+
+    function afterUpdateFollowings(): void {
+        getFollowers()?.then((data) => {
+            setFollowers(data);
+            setFollowersNumber(data.length);
+        });
     }
 
     // タブ関連のメソッドなど

@@ -22,7 +22,10 @@ const tweets = [
         createdAt: new Date('2022-06-21 12:40'),
     },
     { id: 11, createdBy: 1, replyTo: 10, content: '@zepi 煎餅屋開業', createdAt: new Date('2022-06-21 12:50') },
-    { id: 12, createdBy: 1, replyTo: 10, content: '@zepi 煎餅屋閉業', createdAt: new Date('2022-07-12 12:50') },
+    { id: 12, createdBy: 4, replyTo: null, content: 'オーボールだよ', createdAt: new Date('2022-08-01 12:50') },
+    { id: 13, createdBy: 5, replyTo: null, content: 'バウンサーだよ', createdAt: new Date('2022-08-02 12:50') },
+    { id: 14, createdBy: 6, replyTo: null, content: 'カシャカシャ', createdAt: new Date('2022-08-03 12:50') },
+    { id: 15, createdBy: 7, replyTo: null, content: 'ガーゼだよ', createdAt: new Date('2022-08-04 12:50') },
 ];
 
 module.exports = tweets;
