@@ -7,8 +7,17 @@ let followers = require('../data/followers.js');
 
 const getTweets = (req, res) => {
     const limit = 10;
+    const followingUsers = followers.filter((follower) => follower.followedUserId === req.user.id);
+    const followingUsersIds = followingUsers.map((obj) => obj.userIdBeingFollowed);
+    let followingUsersTweetsList = [];
 
-    const sortedTweets = tweets.sort(function (a, b) {
+    tweets.forEach((tweet) => {
+        if (followingUsersIds.includes(tweet.createdBy)) {
+            followingUsersTweetsList.push(tweet);
+        }
+    });
+
+    const sortedTweets = followingUsersTweetsList.sort(function (a, b) {
         if (a.createdAt > b.createdAt) {
             return -1;
         } else {
