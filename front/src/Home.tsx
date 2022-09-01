@@ -20,7 +20,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 
 const Home: React.FC = () => {
-    const [tweetsList, setTweets] = useState<Array<TweetType>>([]);
+    const [tweets, setTweets] = useState<TweetType[]>([]);
     const callApi = useCallApi();
 
     useEffect(() => {
@@ -34,7 +34,7 @@ const Home: React.FC = () => {
                 method: 'PATCH',
                 body: JSON.stringify({ tweet: tweet, order: 'delete' }),
             })?.then((data) => {
-                let result = tweetsList.map(function (value: TweetType): TweetType {
+                let result = tweets.map(function (value: TweetType): TweetType {
                     if (tweet.id === value.id) {
                         return data;
                     } else {
@@ -49,7 +49,7 @@ const Home: React.FC = () => {
                 method: 'PATCH',
                 body: JSON.stringify({ tweet: tweet, order: 'add' }),
             })?.then((data) => {
-                let result = tweetsList.map(function (value: TweetType): TweetType {
+                let result = tweets.map(function (value: TweetType): TweetType {
                     if (tweet.id === value.id) {
                         return data;
                     } else {
@@ -90,7 +90,7 @@ const Home: React.FC = () => {
             今まで表示してる10件＋最新のn件のツイートを取得する方法を検討する必要がある */}
             {/* 表示していない最新のツイートがあるときのみ表示する */}
             <List sx={{ width: '100%', maxWidth: 1000, bgcolor: 'background.paper' }}>
-                {tweetsList.map((tweet, index) => (
+                {tweets.map((tweet, index) => (
                     <ListItem key={tweet.id} alignItems="flex-start">
                         <ListItemAvatar>
                             <Avatar alt={tweet.user.username} src={tweet.user.icon} />

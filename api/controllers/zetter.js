@@ -16,15 +16,14 @@ const getTweets = (req, res) => {
     });
 
     // ツイートに自分がfavしているかの情報を付加するための準備
-    const usersFavoriteTweets = favorities.filter((favorite) => favorite.userId === req.user.id);
-    const favoriteTweetIds = usersFavoriteTweets.map((obj) => obj.tweetId);
+    const favoriteTweetIds = favorities.filter((favorite) => favorite.userId === req.user.id).map((obj) => obj.tweetId);
 
     tweets.forEach((tweet) => {
         const user = users.find(({ id }) => id === tweet.ownerId);
         tweet['user'] = user;
 
-        const numberOfFavorite = favorities.filter((favorite) => favorite.tweetId === tweet.id);
-        tweet['numberOfFavorite'] = numberOfFavorite.length;
+        const favoritiesOfTweet = favorities.filter((favorite) => favorite.tweetId === tweet.id);
+        tweet['numberOfFavorite'] = favoritiesOfTweet.length;
 
         if (favoriteTweetIds.includes(tweet.id)) {
             tweet.isFavorite = true;
