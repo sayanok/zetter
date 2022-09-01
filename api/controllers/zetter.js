@@ -29,8 +29,7 @@ const getTweet = (req, res) => {
     tweet['numberOfReply'] = numberOfReply.length;
 
     // ツイートに自分がfavしているかの情報を付加するための準備
-    const usersFavoriteTweets = favorities.filter((favorite) => favorite.userId === req.user.id);
-    const favoriteTweetIds = usersFavoriteTweets.map((obj) => obj.tweetId);
+    const favoriteTweetIds = favorities.filter((favorite) => favorite.userId === req.user.id).map((obj) => obj.tweetId);
 
     if (favoriteTweetIds.includes(tweet.id)) {
         tweet.isFavorite = true;
