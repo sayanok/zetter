@@ -18,37 +18,19 @@ const TweetTrees: React.FC<TweetTreeProps> = (props) => {
     useEffect(() => {}, [props.tweetsList]);
 
     function updateFavoriteState(tweet: TweetType): void {
-        if (tweet.isFavorite) {
-            // favから削除する
-            callApi('http://localhost:5000/api/zetter', {
-                method: 'PATCH',
-                body: JSON.stringify({ tweet: tweet, order: 'delete' }),
-            })?.then((data) => {
-                let result = props.tweetsList.map(function (value: TweetType): TweetType {
-                    if (tweet.id === value.id) {
-                        return data;
-                    } else {
-                        return value;
-                    }
-                });
-                props.setTweets(result);
+        callApi('http://localhost:5000/api/zetter', {
+            method: 'PATCH',
+            body: JSON.stringify({ tweet: tweet, order: tweet.isFavorite ? 'delete' : 'add' }),
+        })?.then((data) => {
+            let result = props.tweetsList.map(function (value: TweetType): TweetType {
+                if (tweet.id === value.id) {
+                    return data;
+                } else {
+                    return value;
+                }
             });
-        } else {
-            // favに追加する
-            callApi('http://localhost:5000/api/zetter', {
-                method: 'PATCH',
-                body: JSON.stringify({ tweet: tweet, order: 'add' }),
-            })?.then((data) => {
-                let result = props.tweetsList.map(function (value: TweetType): TweetType {
-                    if (tweet.id === value.id) {
-                        return data;
-                    } else {
-                        return value;
-                    }
-                });
-                props.setTweets(result);
-            });
-        }
+            props.setTweets(result);
+        });
     }
 
     return (

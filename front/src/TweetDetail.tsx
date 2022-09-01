@@ -33,56 +33,28 @@ const TweetDetail: React.FC = () => {
     }
 
     function updateFavoriteState(tweet: TweetType): void {
-        if (tweet.isFavorite) {
-            // favから削除する
-            callApi('http://localhost:5000/api/zetter', {
-                method: 'PATCH',
-                body: JSON.stringify({ tweet: tweet, order: 'delete' }),
-            })?.then((data) => {
-                setTweet(data);
-            });
-        } else {
-            // favに追加する
-            callApi('http://localhost:5000/api/zetter', {
-                method: 'PATCH',
-                body: JSON.stringify({ tweet: tweet, order: 'add' }),
-            })?.then((data) => {
-                setTweet(data);
-            });
-        }
+        callApi('http://localhost:5000/api/zetter', {
+            method: 'PATCH',
+            body: JSON.stringify({ tweet: tweet, order: tweet.isFavorite ? 'delete' : 'add' }),
+        })?.then((data) => {
+            setTweet(data);
+        });
     }
 
     function updateReplyFavoriteState(reply: TweetType): void {
-        if (reply.isFavorite) {
-            callApi('http://localhost:5000/api/zetter', {
-                method: 'PATCH',
-                body: JSON.stringify({ tweet: reply, order: 'delete' }),
-            })?.then((data) => {
-                let result = replyTweetsList.map(function (value: TweetType): TweetType {
-                    if (reply.id === value.id) {
-                        return data;
-                    } else {
-                        return value;
-                    }
-                });
-                setReplyTweetsList(result);
+        callApi('http://localhost:5000/api/zetter', {
+            method: 'PATCH',
+            body: JSON.stringify({ tweet: reply, order: reply.isFavorite ? 'delete' : 'add' }),
+        })?.then((data) => {
+            let result = replyTweetsList.map(function (value: TweetType): TweetType {
+                if (reply.id === value.id) {
+                    return data;
+                } else {
+                    return value;
+                }
             });
-        } else {
-            // favに追加する
-            callApi('http://localhost:5000/api/zetter', {
-                method: 'PATCH',
-                body: JSON.stringify({ tweet: reply, order: 'add' }),
-            })?.then((data) => {
-                let result = replyTweetsList.map(function (value: TweetType): TweetType {
-                    if (reply.id === value.id) {
-                        return data;
-                    } else {
-                        return value;
-                    }
-                });
-                setReplyTweetsList(result);
-            });
-        }
+            setReplyTweetsList(result);
+        });
     }
 
     return tweet ? (

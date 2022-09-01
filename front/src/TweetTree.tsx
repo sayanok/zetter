@@ -30,36 +30,19 @@ const TweetTree: React.FC<TweetTreeProps> = (props) => {
     }
 
     function updateReplyFavoriteState(reply: TweetType): void {
-        if (reply.isFavorite) {
-            callApi('http://localhost:5000/api/zetter', {
-                method: 'PATCH',
-                body: JSON.stringify({ tweet: reply, order: 'delete' }),
-            })?.then((data) => {
-                let result = replyTweetsList.map(function (value: TweetType): TweetType {
-                    if (reply.id === value.id) {
-                        return data;
-                    } else {
-                        return value;
-                    }
-                });
-                setReplyTweetsList(result);
+        callApi('http://localhost:5000/api/zetter', {
+            method: 'PATCH',
+            body: JSON.stringify({ tweet: reply, order: reply.isFavorite ? 'delete' : 'add' }),
+        })?.then((data) => {
+            let result = replyTweetsList.map(function (value: TweetType): TweetType {
+                if (reply.id === value.id) {
+                    return data;
+                } else {
+                    return value;
+                }
             });
-        } else {
-            // favに追加する
-            callApi('http://localhost:5000/api/zetter', {
-                method: 'PATCH',
-                body: JSON.stringify({ tweet: reply, order: 'add' }),
-            })?.then((data) => {
-                let result = replyTweetsList.map(function (value: TweetType): TweetType {
-                    if (reply.id === value.id) {
-                        return data;
-                    } else {
-                        return value;
-                    }
-                });
-                setReplyTweetsList(result);
-            });
-        }
+            setReplyTweetsList(result);
+        });
     }
 
     return (
