@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import useCallApi from './utils/api';
+import { useCallApi } from './utils/api';
 import { useNavigate } from 'react-router-dom';
 import { ProfileType } from './utils/types';
 

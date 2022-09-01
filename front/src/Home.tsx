@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import TweetForm from './TweetForm';
-import useCallApi from './utils/api';
+import { useCallApi } from './utils/api';
 import { TweetType } from './utils/types';
 import TweetTrees from './TweetTrees';
 

@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import Button from '@mui/material/Button';
-import useCallApi from './utils/api';
+import { useCallApi } from './utils/api';
 import { ProfileType } from './utils/types';
 
 const Profile: React.FC = () => {

@@ -1,5 +1,5 @@
 import React, { useEffect, Dispatch, SetStateAction } from 'react';
-import useCallApi from './utils/api';
+import { useCallApi } from './utils/api';
 import { TweetType } from './utils/types';
 import TweetTree from './TweetTree';
 

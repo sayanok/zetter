@@ -1,12 +1,14 @@
 import { token } from '../api';
 import { useNavigate } from 'react-router-dom';
+import { TweetType } from './types';
+// import { TweetType } from ''
 
 type CallApiType = (
     url: string,
     config?: { method?: string; headers?: Record<string, string>; body?: string }
 ) => Promise<any> | undefined;
 
-function useCallApi(): CallApiType {
+export function useCallApi(): CallApiType {
     const navigate = useNavigate();
 
     const callApi: CallApiType = (url, config = {}) => {
@@ -26,4 +28,6 @@ function useCallApi(): CallApiType {
     return callApi;
 }
 
-export default useCallApi;
+export function callUpdateFavoriteApi(tweet: TweetType): Promise<TweetType | undefined> {
+    return undefined;
+}

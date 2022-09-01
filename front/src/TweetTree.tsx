@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import useCallApi from './utils/api';
+import { useCallApi } from './utils/api';
 import { TweetType } from './utils/types';
 import SingleTweet from './SingleTweet';
 
