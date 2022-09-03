@@ -18,15 +18,15 @@ const TweetTrees: React.FC<TweetTreeProps> = (props) => {
     useEffect(() => {}, [props.tweetsList]);
 
     function updateFavoriteState(tweet: TweetType): void {
-        callUpdateFavoriteApi(tweet)?.then((data) => {
-            let result = props.tweetsList.map(function (value: TweetType): TweetType {
-                if (tweet.id === value.id) {
-                    return data;
+        callUpdateFavoriteApi(tweet)?.then((newTweet) => {
+            let newTweets = props.tweetsList.map((tweet) => {
+                if (newTweet.id === tweet.id) {
+                    return newTweet;
                 } else {
-                    return value;
+                    return tweet;
                 }
             });
-            props.setTweets(result);
+            props.setTweets(newTweets);
         });
     }
 

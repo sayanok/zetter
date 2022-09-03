@@ -34,21 +34,21 @@ const TweetDetail: React.FC = () => {
     }
 
     function updateFavoriteState(tweet: TweetType): void {
-        callUpdateFavoriteApi(tweet)?.then((data) => {
-            setTweet(data);
+        callUpdateFavoriteApi(tweet)?.then((newTweet) => {
+            setTweet(newTweet);
         });
     }
 
     function updateReplyFavoriteState(reply: TweetType): void {
-        callUpdateFavoriteApi(reply)?.then((data) => {
-            let result = replyTweetsList.map(function (value: TweetType): TweetType {
-                if (reply.id === value.id) {
-                    return data;
+        callUpdateFavoriteApi(reply)?.then((newReply) => {
+            let newReplys = replyTweetsList.map((reply) => {
+                if (newReply.id === reply.id) {
+                    return newReply;
                 } else {
-                    return value;
+                    return reply;
                 }
             });
-            setReplyTweetsList(result);
+            setReplyTweetsList(newReplys);
         });
     }
 

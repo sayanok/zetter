@@ -31,15 +31,15 @@ const TweetTree: React.FC<TweetTreeProps> = (props) => {
     }
 
     function updateReplyFavoriteState(reply: TweetType): void {
-        callUpdateFavoriteApi(reply)?.then((data) => {
-            let result = replyTweetsList.map(function (value: TweetType): TweetType {
-                if (reply.id === value.id) {
-                    return data;
+        callUpdateFavoriteApi(reply)?.then((newReply) => {
+            let newReplys = replyTweetsList.map((reply) => {
+                if (newReply.id === reply.id) {
+                    return newReply;
                 } else {
-                    return value;
+                    return reply;
                 }
             });
-            setReplyTweetsList(result);
+            setReplyTweetsList(newReplys);
         });
     }
 
