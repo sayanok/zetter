@@ -38,13 +38,9 @@ const SingleTweet: React.FC<SingleTweetProps> = (props) => {
                     <Avatar alt={props.tweet.user.username} src={props.tweet.user.icon} />
                 </ListItemAvatar>
                 <ListItemText
-                    primary={
-                        <React.Fragment>
-                            {props.tweet.user.username + '・' + formatDate(props.tweet.createdAt)}
-                        </React.Fragment>
-                    }
+                    primary={<>{props.tweet.user.username + '・' + formatDate(props.tweet.createdAt)}</>}
                     secondary={
-                        <React.Fragment>
+                        <>
                             {props.tweet.content}
                             <br />
                             <ListItemIcon>
@@ -62,7 +58,7 @@ const SingleTweet: React.FC<SingleTweetProps> = (props) => {
                                 </Button>
                             </ListItemIcon>
                             <Divider />
-                        </React.Fragment>
+                        </>
                     }
                 />
             </Link>
