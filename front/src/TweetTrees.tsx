@@ -1,5 +1,5 @@
 import React, { useEffect, Dispatch, SetStateAction } from 'react';
-import { useCallApi } from './utils/api';
+import { useCallUpdateFavoriteApi } from './utils/api';
 import { TweetType } from './utils/types';
 import TweetTree from './TweetTree';
 
@@ -13,15 +13,12 @@ type TweetTreeProps = {
 };
 
 const TweetTrees: React.FC<TweetTreeProps> = (props) => {
-    const callApi = useCallApi();
+    const callUpdateFavoriteApi = useCallUpdateFavoriteApi();
 
     useEffect(() => {}, [props.tweetsList]);
 
     function updateFavoriteState(tweet: TweetType): void {
-        callApi('http://localhost:5000/api/zetter', {
-            method: 'PATCH',
-            body: JSON.stringify({ tweet: tweet, order: tweet.isFavorite ? 'delete' : 'add' }),
-        })?.then((data) => {
+        callUpdateFavoriteApi(tweet)?.then((data) => {
             let result = props.tweetsList.map(function (value: TweetType): TweetType {
                 if (tweet.id === value.id) {
                     return data;

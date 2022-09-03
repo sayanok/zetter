@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { TweetType } from './utils/types';
-import { useCallApi } from './utils/api';
+import { useCallApi, useCallUpdateFavoriteApi } from './utils/api';
 import TweetTree from './TweetTree';
 import SingleTweet from './SingleTweet';
 
@@ -10,6 +10,7 @@ import ListItem from '@mui/material/ListItem';
 
 const TweetDetail: React.FC = () => {
     const callApi = useCallApi();
+    const callUpdateFavoriteApi = useCallUpdateFavoriteApi();
     const params = useParams();
     const [tweet, setTweet] = useState<TweetType>();
     const [replyTweetsList, setReplyTweetsList] = useState<Array<TweetType>>([]);
@@ -33,19 +34,13 @@ const TweetDetail: React.FC = () => {
     }
 
     function updateFavoriteState(tweet: TweetType): void {
-        callApi('http://localhost:5000/api/zetter', {
-            method: 'PATCH',
-            body: JSON.stringify({ tweet: tweet, order: tweet.isFavorite ? 'delete' : 'add' }),
-        })?.then((data) => {
+        callUpdateFavoriteApi(tweet)?.then((data) => {
             setTweet(data);
         });
     }
 
     function updateReplyFavoriteState(reply: TweetType): void {
-        callApi('http://localhost:5000/api/zetter', {
-            method: 'PATCH',
-            body: JSON.stringify({ tweet: reply, order: reply.isFavorite ? 'delete' : 'add' }),
-        })?.then((data) => {
+        callUpdateFavoriteApi(reply)?.then((data) => {
             let result = replyTweetsList.map(function (value: TweetType): TweetType {
                 if (reply.id === value.id) {
                     return data;

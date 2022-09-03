@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useCallApi } from './utils/api';
+import { useCallApi, useCallUpdateFavoriteApi } from './utils/api';
 import { TweetType } from './utils/types';
 import SingleTweet from './SingleTweet';
 
@@ -19,6 +19,7 @@ type TweetTreeProps = {
 const TweetTree: React.FC<TweetTreeProps> = (props) => {
     const location = useLocation();
     const callApi = useCallApi();
+    const callUpdateFavoriteApi = useCallUpdateFavoriteApi();
     const [replyTweetsList, setReplyTweetsList] = useState<Array<TweetType>>([]);
 
     function getReplys(): Promise<Array<TweetType>> | undefined {
@@ -30,10 +31,7 @@ const TweetTree: React.FC<TweetTreeProps> = (props) => {
     }
 
     function updateReplyFavoriteState(reply: TweetType): void {
-        callApi('http://localhost:5000/api/zetter', {
-            method: 'PATCH',
-            body: JSON.stringify({ tweet: reply, order: reply.isFavorite ? 'delete' : 'add' }),
-        })?.then((data) => {
+        callUpdateFavoriteApi(reply)?.then((data) => {
             let result = replyTweetsList.map(function (value: TweetType): TweetType {
                 if (reply.id === value.id) {
                     return data;
