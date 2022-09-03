@@ -12,16 +12,12 @@ const TweetForm: React.FC<TweetFormProps> = (props) => {
         props.replySourceTweet ? '@' + props.replySourceTweet?.user.username : ''
     );
     const [replyTo, setReplyTo] = useState<null | number>();
-    const [placeholder, setPlaceholder] = useState<string>('今然ぴどうしてる？');
+    const placeholder = props.replySourceTweet ? '返信をツイートする' : '今然ぴどうしてる？';
     const callApi = useCallApi();
 
     useEffect(() => {
-        if (props.replySourceTweet === null) {
-            setPlaceholder('今然ぴどうしてる？');
-        } else {
-            setPlaceholder('返信をツイートする');
+        if (props.replySourceTweet !== null) {
             props.replySourceTweet ? setReplyTo(props.replySourceTweet.id) : setReplyTo(null);
-            // replySourceTweetがnullならエラー返したほうがよいかも
         }
     }, []);
 
