@@ -15,6 +15,49 @@ const getTweets = (req, res) => {
     res.json(result.slice(0, limit));
 };
 
+const getSpecificUsersTweets = (req, res) => {
+    const limit = 10;
+
+    const user = users.find(({ username }) => username === req.params.username);
+    const sortedTweets = tweets.sort(function (a, b) {
+        if (a.createdAt > b.createdAt) {
+            return -1;
+        } else {
+            return 1;
+        }
+    });
+    const specificUsersTweets = sortedTweets.filter((tweet) => tweet.createdBy === user.id);
+
+    const result = addInformationToTweet(specificUsersTweets, req);
+    res.json(result.slice(0, limit));
+};
+
+const getSpecificUsersFavoriteTweets = (req, res) => {
+    const limit = 10;
+    const user = users.find(({ username }) => username === req.params.username);
+    const favoriteTweets = favorities.filter((favorite) => favorite.userId === user.id);
+    const favoriteTweetIds = favoriteTweets.map((obj) => obj.tweetId);
+
+    let favoriteTweetList = [];
+
+    tweets.forEach((tweet) => {
+        if (favoriteTweetIds.includes(tweet.id)) {
+            favoriteTweetList.push(tweet);
+        }
+    });
+
+    const sortedFavoriteTweetList = favoriteTweetList.sort(function (a, b) {
+        if (a.createdAt > b.createdAt) {
+            return -1;
+        } else {
+            return 1;
+        }
+    });
+
+    const result = addInformationToTweet(sortedFavoriteTweetList, req);
+    res.json(result.slice(0, limit));
+};
+
 const getTweet = (req, res) => {
     const tweet = tweets.find((tweet) => tweet.id === parseInt(req.params.tweetId));
 
@@ -78,8 +121,16 @@ const updateTweet = (req, res) => {
     res.status(200).json(tweet);
 };
 
+const getMyProfile = (req, res) => {
+    const username = req.user.username;
+    const user = users.find((user) => user.username === username);
+    res.json(user);
+};
+
 const getProfile = (req, res) => {
-    res.json(req.user);
+    const username = req.params.username;
+    const user = users.find((user) => user.username === username);
+    res.json(user);
 };
 
 const updateProfile = (req, res) => {
@@ -137,10 +188,13 @@ function addInformationToTweet(tweetList, req) {
 
 module.exports = {
     getTweets,
+    getSpecificUsersTweets,
+    getSpecificUsersFavoriteTweets,
     getTweet,
     getReplys,
     createTweet,
     updateTweet,
+    getMyProfile,
     getProfile,
     updateProfile,
     login,
