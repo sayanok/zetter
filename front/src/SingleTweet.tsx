@@ -50,7 +50,7 @@ const SingleTweet: React.FC<SingleTweetProps> = (props) => {
                         </React.Fragment>
                     }
                     secondary={
-                        <React.Fragment>
+                        <>
                             {props.tweet.content}
                             <br />
                             <ListItemIcon>
@@ -68,7 +68,7 @@ const SingleTweet: React.FC<SingleTweetProps> = (props) => {
                                 </Button>
                             </ListItemIcon>
                             <Divider />
-                        </React.Fragment>
+                        </>
                     }
                 />
             </Link>

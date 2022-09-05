@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
-import useCallApi from './utils/api';
+import { useCallApi } from './utils/api';
 import { ProfileType } from './utils/types';
 
 import Card from '@mui/material/Card';

@@ -1,7 +1,6 @@
 import React from 'react';
 import { TweetType } from './utils/types';
 import TweetForm from './TweetForm';
-import './ReplyButton.css';
 
 import Button from '@mui/material/Button';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
@@ -42,6 +41,7 @@ const ReplyButton: React.FC<ReplyButtonProps> = (props) => {
             >
                 <ChatBubbleOutlineIcon />
             </Button>
+            {props.tweet.numberOfReply}
             <Modal
                 open={open}
                 onClose={(e: Event) => {
@@ -50,7 +50,7 @@ const ReplyButton: React.FC<ReplyButtonProps> = (props) => {
                 }}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
-                className="Modal"
+                sx={{ backgroundColor: '#ffffff00' }}
             >
                 <Box sx={style}>
                     {props.tweet ? (
@@ -68,7 +68,6 @@ const ReplyButton: React.FC<ReplyButtonProps> = (props) => {
                     )}
                 </Box>
             </Modal>
-            {props.tweet.numberOfReply}
         </>
     );
 };

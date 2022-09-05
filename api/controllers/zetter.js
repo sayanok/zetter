@@ -7,15 +7,11 @@ const users = require('../data/users.js');
 const getTweets = (req, res) => {
     const limit = 10;
 
-    const sortedTweets = tweets.sort(function (a, b) {
-        if (a.createdAt > b.createdAt) {
-            return -1;
-        } else {
-            return 1;
-        }
+    tweets.sort(function (a, b) {
+        return b.createdAt - a.createdAt;
     });
 
-    const result = addInformationToTweet(sortedTweets, req);
+    const result = addInformationToTweet(tweets, req);
     res.json(result.slice(0, limit));
 };
 
@@ -46,14 +42,8 @@ const getTweet = (req, res) => {
     tweet['numberOfReply'] = numberOfReply.length;
 
     // ツイートに自分がfavしているかの情報を付加するための準備
-    const usersFavoriteTweets = favorities.filter((favorite) => favorite.userId === req.user.id);
-    const favoriteTweetIds = usersFavoriteTweets.map((obj) => obj.tweetId);
-
-    if (favoriteTweetIds.includes(tweet.id)) {
-        tweet.isFavorite = true;
-    } else {
-        tweet.isFavorite = false;
-    }
+    const favoriteTweetIds = favorities.filter((favorite) => favorite.userId === req.user.id).map((obj) => obj.tweetId);
+    tweet.isFavorite = favoriteTweetIds.includes(tweet.id);
 
     res.json(tweet);
 };
@@ -164,11 +154,7 @@ function addInformationToTweet(tweetList, req) {
         const numberOfReply = tweets.filter((replyTweet) => replyTweet.replyTo === tweet.id);
         tweet['numberOfReply'] = numberOfReply.length;
 
-        if (favoriteTweetIds.includes(tweet.id)) {
-            tweet.isFavorite = true;
-        } else {
-            tweet.isFavorite = false;
-        }
+        tweet.isFavorite = favoriteTweetIds.includes(tweet.id);
     });
 
     return tweetList;
