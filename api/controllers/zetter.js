@@ -95,14 +95,14 @@ const updateTweet = (req, res) => {
     res.status(200).json(tweet);
 };
 
-const getProfile = (req, res) => {
-    let username;
-    if (req.params.username === 'login') {
-        username = req.user.username;
-    } else {
-        username = req.params.username;
-    }
+const getMyProfile = (req, res) => {
+    const username = req.user.username;
+    const user = users.find((user) => user.username === username);
+    res.json(user);
+};
 
+const getProfile = (req, res) => {
+    const username = req.params.username;
     const user = users.find((user) => user.username === username);
     res.json(user);
 };
@@ -167,6 +167,7 @@ module.exports = {
     getReplys,
     createTweet,
     updateTweet,
+    getMyProfile,
     getProfile,
     updateProfile,
     login,

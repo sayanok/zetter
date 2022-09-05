@@ -17,11 +17,11 @@ const Main: React.FC = () => {
     const [myProfile, setMyProfile] = useState<ProfileType>();
 
     function getAndSetProfile() {
-        getProfile()?.then(setMyProfile);
+        getMyProfile()?.then(setMyProfile);
     }
 
-    function getProfile(): Promise<ProfileType> | undefined {
-        return callApi('http://localhost:5000/api/zetter/profile/login');
+    function getMyProfile(): Promise<ProfileType> | undefined {
+        return callApi('http://localhost:5000/api/zetter/profile');
     }
 
     return (

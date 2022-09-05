@@ -10,6 +10,7 @@ const {
     getReplys,
     createTweet,
     updateTweet,
+    getMyProfile,
     getProfile,
     updateProfile,
     login,
@@ -22,6 +23,7 @@ router.get('/replys/:tweetId', auth, getReplys);
 router.post('/', auth, createTweet);
 router.patch('/', auth, updateTweet);
 
+router.get('/profile', auth, getMyProfile);
 router.get('/profile/:username', auth, getProfile);
 router.patch('/profile', auth, updateProfile);
 
