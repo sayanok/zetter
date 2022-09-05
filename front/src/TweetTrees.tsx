@@ -1,5 +1,5 @@
 import React, { useEffect, Dispatch, SetStateAction } from 'react';
-import useCallApi from './utils/api';
+import { useCallUpdateFavoriteApi } from './utils/api';
 import { TweetType } from './utils/types';
 import TweetTree from './TweetTree';
 
@@ -13,42 +13,21 @@ type TweetTreeProps = {
 };
 
 const TweetTrees: React.FC<TweetTreeProps> = (props) => {
-    const callApi = useCallApi();
+    const callUpdateFavoriteApi = useCallUpdateFavoriteApi();
 
     useEffect(() => {}, [props.tweetsList]);
 
     function updateFavoriteState(tweet: TweetType): void {
-        if (tweet.isFavorite) {
-            // favから削除する
-            callApi('http://localhost:5000/api/zetter', {
-                method: 'PATCH',
-                body: JSON.stringify({ tweet: tweet, order: 'delete' }),
-            })?.then((data) => {
-                let result = props.tweetsList.map(function (value: TweetType): TweetType {
-                    if (tweet.id === value.id) {
-                        return data;
-                    } else {
-                        return value;
-                    }
-                });
-                props.setTweets(result);
+        callUpdateFavoriteApi(tweet)?.then((newTweet) => {
+            let newTweets = props.tweetsList.map((tweet) => {
+                if (newTweet.id === tweet.id) {
+                    return newTweet;
+                } else {
+                    return tweet;
+                }
             });
-        } else {
-            // favに追加する
-            callApi('http://localhost:5000/api/zetter', {
-                method: 'PATCH',
-                body: JSON.stringify({ tweet: tweet, order: 'add' }),
-            })?.then((data) => {
-                let result = props.tweetsList.map(function (value: TweetType): TweetType {
-                    if (tweet.id === value.id) {
-                        return data;
-                    } else {
-                        return value;
-                    }
-                });
-                props.setTweets(result);
-            });
-        }
+            props.setTweets(newTweets);
+        });
     }
 
     return (

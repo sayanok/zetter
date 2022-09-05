@@ -1,12 +1,13 @@
 import { token } from '../api';
 import { useNavigate } from 'react-router-dom';
+import { TweetType } from './types';
 
 type CallApiType = (
     url: string,
     config?: { method?: string; headers?: Record<string, string>; body?: string }
 ) => Promise<any> | undefined;
 
-function useCallApi(): CallApiType {
+export function useCallApi(): CallApiType {
     const navigate = useNavigate();
 
     const callApi: CallApiType = (url, config = {}) => {
@@ -26,4 +27,15 @@ function useCallApi(): CallApiType {
     return callApi;
 }
 
-export default useCallApi;
+export function useCallUpdateFavoriteApi(): (tweet: TweetType) => Promise<TweetType> | undefined {
+    const callApi = useCallApi();
+
+    function callUpdateFavoriteApi(tweet: TweetType) {
+        return callApi('http://localhost:5000/api/zetter', {
+            method: 'PATCH',
+            body: JSON.stringify({ tweet: tweet, order: tweet.isFavorite ? 'delete' : 'add' }),
+        });
+    }
+
+    return callUpdateFavoriteApi;
+}

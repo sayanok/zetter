@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import useCallApi from './utils/api';
+import { useCallApi, useCallUpdateFavoriteApi } from './utils/api';
 import { TweetType } from './utils/types';
 import SingleTweet from './SingleTweet';
 
@@ -19,6 +19,7 @@ type TweetTreeProps = {
 const TweetTree: React.FC<TweetTreeProps> = (props) => {
     const location = useLocation();
     const callApi = useCallApi();
+    const callUpdateFavoriteApi = useCallUpdateFavoriteApi();
     const [replyTweetsList, setReplyTweetsList] = useState<Array<TweetType>>([]);
 
     function getReplys(): Promise<Array<TweetType>> | undefined {
@@ -30,36 +31,16 @@ const TweetTree: React.FC<TweetTreeProps> = (props) => {
     }
 
     function updateReplyFavoriteState(reply: TweetType): void {
-        if (reply.isFavorite) {
-            callApi('http://localhost:5000/api/zetter', {
-                method: 'PATCH',
-                body: JSON.stringify({ tweet: reply, order: 'delete' }),
-            })?.then((data) => {
-                let result = replyTweetsList.map(function (value: TweetType): TweetType {
-                    if (reply.id === value.id) {
-                        return data;
-                    } else {
-                        return value;
-                    }
-                });
-                setReplyTweetsList(result);
+        callUpdateFavoriteApi(reply)?.then((newReply) => {
+            let newReplys = replyTweetsList.map((reply) => {
+                if (newReply.id === reply.id) {
+                    return newReply;
+                } else {
+                    return reply;
+                }
             });
-        } else {
-            // favに追加する
-            callApi('http://localhost:5000/api/zetter', {
-                method: 'PATCH',
-                body: JSON.stringify({ tweet: reply, order: 'add' }),
-            })?.then((data) => {
-                let result = replyTweetsList.map(function (value: TweetType): TweetType {
-                    if (reply.id === value.id) {
-                        return data;
-                    } else {
-                        return value;
-                    }
-                });
-                setReplyTweetsList(result);
-            });
-        }
+            setReplyTweetsList(newReplys);
+        });
     }
 
     return (

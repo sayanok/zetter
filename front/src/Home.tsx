@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import TweetForm from './TweetForm';
-import useCallApi from './utils/api';
+import { useCallApi } from './utils/api';
 import { TweetType } from './utils/types';
 import TweetTrees from './TweetTrees';
 
@@ -9,7 +9,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 
 const Home: React.FC = () => {
-    const [tweetsList, setTweets] = useState<Array<TweetType>>([]);
+    const [tweets, setTweets] = useState<TweetType[]>([]);
     const callApi = useCallApi();
 
     useEffect(() => {
@@ -35,7 +35,7 @@ const Home: React.FC = () => {
             {/* 今の実装だと、最新の10件しか表示されてない
             今まで表示してる10件＋最新のn件のツイートを取得する方法を検討する必要がある */}
             {/* 表示していない最新のツイートがあるときのみ表示する */}
-            <TweetTrees tweetsList={tweetsList} setTweets={setTweets} afterPostTweet={() => getAndSetTweets()} />
+            <TweetTrees tweetsList={tweets} setTweets={setTweets} afterPostTweet={() => getAndSetTweets()} />
         </>
     );
 };
