@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { BrowserRouter, Route, Routes, useParams } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ProfileType } from './utils/types';
-import useCallApi from './utils/api';
+import { useCallApi } from './utils/api';
 
 import Sidebar from './Sidebar';
 import Login from './Login';

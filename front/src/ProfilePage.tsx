@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import useCallApi from './utils/api';
+import { useCallApi } from './utils/api';
 import { TweetType, ProfileType } from './utils/types';
 import Profile from './Profile';
 import TweetTrees from './TweetTrees';
