@@ -5,22 +5,28 @@ const users = require('../data/users.js');
 
 const {
     getTweets,
+    getSpecificUsersTweets,
+    getSpecificUsersFavoriteTweets,
     getTweet,
     getReplys,
     createTweet,
     updateTweet,
+    getMyProfile,
     getProfile,
     updateProfile,
     login,
 } = require('../controllers/zetter.js');
 
 router.get('/', auth, getTweets);
+router.get('/specificUsersTweets/:username', auth, getSpecificUsersTweets);
+router.get('/specificUsersFavoriteTweets/:username', auth, getSpecificUsersFavoriteTweets);
 router.get('/tweet/:tweetId', auth, getTweet);
 router.get('/replys/:tweetId', auth, getReplys);
 router.post('/', auth, createTweet);
 router.patch('/', auth, updateTweet);
 
-router.get('/profile', auth, getProfile);
+router.get('/profile', auth, getMyProfile);
+router.get('/profile/:username', auth, getProfile);
 router.patch('/profile', auth, updateProfile);
 
 router.post('/login', login);

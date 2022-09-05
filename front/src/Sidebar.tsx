@@ -1,10 +1,11 @@
+import React from 'react';
 import { Link } from 'react-router-dom';
+import { ProfileType } from './utils/types';
 
 import Drawer from '@mui/material/Drawer';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
 import Button from '@mui/material/Button';
-
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
@@ -15,36 +16,38 @@ import PetsIcon from '@mui/icons-material/Pets';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SettingsIcon from '@mui/icons-material/Settings';
 
-const drawerWidth: number = 240;
-const listContents: Array<{ href: string; iconComponent: JSX.Element; text: string }> = [
-    {
-        href: '/',
-        iconComponent: <HomeIcon />,
-        text: 'home',
-    },
-    {
-        href: 'search',
-        iconComponent: <TagIcon />,
-        text: 'search',
-    },
-    {
-        href: 'notifications',
-        iconComponent: <NotificationsIcon />,
-        text: 'notifications',
-    },
-    {
-        href: 'profile',
-        iconComponent: <AccountCircleIcon />,
-        text: 'profile',
-    },
-    {
-        href: 'settings',
-        iconComponent: <SettingsIcon />,
-        text: 'settings',
-    },
-];
+type SidebarProps = { myProfile: ProfileType };
 
-const Sidebar: React.FC = () => {
+const Sidebar: React.FC<SidebarProps> = (props) => {
+    const drawerWidth: number = 240;
+    const listContents: Array<{ href: string; iconComponent: JSX.Element; text: string }> = [
+        {
+            href: '/',
+            iconComponent: <HomeIcon />,
+            text: 'home',
+        },
+        {
+            href: 'search',
+            iconComponent: <TagIcon />,
+            text: 'search',
+        },
+        {
+            href: 'notifications',
+            iconComponent: <NotificationsIcon />,
+            text: 'notifications',
+        },
+        {
+            href: props.myProfile.username,
+            iconComponent: <AccountCircleIcon />,
+            text: 'profile',
+        },
+        {
+            href: 'settings/' + props.myProfile.username,
+            iconComponent: <SettingsIcon />,
+            text: 'settings',
+        },
+    ];
+
     return (
         <Drawer
             sx={{
