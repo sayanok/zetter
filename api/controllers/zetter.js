@@ -8,36 +8,46 @@ const getTweets = (req, res) => {
     const limit = 10;
 
     tweets.sort(function (a, b) {
-        if (a.createdAt > b.createdAt) {
-            return -1;
-        } else {
-            return 1;
-        }
+        return b.createdAt - a.createdAt;
     });
+
+    const result = addInformationToTweet(tweets, req);
+    res.json(result.slice(0, limit));
+};
+
+const getTweet = (req, res) => {
+    const tweet = tweets.find((tweet) => tweet.id === parseInt(req.params.tweetId));
+
+    const numberOfFavorite = favorities.filter((favorite) => favorite.tweetId === tweet.id);
+    tweet['numberOfFavorite'] = numberOfFavorite.length;
+
+    const numberOfReply = tweets.filter((replyTweet) => replyTweet.replyTo === tweet.id);
+    tweet['numberOfReply'] = numberOfReply.length;
 
     // ツイートに自分がfavしているかの情報を付加するための準備
     const favoriteTweetIds = favorities.filter((favorite) => favorite.userId === req.user.id).map((obj) => obj.tweetId);
+    tweet.isFavorite = favoriteTweetIds.includes(tweet.id);
 
+    res.json(tweet);
+};
+
+const getReplys = (req, res) => {
+    let replys = [];
     tweets.forEach((tweet) => {
-        const user = users.find(({ id }) => id === tweet.ownerId);
-        tweet['user'] = user;
-
-        const favoritiesOfTweet = favorities.filter((favorite) => favorite.tweetId === tweet.id);
-        tweet['numberOfFavorite'] = favoritiesOfTweet.length;
-
-        if (favoriteTweetIds.includes(tweet.id)) {
-            tweet.isFavorite = true;
-        } else {
-            tweet.isFavorite = false;
+        if (tweet.replyTo === parseInt(req.params.tweetId)) {
+            replys.push(tweet);
         }
     });
-    res.json(tweets.slice(0, limit));
+
+    const result = addInformationToTweet(replys, req);
+    res.json(result);
 };
 
 const createTweet = (req, res) => {
     const newTweet = {
         id: tweets.length + 1,
-        ownerId: req.user.id,
+        createdBy: req.user.id,
+        replyTo: req.body.replyTo,
         content: req.body.content,
         createdAt: new Date(),
     };
@@ -104,8 +114,31 @@ const login = (req, res) => {
     return res.status(400).json({ code: 400 });
 };
 
+function addInformationToTweet(tweetList, req) {
+    // ツイートに自分がfavしているかの情報を付加するための準備
+    const usersFavoriteTweets = favorities.filter((favorite) => favorite.userId === req.user.id);
+    const favoriteTweetIds = usersFavoriteTweets.map((obj) => obj.tweetId);
+
+    tweetList.forEach((tweet) => {
+        const user = users.find(({ id }) => id === tweet.createdBy);
+        tweet['user'] = user;
+
+        const numberOfFavorite = favorities.filter((favorite) => favorite.tweetId === tweet.id);
+        tweet['numberOfFavorite'] = numberOfFavorite.length;
+
+        const numberOfReply = tweets.filter((replyTweet) => replyTweet.replyTo === tweet.id);
+        tweet['numberOfReply'] = numberOfReply.length;
+
+        tweet.isFavorite = favoriteTweetIds.includes(tweet.id);
+    });
+
+    return tweetList;
+}
+
 module.exports = {
     getTweets,
+    getTweet,
+    getReplys,
     createTweet,
     updateTweet,
     getProfile,
