@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { BrowserRouter, Route, Routes, useParams } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ProfileType } from './utils/types';
-import useCallApi from './utils/api';
+import { useCallApi } from './utils/api';
 
 import Sidebar from './Sidebar';
 import Login from './Login';
@@ -17,11 +17,11 @@ const Main: React.FC = () => {
     const [myProfile, setMyProfile] = useState<ProfileType>();
 
     function getAndSetProfile() {
-        getProfile()?.then(setMyProfile);
+        getMyProfile()?.then(setMyProfile);
     }
 
-    function getProfile(): Promise<ProfileType> | undefined {
-        return callApi('http://localhost:5000/api/zetter/profile/login');
+    function getMyProfile(): Promise<ProfileType> | undefined {
+        return callApi('http://localhost:5000/api/zetter/profile');
     }
 
     return (
