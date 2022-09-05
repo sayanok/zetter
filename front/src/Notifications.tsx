@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import useCallApi from './utils/api';
+import { useCallApi } from './utils/api';
 import { TweetType } from './utils/types';
 import TweetTree from './TweetTree';
 import FavoriteNotification from './FavoriteNotification';
