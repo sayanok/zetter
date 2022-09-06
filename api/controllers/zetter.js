@@ -124,31 +124,24 @@ const updateTweet = (req, res) => {
 const getNotifications = (req, res) => {
     const limit = 10;
     let notifications = [];
-    let replyNotifications = [];
     let favoriteNotifications = [];
 
     const specificUsersTweets = tweets.filter((tweet) => tweet.createdBy === req.user.id);
 
     // リプライを取得
-    tweets.forEach((tweet) => {
-        specificUsersTweets.forEach((specificUsersTweet) => {
-            if (tweet.replyTo === specificUsersTweet.id) {
-                replyNotifications.push(tweet);
-            }
-        });
-    });
+    const replyNotifications = tweets.filter((tweet) =>
+        specificUsersTweets.some((specificUsersTweet) => specificUsersTweet.id === tweet.replyTo)
+    );
 
     // favを取得
     favorities.forEach((favorite) => {
-        let valueOfInsert = [];
         specificUsersTweets.forEach((specificUsersTweet) => {
             if (favorite.tweetId === specificUsersTweet.id) {
                 const user = users.find((user) => user.id === favorite.userId);
                 specificUsersTweet['favoriteNotification'] = favorite;
                 specificUsersTweet['favoriteNotification']['user'] = user;
 
-                valueOfInsert = JSON.parse(JSON.stringify(specificUsersTweet));
-                favoriteNotifications.push(valueOfInsert);
+                favoriteNotifications.push(specificUsersTweet);
             }
         });
     });
