@@ -25,7 +25,7 @@ const FavoriteNotification: React.FC<FavoriteNotificationProps> = (props) => {
             <Link to={'/tweet/' + props.tweet.id}>
                 <ListItemText
                     primary={
-                        <React.Fragment>
+                        <>
                             <Link to={'/' + props.tweet.favoriteNotification.user.username}>
                                 <ListItemIcon>
                                     <StarIcon color="primary" fontSize="large" />
@@ -39,10 +39,10 @@ const FavoriteNotification: React.FC<FavoriteNotificationProps> = (props) => {
                                     さんがあなたのツイートをいいねしました
                                 </p>
                             </Link>
-                        </React.Fragment>
+                        </>
                     }
                     secondary={
-                        <React.Fragment>
+                        <>
                             {props.tweet.content}
                             <br />
                             <ListItemIcon>
@@ -60,7 +60,7 @@ const FavoriteNotification: React.FC<FavoriteNotificationProps> = (props) => {
                                 </Button>
                             </ListItemIcon>
                             <Divider />
-                        </React.Fragment>
+                        </>
                     }
                 />
             </Link>

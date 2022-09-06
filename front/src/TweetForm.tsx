@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import useCallApi from './utils/api';
+import { useCallApi } from './utils/api';
 import { TweetType } from './utils/types';
 
 type TweetFormProps = { afterPostTweet: () => void; replySourceTweet: null | TweetType };
@@ -12,16 +12,12 @@ const TweetForm: React.FC<TweetFormProps> = (props) => {
         props.replySourceTweet ? '@' + props.replySourceTweet?.user.username : ''
     );
     const [replyTo, setReplyTo] = useState<null | number>();
-    const [placeholder, setPlaceholder] = useState<string>('今然ぴどうしてる？');
+    const placeholder = props.replySourceTweet ? '返信をツイートする' : '今然ぴどうしてる？';
     const callApi = useCallApi();
 
     useEffect(() => {
-        if (props.replySourceTweet === null) {
-            setPlaceholder('今然ぴどうしてる？');
-        } else {
-            setPlaceholder('返信をツイートする');
+        if (props.replySourceTweet !== null) {
             props.replySourceTweet ? setReplyTo(props.replySourceTweet.id) : setReplyTo(null);
-            // replySourceTweetがnullならエラー返したほうがよいかも
         }
     }, []);
 

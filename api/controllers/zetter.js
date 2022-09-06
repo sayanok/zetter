@@ -17,15 +17,11 @@ const getTweets = (req, res) => {
         }
     });
 
-    const sortedTweets = followingUsersTweetsList.sort(function (a, b) {
-        if (a.createdAt > b.createdAt) {
-            return -1;
-        } else {
-            return 1;
-        }
+    tweets.sort(function (a, b) {
+        return b.createdAt - a.createdAt;
     });
 
-    const result = addInformationToTweet(sortedTweets, req);
+    const result = addInformationToTweet(tweets, req);
     res.json(result.slice(0, limit));
 };
 
@@ -82,14 +78,8 @@ const getTweet = (req, res) => {
     tweet['numberOfReply'] = numberOfReply.length;
 
     // ツイートに自分がfavしているかの情報を付加するための準備
-    const usersFavoriteTweets = favorities.filter((favorite) => favorite.userId === req.user.id);
-    const favoriteTweetIds = usersFavoriteTweets.map((obj) => obj.tweetId);
-
-    if (favoriteTweetIds.includes(tweet.id)) {
-        tweet.isFavorite = true;
-    } else {
-        tweet.isFavorite = false;
-    }
+    const favoriteTweetIds = favorities.filter((favorite) => favorite.userId === req.user.id).map((obj) => obj.tweetId);
+    tweet.isFavorite = favoriteTweetIds.includes(tweet.id);
 
     res.json(tweet);
 };
@@ -144,31 +134,24 @@ const updateTweet = (req, res) => {
 const getNotifications = (req, res) => {
     const limit = 10;
     let notifications = [];
-    let replyNotifications = [];
     let favoriteNotifications = [];
 
     const specificUsersTweets = tweets.filter((tweet) => tweet.createdBy === req.user.id);
 
     // リプライを取得
-    tweets.forEach((tweet) => {
-        specificUsersTweets.forEach((specificUsersTweet) => {
-            if (tweet.replyTo === specificUsersTweet.id) {
-                replyNotifications.push(tweet);
-            }
-        });
-    });
+    const replyNotifications = tweets.filter((tweet) =>
+        specificUsersTweets.some((specificUsersTweet) => specificUsersTweet.id === tweet.replyTo)
+    );
 
     // favを取得
     favorities.forEach((favorite) => {
-        let valueOfInsert = [];
         specificUsersTweets.forEach((specificUsersTweet) => {
             if (favorite.tweetId === specificUsersTweet.id) {
                 const user = users.find((user) => user.id === favorite.userId);
                 specificUsersTweet['favoriteNotification'] = favorite;
                 specificUsersTweet['favoriteNotification']['user'] = user;
 
-                valueOfInsert = JSON.parse(JSON.stringify(specificUsersTweet));
-                favoriteNotifications.push(valueOfInsert);
+                favoriteNotifications.push(specificUsersTweet);
             }
         });
     });
@@ -186,14 +169,14 @@ const getNotifications = (req, res) => {
     res.json(result.slice(0, limit));
 };
 
-const getProfile = (req, res) => {
-    let username;
-    if (req.params.username === 'login') {
-        username = req.user.username;
-    } else {
-        username = req.params.username;
-    }
+const getMyProfile = (req, res) => {
+    const username = req.user.username;
+    const user = users.find((user) => user.username === username);
+    res.json(user);
+};
 
+const getProfile = (req, res) => {
+    const username = req.params.username;
     const user = users.find((user) => user.username === username);
     res.json(user);
 };
@@ -316,11 +299,7 @@ function addInformationToTweet(tweetList, req) {
         const numberOfReply = tweets.filter((replyTweet) => replyTweet.replyTo === tweet.id);
         tweet['numberOfReply'] = numberOfReply.length;
 
-        if (favoriteTweetIds.includes(tweet.id)) {
-            tweet.isFavorite = true;
-        } else {
-            tweet.isFavorite = false;
-        }
+        tweet.isFavorite = favoriteTweetIds.includes(tweet.id);
     });
 
     return tweetList;
@@ -335,6 +314,7 @@ module.exports = {
     createTweet,
     updateTweet,
     getNotifications,
+    getMyProfile,
     getProfile,
     updateProfile,
     getFollowings,

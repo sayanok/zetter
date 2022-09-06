@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import useCallApi from './utils/api';
+import { useCallApi } from './utils/api';
 import { FollowerType, ProfileType, TweetType } from './utils/types';
 import TweetTrees from './TweetTrees';
 

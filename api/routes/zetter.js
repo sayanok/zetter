@@ -12,6 +12,7 @@ const {
     createTweet,
     updateTweet,
     getNotifications,
+    getMyProfile,
     getProfile,
     updateProfile,
     getFollowings,
@@ -30,6 +31,7 @@ router.patch('/', auth, updateTweet);
 
 router.get('/notifications', auth, getNotifications);
 
+router.get('/profile', auth, getMyProfile);
 router.get('/profile/:username', auth, getProfile);
 router.patch('/profile', auth, updateProfile);
 
