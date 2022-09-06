@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import useCallApi from './utils/api';
+import { useCallApi } from './utils/api';
 import { FollowerType, ProfileType } from './utils/types';
 
 import List from '@mui/material/List';
@@ -116,7 +116,7 @@ const Follow: React.FC<FollowProps> = (props) => {
                                 <ListItem key={index} alignItems="flex-start">
                                     <ListItemText
                                         primary={
-                                            <React.Fragment>
+                                            <>
                                                 <Link to={'/' + user.user.username}>
                                                     <Stack direction="row" spacing={2}>
                                                         <Avatar alt={user.user.username} src={user.user.icon} />
@@ -148,9 +148,9 @@ const Follow: React.FC<FollowProps> = (props) => {
                                                         )}
                                                     </Stack>
                                                 </Link>
-                                            </React.Fragment>
+                                            </>
                                         }
-                                        secondary={<React.Fragment>{user.user.introduction}</React.Fragment>}
+                                        secondary={<>{user.user.introduction}</>}
                                     />
                                 </ListItem>
                             ))}
@@ -166,7 +166,7 @@ const Follow: React.FC<FollowProps> = (props) => {
                                 <ListItem key={index} alignItems="flex-start">
                                     <ListItemText
                                         primary={
-                                            <React.Fragment>
+                                            <>
                                                 <Link to={'/' + user.user.username}>
                                                     <Stack direction="row" spacing={2}>
                                                         <Avatar alt={user.user.username} src={user.user.icon} />
@@ -199,9 +199,9 @@ const Follow: React.FC<FollowProps> = (props) => {
                                                         )}
                                                     </Stack>
                                                 </Link>
-                                            </React.Fragment>
+                                            </>
                                         }
-                                        secondary={<React.Fragment>{user.user.introduction}</React.Fragment>}
+                                        secondary={<>{user.user.introduction}</>}
                                     />
                                 </ListItem>
                             ))}
