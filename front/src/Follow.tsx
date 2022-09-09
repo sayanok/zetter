@@ -124,7 +124,7 @@ const Follow: React.FC<FollowProps> = (props) => {
                                                         {props.myProfile?.username ===
                                                         user.user.username ? null : followingsList.find(
                                                               (followingUser) =>
-                                                                  followingUser.followedUserId === props.myProfile?.id
+                                                                  followingUser.from === props.myProfile?.id
                                                           ) ? (
                                                             <Button
                                                                 size="small"
@@ -173,9 +173,7 @@ const Follow: React.FC<FollowProps> = (props) => {
                                                         <p>{user.user.username}</p>
                                                         {props.myProfile?.username ===
                                                         user.user.username ? null : myFollowingsList.find(
-                                                              (myFollowingUser) =>
-                                                                  myFollowingUser.userIdBeingFollowed ===
-                                                                  user.followedUserId
+                                                              (myFollowingUser) => myFollowingUser.to === user.from
                                                           ) ? (
                                                             <Button
                                                                 size="small"

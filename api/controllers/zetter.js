@@ -7,8 +7,8 @@ let followers = require('../data/followers.js');
 
 const getTweets = (req, res) => {
     const limit = 10;
-    const followingUsers = followers.filter((follower) => follower.followedUserId === req.user.id);
-    const followingUsersIds = followingUsers.map((obj) => obj.userIdBeingFollowed);
+    const followingUsers = followers.filter((follower) => follower.from === req.user.id);
+    const followingUsersIds = followingUsers.map((obj) => obj.to);
     let followingUsersTweetsList = [];
 
     tweets.forEach((tweet) => {
@@ -17,11 +17,11 @@ const getTweets = (req, res) => {
         }
     });
 
-    tweets.sort(function (a, b) {
+    followingUsersTweetsList.sort(function (a, b) {
         return b.createdAt - a.createdAt;
     });
 
-    const result = addInformationToTweet(tweets, req);
+    const result = addInformationToTweet(followingUsersTweetsList, req);
     res.json(result.slice(0, limit));
 };
 
@@ -196,7 +196,7 @@ const getFollowings = (req, res) => {
     let specificUserFollowingUsersList = [];
     let specificUserFollowingUsersListWithUserInformation = [];
     followers.forEach((follower) => {
-        if (follower.followedUserId === requestUser.id) {
+        if (follower.from === requestUser.id) {
             specificUserFollowingUsersList.push(follower);
         }
     });
@@ -204,7 +204,7 @@ const getFollowings = (req, res) => {
     specificUserFollowingUsersList.forEach((specificUserFollowingUser) => {
         let valueOfInsert = [];
         users.forEach((user) => {
-            if (specificUserFollowingUser.userIdBeingFollowed === user.id) {
+            if (specificUserFollowingUser.to === user.id) {
                 specificUserFollowingUser['user'] = user;
 
                 valueOfInsert = JSON.parse(JSON.stringify(specificUserFollowingUser));
@@ -221,7 +221,7 @@ const getFollowers = (req, res) => {
     let specificUserFollowersUsersList = [];
     let specificUserFollowersUsersListWithUserInformation = [];
     followers.forEach((follower) => {
-        if (follower.userIdBeingFollowed === requestUser.id) {
+        if (follower.to === requestUser.id) {
             specificUserFollowersUsersList.push(follower);
         }
     });
@@ -229,7 +229,7 @@ const getFollowers = (req, res) => {
     specificUserFollowersUsersList.forEach((specificUserFollowerdUser) => {
         let valueOfInsert = [];
         users.forEach((user) => {
-            if (specificUserFollowerdUser.followedUserId === user.id) {
+            if (specificUserFollowerdUser.from === user.id) {
                 specificUserFollowerdUser['user'] = user;
 
                 valueOfInsert = JSON.parse(JSON.stringify(specificUserFollowerdUser));
@@ -249,13 +249,13 @@ const updateFollowings = (req, res) => {
         followers.push({
             id: followers.length + 1,
             // TODO: DBとつなぐときなおしたい
-            userIdBeingFollowed: userToEdit.id,
-            followedUserId: user.id,
+            to: userToEdit.id,
+            from: user.id,
             createdAt: new Date(),
         });
     } else {
         followers = followers.filter(
-            (follower) => follower.userIdBeingFollowed !== userToEdit.id || follower.followedUserId !== user.id
+            (follower) => follower.to !== userToEdit.id || follower.from !== user.id
         );
     }
     res.status(200).json(followings);

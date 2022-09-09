@@ -31,8 +31,8 @@ export type FavoriteType = {
 
 export type FollowerType = {
     id: number;
-    userIdBeingFollowed: number;
-    followedUserId: number;
+    to: number;
+    from: number;
     createdAt: string;
     user: ProfileType;
 };

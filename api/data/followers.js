@@ -1,13 +1,12 @@
 let followers = [
-    { id: 1, userIdBeingFollowed: 3, followedUserId: 1, createdAt: new Date() },
-    { id: 2, userIdBeingFollowed: 3, followedUserId: 2, createdAt: new Date() },
-    { id: 3, userIdBeingFollowed: 3, followedUserId: 4, createdAt: new Date() },
-    { id: 4, userIdBeingFollowed: 1, followedUserId: 3, createdAt: new Date() },
-    { id: 5, userIdBeingFollowed: 2, followedUserId: 3, createdAt: new Date() },
-    { id: 6, userIdBeingFollowed: 3, followedUserId: 6, createdAt: new Date() },
-    { id: 7, userIdBeingFollowed: 3, followedUserId: 7, createdAt: new Date() },
+    { id: 1, to: 3, from: 1, createdAt: new Date() },
+    { id: 2, to: 3, from: 2, createdAt: new Date() },
+    { id: 3, to: 3, from: 4, createdAt: new Date() },
+    { id: 4, to: 1, from: 3, createdAt: new Date() },
+    { id: 5, to: 2, from: 3, createdAt: new Date() },
+    { id: 6, to: 3, from: 6, createdAt: new Date() },
+    { id: 7, to: 3, from: 7, createdAt: new Date() },
 ];
-// 日本語で書いてもややこしいけど
-// userIdBeingFollowed: フォローされている人
-// followedUserId: フォローしている人
+// to: フォローされている人
+// from: フォローしている人
 module.exports = followers;
