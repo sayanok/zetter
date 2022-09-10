@@ -121,6 +121,44 @@ const updateTweet = (req, res) => {
     res.status(200).json(tweet);
 };
 
+const getNotifications = (req, res) => {
+    const limit = 10;
+    let notifications = [];
+    let favoriteNotifications = [];
+
+    const specificUsersTweets = tweets.filter((tweet) => tweet.createdBy === req.user.id);
+
+    // リプライを取得
+    const replyNotifications = tweets.filter((tweet) =>
+        specificUsersTweets.some((specificUsersTweet) => specificUsersTweet.id === tweet.replyTo)
+    );
+
+    // favを取得
+    favorities.forEach((favorite) => {
+        specificUsersTweets.forEach((specificUsersTweet) => {
+            if (favorite.tweetId === specificUsersTweet.id) {
+                const user = users.find((user) => user.id === favorite.userId);
+                specificUsersTweet['favoriteNotification'] = favorite;
+                specificUsersTweet['favoriteNotification']['user'] = user;
+
+                favoriteNotifications.push(specificUsersTweet);
+            }
+        });
+    });
+
+    notifications = replyNotifications.concat(favoriteNotifications);
+
+    const sortedTweets = notifications.sort(function (a, b) {
+        if (a.createdAt > b.createdAt) {
+            return -1;
+        } else {
+            return 1;
+        }
+    });
+    const result = addInformationToTweet(sortedTweets, req);
+    res.json(result.slice(0, limit));
+};
+
 const getMyProfile = (req, res) => {
     const username = req.user.username;
     const user = users.find((user) => user.username === username);
@@ -194,6 +232,7 @@ module.exports = {
     getReplys,
     createTweet,
     updateTweet,
+    getNotifications,
     getMyProfile,
     getProfile,
     updateProfile,

@@ -21,8 +21,8 @@ const tweets = [
         content: 'あかん、寝返り返りできひん...ﾋｪｰﾝ...!!',
         createdAt: new Date('2022-06-21 12:40'),
     },
-    { id: 11, createdBy: 1, replyTo: 10, content: '煎餅屋開業', createdAt: new Date('2022-06-21 12:50') },
-    { id: 12, createdBy: 1, replyTo: 10, content: '煎餅屋閉業', createdAt: new Date('2022-07-12 12:50') },
+    { id: 11, createdBy: 1, replyTo: 10, content: '@zepi 煎餅屋開業', createdAt: new Date('2022-06-21 12:50') },
+    { id: 12, createdBy: 1, replyTo: 10, content: '@zepi 煎餅屋閉業', createdAt: new Date('2022-07-12 12:50') },
 ];
 
 module.exports = tweets;

@@ -11,6 +11,7 @@ const {
     getReplys,
     createTweet,
     updateTweet,
+    getNotifications,
     getMyProfile,
     getProfile,
     updateProfile,
@@ -24,6 +25,8 @@ router.get('/tweet/:tweetId', auth, getTweet);
 router.get('/replys/:tweetId', auth, getReplys);
 router.post('/', auth, createTweet);
 router.patch('/', auth, updateTweet);
+
+router.get('/notifications', auth, getNotifications);
 
 router.get('/profile', auth, getMyProfile);
 router.get('/profile/:username', auth, getProfile);
