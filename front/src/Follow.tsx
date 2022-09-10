@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useCallApi } from './utils/api';
 import { FollowerType, ProfileType } from './utils/types';
 
@@ -14,18 +14,21 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
-type FollowProps = { myProfile: ProfileType | undefined };
+type TabValue = 'followings' | 'followers';
+type FollowProps = { myProfile: ProfileType | undefined; tabValue: TabValue };
 
 const Follow: React.FC<FollowProps> = (props) => {
     const callApi = useCallApi();
     const params = useParams();
+    const navigate = useNavigate();
     const [followingsList, setFollowingsList] = useState<Array<FollowerType>>([]);
     const [followersList, setFollowersList] = useState<Array<FollowerType>>([]);
     const [myFollowingsList, setMyFollowingsList] = useState<Array<FollowerType>>([]);
     // タブのためのstate
-    const [value, setValue] = React.useState(0);
-    const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-        setValue(newValue);
+    const handleChange = (event: React.SyntheticEvent, newTabValue: TabValue) => {
+        if (newTabValue !== props.tabValue) {
+            navigate(`/${params.username}/${newTabValue}`);
+        }
     };
 
     useEffect(() => {
@@ -63,22 +66,22 @@ const Follow: React.FC<FollowProps> = (props) => {
     // タブ関連のメソッドなど
     interface TabPanelProps {
         children?: React.ReactNode;
-        index: number;
-        value: number;
+        currentValue: TabValue;
+        tabValue: TabValue;
     }
 
     function TabPanel(props: TabPanelProps) {
-        const { children, value, index, ...other } = props;
+        const { children, currentValue, tabValue, ...other } = props;
 
         return (
             <div
                 role="tabpanel"
-                hidden={value !== index}
-                id={`simple-tabpanel-${index}`}
-                aria-labelledby={`simple-tab-${index}`}
+                hidden={currentValue !== tabValue}
+                id={`simple-tabpanel-${tabValue}`}
+                aria-labelledby={`simple-tab-${tabValue}`}
                 {...other}
             >
-                {value === index && (
+                {currentValue === tabValue && (
                     <Box sx={{ p: 3 }}>
                         <Typography>{children}</Typography>
                     </Box>
@@ -91,25 +94,12 @@ const Follow: React.FC<FollowProps> = (props) => {
         <>
             <Box sx={{ width: '100%' }}>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                    <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-                        {/* 修正の必要あり */}
-                        <Tab
-                            label="フォロー中"
-                            //    href={'/' + params.username + '/followings'}
-                            //     onChange={(e) => {
-                            //         e.preventDefault();
-                            //     }}
-                        />
-                        <Tab
-                            label="フォロワー"
-                            //     href={'/' + params.username + '/followers'}
-                            //     onChange={(e) => {
-                            //         e.preventDefault();
-                            //     }}
-                        />
+                    <Tabs value={props.tabValue} onChange={handleChange} aria-label="basic tabs example">
+                        <Tab label="フォロー中" value="followings" />
+                        <Tab label="フォロワー" value="followers" />
                     </Tabs>
                 </Box>
-                <TabPanel value={value} index={0}>
+                <TabPanel currentValue={props.tabValue} tabValue={'followings'}>
                     {followingsList.length ? (
                         <List sx={{ width: '100%', maxWidth: 1000, bgcolor: 'background.paper' }}>
                             {followingsList.map((user, index) => (
@@ -159,7 +149,7 @@ const Follow: React.FC<FollowProps> = (props) => {
                         <p>やーいぼっち！</p>
                     )}
                 </TabPanel>
-                <TabPanel value={value} index={1}>
+                <TabPanel currentValue={props.tabValue} tabValue={'followers'}>
                     {followersList.length ? (
                         <List sx={{ width: '100%', maxWidth: 1000, bgcolor: 'background.paper' }}>
                             {followersList.map((user, index) => (
