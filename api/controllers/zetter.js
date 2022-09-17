@@ -245,7 +245,7 @@ const updateFollowings = (req, res) => {
     const user = req.user;
     const userToEdit = users.find(({ username }) => username === req.body.followingUsername);
 
-    if (req.body.order === 'follow') {
+    if (req.body.action === 'follow') {
         followers.push({
             id: followers.length + 1,
             // TODO: DBとつなぐときなおしたい
@@ -254,9 +254,7 @@ const updateFollowings = (req, res) => {
             createdAt: new Date(),
         });
     } else {
-        followers = followers.filter(
-            (follower) => follower.to !== userToEdit.id || follower.from !== user.id
-        );
+        followers = followers.filter((follower) => follower.to !== userToEdit.id || follower.from !== user.id);
     }
     res.status(200).json(followings);
 };

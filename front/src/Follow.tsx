@@ -35,7 +35,6 @@ const Follow: React.FC<FollowProps> = (props) => {
         getMyFollowings()?.then(setMyFollowingsList);
         getFollowings()?.then(setFollowingsList);
         getFollowers()?.then(setFollowersList);
-        // }, [location]);
     }, []);
 
     function getFollowings(): Promise<Array<FollowerType>> | undefined {
@@ -50,10 +49,10 @@ const Follow: React.FC<FollowProps> = (props) => {
         return callApi('http://localhost:5000/api/zetter/' + props.myProfile?.username + '/followings');
     }
 
-    function updateFollowings(username: string, order: string): void {
+    function updateFollowings(username: string, action: 'follow' | 'unFollow'): void {
         callApi('http://localhost:5000/api/zetter/updateFollowings', {
             method: 'PATCH',
-            body: JSON.stringify({ followings: followingsList, followingUsername: username, order: order }),
+            body: JSON.stringify({ followings: followingsList, followingUsername: username, action: action }),
         });
         afterUpdateFollowings();
     }
@@ -100,105 +99,88 @@ const Follow: React.FC<FollowProps> = (props) => {
                     </Tabs>
                 </Box>
                 <TabPanel currentValue={props.tabValue} tabValue={'followings'}>
-                    {followingsList.length ? (
-                        <List sx={{ width: '100%', maxWidth: 1000, bgcolor: 'background.paper' }}>
-                            {followingsList.map((user, index) => (
-                                <ListItem key={index} alignItems="flex-start">
-                                    <ListItemText
-                                        primary={
-                                            <>
-                                                <Link to={'/' + user.user.username}>
-                                                    <Stack direction="row" spacing={2}>
-                                                        <Avatar alt={user.user.username} src={user.user.icon} />
-                                                        <p>{user.user.username}</p>
-                                                        {props.myProfile?.username ===
-                                                        user.user.username ? null : followingsList.find(
-                                                              (followingUser) =>
-                                                                  followingUser.from === props.myProfile?.id
-                                                          ) ? (
-                                                            <Button
-                                                                size="small"
-                                                                onClick={(e) => {
-                                                                    updateFollowings(user.user.username, 'unFollow');
-                                                                    e.preventDefault();
-                                                                }}
-                                                            >
-                                                                フォロー解除
-                                                            </Button>
-                                                        ) : (
-                                                            <Button
-                                                                size="small"
-                                                                onClick={(e) => {
-                                                                    updateFollowings(user.user.username, 'follow');
-                                                                    e.preventDefault();
-                                                                }}
-                                                            >
-                                                                フォロー
-                                                            </Button>
-                                                        )}
-                                                    </Stack>
-                                                </Link>
-                                            </>
-                                        }
-                                        secondary={<>{user.user.introduction}</>}
-                                    />
-                                </ListItem>
-                            ))}
-                        </List>
-                    ) : (
-                        <p>やーいぼっち！</p>
-                    )}
+                    <FollowersList
+                        followers={followingsList}
+                        onUpdateFollowings={updateFollowings}
+                        myProfile={props.myProfile}
+                        myFollowings={myFollowingsList}
+                    />
                 </TabPanel>
                 <TabPanel currentValue={props.tabValue} tabValue={'followers'}>
-                    {followersList.length ? (
-                        <List sx={{ width: '100%', maxWidth: 1000, bgcolor: 'background.paper' }}>
-                            {followersList.map((user, index) => (
-                                <ListItem key={index} alignItems="flex-start">
-                                    <ListItemText
-                                        primary={
-                                            <>
-                                                <Link to={'/' + user.user.username}>
-                                                    <Stack direction="row" spacing={2}>
-                                                        <Avatar alt={user.user.username} src={user.user.icon} />
-                                                        <p>{user.user.username}</p>
-                                                        {props.myProfile?.username ===
-                                                        user.user.username ? null : myFollowingsList.find(
-                                                              (myFollowingUser) => myFollowingUser.to === user.from
-                                                          ) ? (
-                                                            <Button
-                                                                size="small"
-                                                                onClick={(e) => {
-                                                                    updateFollowings(user.user.username, 'unFollow');
-                                                                    e.preventDefault();
-                                                                }}
-                                                            >
-                                                                フォロー解除
-                                                            </Button>
-                                                        ) : (
-                                                            <Button
-                                                                size="small"
-                                                                onClick={(e) => {
-                                                                    updateFollowings(user.user.username, 'follow');
-                                                                    e.preventDefault();
-                                                                }}
-                                                            >
-                                                                フォロー
-                                                            </Button>
-                                                        )}
-                                                    </Stack>
-                                                </Link>
-                                            </>
-                                        }
-                                        secondary={<>{user.user.introduction}</>}
-                                    />
-                                </ListItem>
-                            ))}
-                        </List>
-                    ) : (
-                        <p>やーいぼっち！</p>
-                    )}
+                    <FollowersList
+                        followers={followersList}
+                        onUpdateFollowings={updateFollowings}
+                        myProfile={props.myProfile}
+                        myFollowings={myFollowingsList}
+                    />
                 </TabPanel>
             </Box>
+        </>
+    );
+};
+
+type FollowersListProps = {
+    followers: FollowerType[];
+    onUpdateFollowings: (username: string, action: 'follow' | 'unFollow') => void;
+    myProfile?: ProfileType;
+    myFollowings: FollowerType[];
+};
+
+const FollowersList: React.FC<FollowersListProps> = (props) => {
+    return (
+        <>
+            {props.followers.length ? (
+                <List sx={{ width: '100%', maxWidth: 1000, bgcolor: 'background.paper' }}>
+                    {props.followers.map((user, index) => (
+                        <ListItem key={index} alignItems="flex-start">
+                            <ListItemText
+                                primary={
+                                    <>
+                                        <Link to={'/' + user.user.username}>
+                                            <Stack direction="row" spacing={2}>
+                                                <>
+                                                    <Avatar alt={user.user.username} src={user.user.icon} />
+                                                    <p>{user.user.username}</p>
+                                                    {props.myProfile?.username ===
+                                                    user.user.username ? null : props.myFollowings.find(
+                                                          (myFollowing) => myFollowing.to === user.user.id
+                                                      ) ? (
+                                                        <Button
+                                                            size="small"
+                                                            onClick={(e) => {
+                                                                props.onUpdateFollowings(
+                                                                    user.user.username,
+                                                                    'unFollow'
+                                                                );
+                                                                e.preventDefault();
+                                                            }}
+                                                        >
+                                                            フォロー解除
+                                                        </Button>
+                                                    ) : (
+                                                        <Button
+                                                            size="small"
+                                                            onClick={(e) => {
+                                                                props.onUpdateFollowings(user.user.username, 'follow');
+                                                                e.preventDefault();
+                                                            }}
+                                                        >
+                                                            フォロー
+                                                        </Button>
+                                                    )}
+                                                </>
+                                            </Stack>
+                                        </Link>
+                                    </>
+                                }
+                                secondary={<>{user.user.introduction}</>}
+                            />
+                        </ListItem>
+                    ))}
+                </List>
+            ) : (
+                <p>やーいぼっち！</p>
+            )}
         </>
     );
 };
