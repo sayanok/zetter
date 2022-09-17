@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useCallApi } from './utils/api';
-import { ProfileType, TweetType } from './utils/types';
+import { FollowerType, ProfileType, TweetType } from './utils/types';
 import TweetTrees from './TweetTrees';
 
 import Card from '@mui/material/Card';
@@ -22,6 +22,10 @@ const ProfilePage: React.FC<ProfilePageProps> = (props) => {
     const [profile, setProfile] = useState<ProfileType>();
     const [tweetsListOfSpecificUser, setTweetsListOfSpecificUser] = useState<Array<TweetType>>([]);
     const [favoriteTweetList, setFavoriteTweetList] = useState<Array<TweetType>>([]);
+    const [followingsNumber, setFollowingsNumber] = useState<number>();
+    const [followersNumber, setFollowersNumber] = useState<number>();
+    const [followings, setFollowings] = useState<Array<FollowerType>>();
+    const [followers, setFollowers] = useState<Array<FollowerType>>();
     // タブ関連のstate
     const [value, setValue] = React.useState(0);
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -32,6 +36,14 @@ const ProfilePage: React.FC<ProfilePageProps> = (props) => {
         getProfile()?.then(setProfile);
         getAndSetTweetsListOfSpecificUser();
         getAndSetFavoriteTweetList();
+        getFollowings()?.then((data) => {
+            setFollowings(data);
+            setFollowingsNumber(data.length);
+        });
+        getFollowers()?.then((data) => {
+            setFollowers(data);
+            setFollowersNumber(data.length);
+        });
     }, [params.username, value]);
 
     function getProfile(): Promise<ProfileType> | undefined {
@@ -52,6 +64,29 @@ const ProfilePage: React.FC<ProfilePageProps> = (props) => {
 
     function getAndSetFavoriteTweetList(): void {
         getFavoriteTweets()?.then(setFavoriteTweetList);
+    }
+
+    function getFollowings(): Promise<Array<FollowerType>> | undefined {
+        return callApi('http://localhost:5000/api/zetter/' + params.username + '/followings');
+    }
+
+    function getFollowers(): Promise<Array<FollowerType>> | undefined {
+        return callApi('http://localhost:5000/api/zetter/' + params.username + '/followers');
+    }
+
+    function updateFollowings(order: string): void {
+        callApi('http://localhost:5000/api/zetter/updateFollowings', {
+            method: 'PATCH',
+            body: JSON.stringify({ followings: followings, followingUsername: params.username, order: order }),
+        });
+        afterUpdateFollowings();
+    }
+
+    function afterUpdateFollowings(): void {
+        getFollowers()?.then((data) => {
+            setFollowers(data);
+            setFollowersNumber(data.length);
+        });
     }
 
     // タブ関連のメソッドなど
@@ -98,9 +133,15 @@ const ProfilePage: React.FC<ProfilePageProps> = (props) => {
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
                         {profile.introduction}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
+                        <br />
                         誕生日：{profile.birthday}
+                        <br />
+                        <Link to={'/' + profile.username + '/followings'}>
+                            <>フォロー中: {followingsNumber}人</>
+                        </Link>
+                        <Link to={'/' + profile.username + '/followers'}>
+                            <>フォロワー: {followersNumber}人</>
+                        </Link>
                     </Typography>
                 </CardContent>
                 {props.myProfile.id === profile.id ? (
@@ -109,7 +150,29 @@ const ProfilePage: React.FC<ProfilePageProps> = (props) => {
                             <Link to={'/settings/' + profile.username}>編集する</Link>
                         </Button>
                     </CardActions>
-                ) : null}
+                ) : (
+                    <CardActions>
+                        {followers?.find((follower) => follower.user.username === props.myProfile?.username) ? (
+                            <Button
+                                size="small"
+                                onClick={() => {
+                                    updateFollowings('unFollow');
+                                }}
+                            >
+                                フォローを解除する
+                            </Button>
+                        ) : (
+                            <Button
+                                size="small"
+                                onClick={() => {
+                                    updateFollowings('follow');
+                                }}
+                            >
+                                フォローする
+                            </Button>
+                        )}
+                    </CardActions>
+                )}
                 <Box sx={{ width: '100%' }}>
                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">

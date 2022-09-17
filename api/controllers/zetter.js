@@ -3,15 +3,25 @@ const { sign } = require('jsonwebtoken');
 const tweets = require('../data/tweets.js');
 let favorities = require('../data/favorities.js');
 const users = require('../data/users.js');
+let followers = require('../data/followers.js');
 
 const getTweets = (req, res) => {
     const limit = 10;
+    const followingUsers = followers.filter((follower) => follower.from === req.user.id);
+    const followingUsersIds = followingUsers.map((obj) => obj.to);
+    let followingUsersTweetsList = [];
 
-    tweets.sort(function (a, b) {
+    tweets.forEach((tweet) => {
+        if (followingUsersIds.includes(tweet.createdBy)) {
+            followingUsersTweetsList.push(tweet);
+        }
+    });
+
+    followingUsersTweetsList.sort(function (a, b) {
         return b.createdAt - a.createdAt;
     });
 
-    const result = addInformationToTweet(tweets, req);
+    const result = addInformationToTweet(followingUsersTweetsList, req);
     res.json(result.slice(0, limit));
 };
 
@@ -180,6 +190,75 @@ const updateProfile = (req, res) => {
     res.status(200).json(user);
 };
 
+// フォローしているユーザー
+const getFollowings = (req, res) => {
+    const requestUser = users.find(({ username }) => username === req.params.username);
+    let specificUserFollowingUsersList = [];
+    let specificUserFollowingUsersListWithUserInformation = [];
+    followers.forEach((follower) => {
+        if (follower.from === requestUser.id) {
+            specificUserFollowingUsersList.push(follower);
+        }
+    });
+
+    specificUserFollowingUsersList.forEach((specificUserFollowingUser) => {
+        let valueOfInsert = [];
+        users.forEach((user) => {
+            if (specificUserFollowingUser.to === user.id) {
+                specificUserFollowingUser['user'] = user;
+
+                valueOfInsert = JSON.parse(JSON.stringify(specificUserFollowingUser));
+                specificUserFollowingUsersListWithUserInformation.push(valueOfInsert);
+            }
+        });
+    });
+    res.json(specificUserFollowingUsersList);
+};
+
+// 自分のフォロワー
+const getFollowers = (req, res) => {
+    const requestUser = users.find(({ username }) => username === req.params.username);
+    let specificUserFollowersUsersList = [];
+    let specificUserFollowersUsersListWithUserInformation = [];
+    followers.forEach((follower) => {
+        if (follower.to === requestUser.id) {
+            specificUserFollowersUsersList.push(follower);
+        }
+    });
+
+    specificUserFollowersUsersList.forEach((specificUserFollowerdUser) => {
+        let valueOfInsert = [];
+        users.forEach((user) => {
+            if (specificUserFollowerdUser.from === user.id) {
+                specificUserFollowerdUser['user'] = user;
+
+                valueOfInsert = JSON.parse(JSON.stringify(specificUserFollowerdUser));
+                specificUserFollowersUsersListWithUserInformation.push(valueOfInsert);
+            }
+        });
+    });
+    res.json(specificUserFollowersUsersList);
+};
+
+const updateFollowings = (req, res) => {
+    const followings = req.body.followings;
+    const user = req.user;
+    const userToEdit = users.find(({ username }) => username === req.body.followingUsername);
+
+    if (req.body.action === 'follow') {
+        followers.push({
+            id: followers.length + 1,
+            // TODO: DBとつなぐときなおしたい
+            to: userToEdit.id,
+            from: user.id,
+            createdAt: new Date(),
+        });
+    } else {
+        followers = followers.filter((follower) => follower.to !== userToEdit.id || follower.from !== user.id);
+    }
+    res.status(200).json(followings);
+};
+
 const login = (req, res) => {
     const input = req.body;
 
@@ -236,5 +315,8 @@ module.exports = {
     getMyProfile,
     getProfile,
     updateProfile,
+    getFollowings,
+    getFollowers,
+    updateFollowings,
     login,
 };

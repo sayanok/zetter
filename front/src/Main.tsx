@@ -11,6 +11,7 @@ import Home from './Home';
 import TweetDetail from './TweetDetail';
 import Notifications from './Notifications';
 import ProfilePage from './ProfilePage';
+import Follow from './Follow';
 import SettingsProfile from './SettingsProfile';
 
 const Main: React.FC = () => {
@@ -36,6 +37,11 @@ const Main: React.FC = () => {
                     <Route path="tweet/:tweetId" element={<TweetDetail />} />
                     <Route path="notifications" element={<Notifications />} />
                     <Route path=":username" element={<ProfilePage myProfile={myProfile} />} />
+                    <Route
+                        path=":username/followings"
+                        element={<Follow myProfile={myProfile} tabValue="followings" />}
+                    />
+                    <Route path=":username/followers" element={<Follow myProfile={myProfile} tabValue="followers" />} />
                     <Route
                         path="settings/:username"
                         element={
