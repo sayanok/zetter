@@ -16,7 +16,7 @@ const users = [
         icon: 'http://localhost:5000/avatars/mipi.jpg',
         password: 'OGQmpwfD/lBk8rCNTdJbOar2PqfUstFF3lEat3z3Cic=',
         email: 'mipi@example.cpm',
-        introduction: '自己紹介文',
+        introduction: 'ロン！！',
         birthday: '1991-09-24',
     },
     {
@@ -26,12 +26,12 @@ const users = [
         icon: 'http://localhost:5000/avatars/zepi.jpg',
         password: 'RFwA1n7ucYA3PJRjv7jVoPC4cvb2nP2eEIDU8fjNyY0=',
         email: 'zepi@example.com',
-        introduction: '自己紹介文',
+        introduction: 'あーうううﾒﾝﾒﾝﾒﾝﾒｰｰﾝ...ばぶ',
         birthday: '2022-01-14',
     },
     {
         id: 4,
-        username: 'オーボール',
+        username: 'oball',
         header: '',
         icon: '',
         password: 'RFwA1n7ucYA3PJRjv7jVoPC4cvb2nP2eEIDU8fjNyY0=',
