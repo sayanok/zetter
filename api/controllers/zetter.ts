@@ -2,6 +2,7 @@ import tweets from '../data/tweets';
 import users from '../data/users';
 import followers from '../data/followers';
 import favorities from '../data/favorities';
+import { sign } from 'jsonwebtoken';
 import { createHash } from 'crypto';
 import { Request, Response } from 'express';
 import { FavoriteType, FollowerType, ProfileType, TweetType } from '../utils/types';
@@ -22,17 +23,69 @@ export const getTweets = (req: Request, res: Response) => {
         return Number(b.createdAt) - Number(a.createdAt);
     });
 
-    const result = addInformationToTweet(followingUsersTweetsList, req);
+    const result: Array<TweetType> = addInformationToTweet(followingUsersTweetsList, req);
     res.json(result.slice(0, limit));
+};
+
+export const getSpecificUsersTweets = (req: Request, res: Response) => {
+    const limit: number = 10;
+    const user: ProfileType | undefined = users.find(({ username }) => username === req.params.username);
+    const sortedTweets: Array<TweetType> = tweets.sort(function (a: TweetType, b: TweetType) {
+        if (Number(a.createdAt) - Number(b.createdAt)) {
+            return -1;
+        } else {
+            return 1;
+        }
+    });
+
+    if (user) {
+        const specificUsersTweets: Array<TweetType> = sortedTweets.filter((tweet) => tweet.createdBy === user.id);
+        const result: Array<TweetType> = addInformationToTweet(specificUsersTweets, req);
+        res.json(result.slice(0, limit));
+    }
+};
+
+export const getMyProfile = (req: Request, res: Response) => {
+    const username: string = req.user.username;
+    const user: ProfileType | undefined = users.find((user) => user.username === username);
+    res.json(user);
+};
+
+export const getProfile = (req: Request, res: Response) => {
+    const username: string = req.params.username;
+    const user: ProfileType | undefined = users.find((user) => user.username === username);
+    res.json(user);
+};
+
+export const updateProfile = (req: Request, res: Response) => {
+    const user: ProfileType | undefined = users.find((user) => user.username === req.user.username);
+    if (user) {
+        user.username = req.body.username;
+        user.introduction = req.body.introduction;
+        user.email = req.body.email;
+        // もっとスマートにかけそう
+        res.status(200).json(user);
+    }
 };
 
 export const login = (req: Request, res: Response) => {
     const input: any = req.body;
     const user: ProfileType | undefined = users.find((user) => user.username === input.username);
-    const hashedInputPassword: string = createHash('sha256').update(input.passwore).digest('base64');
-
+    const hashedInputPassword: string = createHash('sha256').update(input.password).digest('base64');
     if (user && user.password === hashedInputPassword) {
+        const token: string = sign(
+            {
+                userId: user.id,
+                username: user.username,
+                email: user.email,
+            },
+            // process.env.SECRET_KEY
+            'secret'
+            // { expiresIn: 60 * 60 }
+        );
+        return res.json(token);
     }
+    return res.status(400).json({ code: 400 });
 };
 
 function addInformationToTweet(tweetList: Array<TweetType>, req: Request) {
@@ -56,4 +109,4 @@ function addInformationToTweet(tweetList: Array<TweetType>, req: Request) {
     return tweetList;
 }
 
-module.exports = { getTweets, login };
+module.exports = { getTweets, getSpecificUsersTweets, getMyProfile, getProfile, updateProfile, login };

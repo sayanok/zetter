@@ -1,12 +1,25 @@
 import { Request, Response, NextFunction } from 'express';
 import { Router } from 'express';
-import { getTweets, login } from '../controllers/zetter';
+import {
+    getTweets,
+    getSpecificUsersTweets,
+    getMyProfile,
+    getProfile,
+    updateProfile,
+    login,
+} from '../controllers/zetter';
 import { JwtPayload, verify } from 'jsonwebtoken';
 import users from '../data/users';
 
 const router = Router();
 
 router.get('/', auth, getTweets);
+router.get('/specificUsersTweets/:username', auth, getSpecificUsersTweets);
+
+router.get('/profile', auth, getMyProfile);
+router.get('/profile/:username', auth, getProfile);
+router.patch('/profile', auth, updateProfile);
+
 router.post('/login', login);
 
 function auth(req: Request, res: Response, next: NextFunction) {
