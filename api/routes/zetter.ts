@@ -3,6 +3,7 @@ import { Router } from 'express';
 import {
     getTweets,
     getSpecificUsersTweets,
+    getNotifications,
     getMyProfile,
     getProfile,
     updateProfile,
@@ -15,6 +16,8 @@ const router = Router();
 
 router.get('/', auth, getTweets);
 router.get('/specificUsersTweets/:username', auth, getSpecificUsersTweets);
+
+router.get('/notifications', auth, getNotifications);
 
 router.get('/profile', auth, getMyProfile);
 router.get('/profile/:username', auth, getProfile);
