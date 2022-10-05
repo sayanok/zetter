@@ -7,6 +7,9 @@ import {
     getMyProfile,
     getProfile,
     updateProfile,
+    getFollowings,
+    getFollowers,
+    updateFollowings,
     login,
 } from '../controllers/zetter';
 import { JwtPayload, verify } from 'jsonwebtoken';
@@ -22,6 +25,10 @@ router.get('/notifications', auth, getNotifications);
 router.get('/profile', auth, getMyProfile);
 router.get('/profile/:username', auth, getProfile);
 router.patch('/profile', auth, updateProfile);
+
+router.get('/:username/followings', auth, getFollowings);
+router.get('/:username/followers', auth, getFollowers);
+router.patch('/updateFollowings', auth, updateFollowings);
 
 router.post('/login', login);
 

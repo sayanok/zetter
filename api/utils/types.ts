@@ -37,6 +37,7 @@ export type FollowerType = {
     to: number;
     from: number;
     createdAt: Date;
+    user?: ProfileType;
 };
 
 export type AuthedRequest = Request & {

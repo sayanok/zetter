@@ -109,6 +109,82 @@ export const updateProfile = (req: Request, res: Response) => {
     }
 };
 
+// フォローしているユーザー
+export const getFollowings = (req: Request, res: Response) => {
+    const requestUser: ProfileType | undefined = users.find(({ username }) => username === req.params.username);
+    let specificUserFollowingUsersList: Array<FollowerType> = [];
+    let specificUserFollowingUsersListWithUserInformation: Array<FollowerType> = [];
+    if (requestUser) {
+        followers.forEach((follower) => {
+            if (follower.from === requestUser.id) {
+                specificUserFollowingUsersList.push(follower);
+            }
+        });
+
+        specificUserFollowingUsersList.forEach((specificUserFollowingUser) => {
+            let valueOfInsert: FollowerType;
+            users.forEach((user) => {
+                if (specificUserFollowingUser.to === user.id) {
+                    specificUserFollowingUser['user'] = user;
+
+                    valueOfInsert = JSON.parse(JSON.stringify(specificUserFollowingUser));
+                    specificUserFollowingUsersListWithUserInformation.push(valueOfInsert);
+                }
+            });
+        });
+        res.json(specificUserFollowingUsersList);
+    }
+};
+
+// 自分のフォロワー
+export const getFollowers = (req: Request, res: Response) => {
+    const requestUser: ProfileType | undefined = users.find(({ username }) => username === req.params.username);
+    let specificUserFollowersUsersList: Array<FollowerType> = [];
+    let specificUserFollowersUsersListWithUserInformation: Array<FollowerType> = [];
+    if (requestUser) {
+        followers.forEach((follower) => {
+            if (follower.to === requestUser.id) {
+                specificUserFollowersUsersList.push(follower);
+            }
+        });
+
+        specificUserFollowersUsersList.forEach((specificUserFollowerdUser) => {
+            let valueOfInsert: FollowerType;
+            users.forEach((user) => {
+                if (specificUserFollowerdUser.from === user.id) {
+                    specificUserFollowerdUser['user'] = user;
+
+                    valueOfInsert = JSON.parse(JSON.stringify(specificUserFollowerdUser));
+                    specificUserFollowersUsersListWithUserInformation.push(valueOfInsert);
+                }
+            });
+        });
+
+        res.json(specificUserFollowersUsersList);
+    }
+};
+
+export const updateFollowings = (req: Request, res: Response) => {
+    const followings: string = req.body.followings;
+    const user: ProfileType | undefined = req.user;
+    const userToEdit: ProfileType | undefined = users.find(({ username }) => username === req.body.followingUsername);
+
+    if (user && userToEdit) {
+        if (req.body.action === 'follow') {
+            followers.push({
+                id: followers.length + 1,
+                // TODO: DBとつなぐときなおしたい
+                to: userToEdit.id,
+                from: user.id,
+                createdAt: new Date(),
+            });
+        } else {
+            // followers = followers.filter((follower) => follower.to !== userToEdit.id || follower.from !== user.id);
+        }
+        res.status(200).json(followings);
+    }
+};
+
 export const login = (req: Request, res: Response) => {
     const input: any = req.body;
     const user: ProfileType | undefined = users.find((user) => user.username === input.username);
@@ -156,5 +232,8 @@ module.exports = {
     getMyProfile,
     getProfile,
     updateProfile,
+    getFollowings,
+    getFollowers,
+    updateFollowings,
     login,
 };
