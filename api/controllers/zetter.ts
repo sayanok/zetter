@@ -46,6 +46,107 @@ export const getSpecificUsersTweets = (req: Request, res: Response) => {
     }
 };
 
+export const getSpecificUsersFavoriteTweets = (req: Request, res: Response) => {
+    const limit: number = 10;
+    const user: ProfileType | undefined = users.find(({ username }) => username === req.params.username);
+    if (!user) {
+        throw Error;
+    }
+    const favoriteTweets: Array<FavoriteType> = favorities.filter((favorite) => favorite.userId === user.id);
+    const favoriteTweetIds: Array<number> = favoriteTweets.map((obj) => obj.tweetId);
+
+    let favoriteTweetList: Array<TweetType> = [];
+
+    tweets.forEach((tweet) => {
+        if (favoriteTweetIds.includes(tweet.id)) {
+            favoriteTweetList.push(tweet);
+        }
+    });
+
+    const sortedFavoriteTweetList: Array<TweetType> = favoriteTweetList.sort(function (a, b) {
+        if (a.createdAt > b.createdAt) {
+            return -1;
+        } else {
+            return 1;
+        }
+    });
+
+    const result: Array<TweetType> = addInformationToTweet(sortedFavoriteTweetList, req);
+    res.json(result.slice(0, limit));
+};
+
+export const getTweet = (req: Request, res: Response) => {
+    const tweet: TweetType | undefined = tweets.find((tweet) => tweet.id === parseInt(req.params.tweetId));
+
+    if (!tweet) {
+        throw Error;
+    }
+
+    const numberOfFavorite: Array<FavoriteType> = favorities.filter((favorite) => favorite.tweetId === tweet.id);
+    tweet['numberOfFavorite'] = numberOfFavorite.length;
+
+    const numberOfReply: Array<TweetType> = tweets.filter((replyTweet) => replyTweet.replyTo === tweet.id);
+    tweet['numberOfReply'] = numberOfReply.length;
+
+    // ツイートに自分がfavしているかの情報を付加するための準備
+    const favoriteTweetIds: Array<number> = favorities
+        .filter((favorite) => favorite.userId === req.user.id)
+        .map((obj) => obj.tweetId);
+    tweet.isFavorite = favoriteTweetIds.includes(tweet.id);
+
+    res.json(tweet);
+};
+
+export const getReplys = (req: Request, res: Response) => {
+    let replys: Array<TweetType> = [];
+    tweets.forEach((tweet) => {
+        if (tweet.replyTo === parseInt(req.params.tweetId)) {
+            replys.push(tweet);
+        }
+    });
+
+    const result: Array<TweetType> = addInformationToTweet(replys, req);
+    res.json(result);
+};
+
+export const createTweet = (req: Request, res: Response) => {
+    const newTweet: TweetType = {
+        id: tweets.length + 1,
+        createdBy: req.user.id,
+        replyTo: req.body.replyTo,
+        content: req.body.content,
+        createdAt: new Date(),
+    };
+    tweets.push(newTweet);
+    res.status(201).json(newTweet);
+};
+
+export const updateTweet = (req: Request, res: Response) => {
+    const tweet: TweetType = req.body.tweet;
+    if (!tweet.numberOfFavorite) {
+        tweet.numberOfFavorite = 0;
+    }
+
+    if (req.body.order === 'add') {
+        favorities.push({
+            id: favorities.length + 1,
+            // TODO: DBとつなぐときなおしたい
+            tweetId: tweet.id,
+            userId: req.user.id,
+            createdAt: new Date(),
+        });
+        tweet.isFavorite = true;
+        tweet.numberOfFavorite++;
+    } else {
+        // favorities = favorities.filter(
+        //     (favorite) => favorite.tweetId !== req.body.tweet.id || favorite.userId !== req.user.id
+        // );
+        tweet.isFavorite = false;
+        tweet.numberOfFavorite--;
+    }
+    res.status(200).json(tweet);
+};
+
 export const getNotifications = (req: Request, res: Response) => {
     const limit: number = 10;
     let notifications: Array<TweetType> = [];
@@ -228,6 +329,11 @@ function addInformationToTweet(tweetList: Array<TweetType>, req: Request) {
 module.exports = {
     getTweets,
     getSpecificUsersTweets,
+    getSpecificUsersFavoriteTweets,
+    getTweet,
+    getReplys,
+    createTweet,
+    updateTweet,
     getNotifications,
     getMyProfile,
     getProfile,

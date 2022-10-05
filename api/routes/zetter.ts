@@ -3,6 +3,11 @@ import { Router } from 'express';
 import {
     getTweets,
     getSpecificUsersTweets,
+    getSpecificUsersFavoriteTweets,
+    getTweet,
+    getReplys,
+    createTweet,
+    updateTweet,
     getNotifications,
     getMyProfile,
     getProfile,
@@ -19,6 +24,11 @@ const router = Router();
 
 router.get('/', auth, getTweets);
 router.get('/specificUsersTweets/:username', auth, getSpecificUsersTweets);
+router.get('/specificUsersFavoriteTweets/:username', auth, getSpecificUsersFavoriteTweets);
+router.get('/tweet/:tweetId', auth, getTweet);
+router.get('/replys/:tweetId', auth, getReplys);
+router.post('/', auth, createTweet);
+router.patch('/', auth, updateTweet);
 
 router.get('/notifications', auth, getNotifications);
 
