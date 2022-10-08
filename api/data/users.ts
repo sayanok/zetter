@@ -1,4 +1,4 @@
-const users = [
+let users = [
     {
         id: 1,
         username: 'mupi',
@@ -81,4 +81,4 @@ const users = [
     },
 ];
 
-module.exports = users;
+export default users;

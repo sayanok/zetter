@@ -12,4 +12,4 @@ let favorities = [
     { id: 11, tweetId: 8, userId: 3, createdAt: new Date() },
 ];
 
-module.exports = favorities;
+export default favorities;

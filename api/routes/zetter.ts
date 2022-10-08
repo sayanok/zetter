@@ -1,9 +1,6 @@
-const express = require('express');
-const router = express.Router();
-const { verify } = require('jsonwebtoken');
-const users = require('../data/users.js');
-
-const {
+import { Request, Response, NextFunction } from 'express';
+import { Router } from 'express';
+import {
     getTweets,
     getSpecificUsersTweets,
     getSpecificUsersFavoriteTweets,
@@ -19,7 +16,11 @@ const {
     getFollowers,
     updateFollowings,
     login,
-} = require('../controllers/zetter.js');
+} from '../controllers/zetter';
+import { JwtPayload, verify } from 'jsonwebtoken';
+import users from '../data/users';
+
+const router = Router();
 
 router.get('/', auth, getTweets);
 router.get('/specificUsersTweets/:username', auth, getSpecificUsersTweets);
@@ -41,14 +42,16 @@ router.patch('/updateFollowings', auth, updateFollowings);
 
 router.post('/login', login);
 
-module.exports = router;
-
-function auth(req, res, next) {
-    const authorization = req.headers.authorization;
-    const token = authorization.replace('Bearer ', '');
-    let verifyUser;
+function auth(req: Request, res: Response, next: NextFunction) {
+    if (!req.headers.authorization || !process.env.SECRET_KEY) {
+        res.status(401).end();
+        return;
+    }
+    const authorization: string = req.headers.authorization;
+    const token: string = authorization.replace('Bearer ', '');
+    let verifyUser: JwtPayload;
     try {
-        verifyUser = verify(token, process.env.SECRET_KEY);
+        verifyUser = verify(token, process.env.SECRET_KEY) as JwtPayload;
     } catch (error) {
         res.status(401).end();
         // TODO: verify失敗理由によってかき分ける
@@ -64,3 +67,7 @@ function auth(req, res, next) {
         return;
     }
 }
+
+//
+
+export default router;

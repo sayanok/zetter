@@ -28,4 +28,4 @@ const tweets = [
     { id: 15, createdBy: 7, replyTo: null, content: 'ガーゼだよ', createdAt: new Date('2022-08-04 12:50') },
 ];
 
-module.exports = tweets;
+export default tweets;

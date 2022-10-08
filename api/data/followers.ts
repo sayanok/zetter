@@ -9,4 +9,4 @@ let followers = [
 ];
 // to: フォローされている人
 // from: フォローしている人
-module.exports = followers;
+export default followers;
