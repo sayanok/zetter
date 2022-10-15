@@ -6,6 +6,8 @@ import { sign } from 'jsonwebtoken';
 import { createHash } from 'crypto';
 import { Request, Response } from 'express';
 import { FavoriteType, FollowerType, ProfileType, TweetType } from '../utils/types';
+import { prisma } from '../utils/prisma';
+import { User } from '@prisma/client';
 
 export const getTweets = (req: Request, res: Response) => {
     const limit: number = 10;
@@ -187,27 +189,40 @@ export const getNotifications = (req: Request, res: Response) => {
     res.json(result.slice(0, limit));
 };
 
-export const getMyProfile = (req: Request, res: Response) => {
+export const getMyProfile = async (req: Request, res: Response) => {
     const username: string = req.user.username;
-    const user: ProfileType | undefined = users.find((user) => user.username === username);
+    const user: User | null = await prisma.user.findUnique({
+        where: {
+            username: username,
+        },
+    });
+
     res.json(user);
 };
 
-export const getProfile = (req: Request, res: Response) => {
+export const getProfile = async (req: Request, res: Response) => {
     const username: string = req.params.username;
-    const user: ProfileType | undefined = users.find((user) => user.username === username);
+    const user: User | null = await prisma.user.findUnique({
+        where: {
+            username: username,
+        },
+    });
     res.json(user);
 };
 
-export const updateProfile = (req: Request, res: Response) => {
-    const user: ProfileType | undefined = users.find((user) => user.username === req.user.username);
-    if (user) {
-        user.username = req.body.username;
-        user.introduction = req.body.introduction;
-        user.email = req.body.email;
-        // もっとスマートにかけそう
-        res.status(200).json(user);
-    }
+export const updateProfile = async (req: Request, res: Response) => {
+    const user: User | null = await prisma.user.update({
+        where: {
+            username: req.user.username,
+        },
+        data: {
+            username: req.body.username,
+            introduction: req.body.introduction,
+            email: req.body.email,
+        },
+    });
+
+    res.status(200).json(user);
 };
 
 // フォローしているユーザー
@@ -286,9 +301,14 @@ export const updateFollowings = (req: Request, res: Response) => {
     }
 };
 
-export const login = (req: Request, res: Response) => {
+export const login = async (req: Request, res: Response) => {
     const input: any = req.body;
-    const user: ProfileType | undefined = users.find((user) => user.username === input.username);
+    const username: string = input.username;
+    const user: User | null = await prisma.user.findUnique({
+        where: {
+            username: username,
+        },
+    });
     const hashedInputPassword: string = createHash('sha256').update(input.password).digest('base64');
     if (user && user.password === hashedInputPassword) {
         const token: string = sign(
@@ -335,9 +355,9 @@ module.exports = {
     createTweet,
     updateTweet,
     getNotifications,
-    getMyProfile,
-    getProfile,
-    updateProfile,
+    getMyProfile, // おきかえた
+    getProfile, // おきかえた
+    updateProfile, // おきかえた
     getFollowings,
     getFollowers,
     updateFollowings,

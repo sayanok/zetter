@@ -18,7 +18,8 @@ import {
     login,
 } from '../controllers/zetter';
 import { JwtPayload, verify } from 'jsonwebtoken';
-import users from '../data/users';
+import { prisma } from '../utils/prisma';
+import { User } from '@prisma/client';
 
 const router = Router();
 
@@ -42,7 +43,7 @@ router.patch('/updateFollowings', auth, updateFollowings);
 
 router.post('/login', login);
 
-function auth(req: Request, res: Response, next: NextFunction) {
+async function auth(req: Request, res: Response, next: NextFunction) {
     if (!req.headers.authorization || !process.env.SECRET_KEY) {
         res.status(401).end();
         return;
@@ -58,7 +59,11 @@ function auth(req: Request, res: Response, next: NextFunction) {
         return;
     }
 
-    const user = users.find(({ id }) => id === verifyUser.userId);
+    const user: User | null = await prisma.user.findUnique({
+        where: {
+            id: verifyUser.userId,
+        },
+    });
     if (user) {
         req.user = user;
         next();
