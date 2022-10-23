@@ -22,7 +22,8 @@ model User {
   createdAt    DateTime @default(now())
   tweets Tweet[]
   favorities Favorite[]
-  followers Follower[]
+  followedBy User[]  @relation("UserFollows")
+  following  User[]  @relation("UserFollows")
 }
 
 model Tweet {
@@ -46,12 +47,4 @@ model Favorite {
   createdAt DateTime @default(now())
 
   @@id([tweetId, userId])
-}
-
-model Follower { 
-  id Int @id @default(autoincrement())
-  user User @relation(fields: [to], references: [id])
-  to Int 
-  from Int
-  createdAt DateTime @default(now())
 }

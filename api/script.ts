@@ -69,6 +69,18 @@ async function main() {
             },
         ],
     });
+
+    await prisma.user.update({
+        where: { id: 3 },
+        data: {
+            followedBy: {
+                connect: [{ id: 1 }, { id: 2 }, { id: 4 }, { id: 6 }, { id: 7 }],
+            },
+            following: {
+                connect: [{ id: 1 }, { id: 2 }],
+            },
+        },
+    });
 }
 main()
     .then(async () => {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useCallApi } from './utils/api';
-import { FollowerType, ProfileType } from './utils/types';
+import { ProfileType } from './utils/types';
 
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -21,9 +21,9 @@ const Follow: React.FC<FollowProps> = (props) => {
     const callApi = useCallApi();
     const params = useParams();
     const navigate = useNavigate();
-    const [followingsList, setFollowingsList] = useState<Array<FollowerType>>([]);
-    const [followersList, setFollowersList] = useState<Array<FollowerType>>([]);
-    const [myFollowingsList, setMyFollowingsList] = useState<Array<FollowerType>>([]);
+    const [followingsList, setFollowingsList] = useState<Array<ProfileType>>([]);
+    const [followersList, setFollowersList] = useState<Array<ProfileType>>([]);
+    const [myFollowingsList, setMyFollowingsList] = useState<Array<ProfileType>>([]);
     // タブのためのstate
     const handleChange = (event: React.SyntheticEvent, newTabValue: TabValue) => {
         if (newTabValue !== props.tabValue) {
@@ -37,15 +37,15 @@ const Follow: React.FC<FollowProps> = (props) => {
         getFollowers()?.then(setFollowersList);
     }, []);
 
-    function getFollowings(): Promise<Array<FollowerType>> | undefined {
+    function getFollowings(): Promise<Array<ProfileType>> | undefined {
         return callApi('http://localhost:5000/api/zetter/' + params.username + '/followings');
     }
 
-    function getFollowers(): Promise<Array<FollowerType>> | undefined {
+    function getFollowers(): Promise<Array<ProfileType>> | undefined {
         return callApi('http://localhost:5000/api/zetter/' + params.username + '/followers');
     }
 
-    function getMyFollowings(): Promise<Array<FollowerType>> | undefined {
+    function getMyFollowings(): Promise<Array<ProfileType>> | undefined {
         return callApi('http://localhost:5000/api/zetter/' + props.myProfile?.username + '/followings');
     }
 
@@ -120,10 +120,10 @@ const Follow: React.FC<FollowProps> = (props) => {
 };
 
 type FollowersListProps = {
-    followers: FollowerType[];
+    followers: ProfileType[];
     onUpdateFollowings: (username: string, action: 'follow' | 'unFollow') => void;
     myProfile?: ProfileType;
-    myFollowings: FollowerType[];
+    myFollowings: ProfileType[];
 };
 
 const FollowersList: React.FC<FollowersListProps> = (props) => {
@@ -136,22 +136,19 @@ const FollowersList: React.FC<FollowersListProps> = (props) => {
                             <ListItemText
                                 primary={
                                     <>
-                                        <Link to={'/' + user.user.username}>
+                                        <Link to={'/' + user.username}>
                                             <Stack direction="row" spacing={2}>
                                                 <>
-                                                    <Avatar alt={user.user.username} src={user.user.icon} />
-                                                    <p>{user.user.username}</p>
+                                                    <Avatar alt={user.username} src={user.icon} />
+                                                    <p>{user.username}</p>
                                                     {props.myProfile?.username ===
-                                                    user.user.username ? null : props.myFollowings.find(
-                                                          (myFollowing) => myFollowing.to === user.user.id
+                                                    user.username ? null : props.myFollowings.find(
+                                                          (myFollowing) => myFollowing.id === user.id
                                                       ) ? (
                                                         <Button
                                                             size="small"
                                                             onClick={(e) => {
-                                                                props.onUpdateFollowings(
-                                                                    user.user.username,
-                                                                    'unFollow'
-                                                                );
+                                                                props.onUpdateFollowings(user.username, 'unFollow');
                                                                 e.preventDefault();
                                                             }}
                                                         >
@@ -161,7 +158,7 @@ const FollowersList: React.FC<FollowersListProps> = (props) => {
                                                         <Button
                                                             size="small"
                                                             onClick={(e) => {
-                                                                props.onUpdateFollowings(user.user.username, 'follow');
+                                                                props.onUpdateFollowings(user.username, 'follow');
                                                                 e.preventDefault();
                                                             }}
                                                         >
@@ -173,7 +170,7 @@ const FollowersList: React.FC<FollowersListProps> = (props) => {
                                         </Link>
                                     </>
                                 }
-                                secondary={<>{user.user.introduction}</>}
+                                secondary={<>{user.introduction}</>}
                             />
                         </ListItem>
                     ))}

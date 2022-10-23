@@ -1,6 +1,5 @@
 import tweets from '../data/tweets';
 import users from '../data/users';
-import followers from '../data/followers';
 import favorities from '../data/favorities';
 import { sign } from 'jsonwebtoken';
 import { createHash } from 'crypto';
@@ -11,11 +10,16 @@ import { Tweet, User } from '@prisma/client';
 
 export const getTweets = async (req: Request, res: Response) => {
     const limit: number = 10;
-    // const followingUsers = await prisma.follower.findMany({
-    // where: username =
-    // })
-    const followingUsers: Array<FollowerType> = followers.filter((follower) => follower.from === req.user.id);
-    const followingUsersAndMyIds: Array<number> = followingUsers.map((obj) => obj.to);
+    const user = await prisma.user.findUnique({
+        where: { id: req.user.id },
+        include: { following: true },
+    });
+    if (!user) {
+        throw Error;
+    }
+
+    const followingUsers = user.following;
+    const followingUsersAndMyIds: Array<number> = followingUsers.map((obj) => obj.id);
 
     followingUsersAndMyIds.push(req.user.id);
     const followingUsersTweetsList: Array<Tweet> = await prisma.tweet.findMany({
@@ -31,7 +35,6 @@ export const getTweets = async (req: Request, res: Response) => {
             createdAt: 'desc',
         },
     });
-
     res.json(followingUsersTweetsList.slice(0, limit));
 };
 
@@ -228,7 +231,6 @@ export const getMyProfile = async (req: Request, res: Response) => {
             username: username,
         },
     });
-
     res.json(user);
 };
 
@@ -258,78 +260,60 @@ export const updateProfile = async (req: Request, res: Response) => {
 };
 
 // フォローしているユーザー
-export const getFollowings = (req: Request, res: Response) => {
-    const requestUser: ProfileType | undefined = users.find(({ username }) => username === req.params.username);
-    let specificUserFollowingUsersList: Array<FollowerType> = [];
-    let specificUserFollowingUsersListWithUserInformation: Array<FollowerType> = [];
-    if (requestUser) {
-        followers.forEach((follower) => {
-            if (follower.from === requestUser.id) {
-                specificUserFollowingUsersList.push(follower);
-            }
-        });
+export const getFollowings = async (req: Request, res: Response) => {
+    const requestUser = await prisma.user.findUnique({
+        where: { username: req.params.username },
+        include: { following: true },
+    });
 
-        specificUserFollowingUsersList.forEach((specificUserFollowingUser) => {
-            let valueOfInsert: FollowerType;
-            users.forEach((user) => {
-                if (specificUserFollowingUser.to === user.id) {
-                    specificUserFollowingUser['user'] = user;
-
-                    valueOfInsert = JSON.parse(JSON.stringify(specificUserFollowingUser));
-                    specificUserFollowingUsersListWithUserInformation.push(valueOfInsert);
-                }
-            });
-        });
-        res.json(specificUserFollowingUsersList);
+    if (!requestUser) {
+        throw Error;
     }
+
+    res.json(requestUser.following);
 };
 
 // 自分のフォロワー
-export const getFollowers = (req: Request, res: Response) => {
-    const requestUser: ProfileType | undefined = users.find(({ username }) => username === req.params.username);
-    let specificUserFollowersUsersList: Array<FollowerType> = [];
-    let specificUserFollowersUsersListWithUserInformation: Array<FollowerType> = [];
-    if (requestUser) {
-        followers.forEach((follower) => {
-            if (follower.to === requestUser.id) {
-                specificUserFollowersUsersList.push(follower);
-            }
-        });
-
-        specificUserFollowersUsersList.forEach((specificUserFollowerdUser) => {
-            let valueOfInsert: FollowerType;
-            users.forEach((user) => {
-                if (specificUserFollowerdUser.from === user.id) {
-                    specificUserFollowerdUser['user'] = user;
-
-                    valueOfInsert = JSON.parse(JSON.stringify(specificUserFollowerdUser));
-                    specificUserFollowersUsersListWithUserInformation.push(valueOfInsert);
-                }
-            });
-        });
-
-        res.json(specificUserFollowersUsersList);
+export const getFollowers = async (req: Request, res: Response) => {
+    const requestUser = await prisma.user.findUnique({
+        where: { username: req.params.username },
+        include: { followedBy: true },
+    });
+    if (!requestUser) {
+        throw Error;
     }
+    res.json(requestUser.followedBy);
 };
 
-export const updateFollowings = (req: Request, res: Response) => {
-    const followings: string = req.body.followings;
-    const user: ProfileType | undefined = req.user;
-    const userToEdit: ProfileType | undefined = users.find(({ username }) => username === req.body.followingUsername);
+export const updateFollowings = async (req: Request, res: Response) => {
+    const user: User | null = await prisma.user.findUnique({
+        where: { username: req.user.username },
+    });
+    const userToEdit: User | null = await prisma.user.findUnique({
+        where: { username: req.body.followingUsername },
+    });
 
     if (user && userToEdit) {
         if (req.body.action === 'follow') {
-            followers.push({
-                id: followers.length + 1,
-                // TODO: DBとつなぐときなおしたい
-                to: userToEdit.id,
-                from: user.id,
-                createdAt: new Date(),
+            await prisma.user.update({
+                where: { username: user.username },
+                data: {
+                    following: {
+                        connect: [{ id: userToEdit.id }],
+                    },
+                },
             });
         } else {
-            // followers = followers.filter((follower) => follower.to !== userToEdit.id || follower.from !== user.id);
+            await prisma.user.update({
+                where: { username: user.username },
+                data: {
+                    following: {
+                        disconnect: [{ id: userToEdit.id }],
+                    },
+                },
+            });
         }
-        res.status(200).json(followings);
+        res.status(200);
     }
 };
 
@@ -392,7 +376,7 @@ function addInformationToTweet(tweetList: Array<Tweet>, req: Request) {
 }
 
 module.exports = {
-    getTweets, //おきかえた
+    getTweets, //とちゅうまでおきかえた
     getSpecificUsersTweets,
     getSpecificUsersFavoriteTweets,
     getTweet, // おきかえた
@@ -403,8 +387,8 @@ module.exports = {
     getMyProfile, // おきかえた
     getProfile, // おきかえた
     updateProfile, // おきかえた
-    getFollowings,
-    getFollowers,
-    updateFollowings,
+    getFollowings, // おきかえた
+    getFollowers, // おきかえた
+    updateFollowings, // おきかえた
     login,
 };
