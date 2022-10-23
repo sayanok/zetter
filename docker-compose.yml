@@ -7,7 +7,6 @@ services:
             - ./front:/front
         ports:
             - 3000:3000
-        tty: true
 
     api:
         build: ./api
@@ -16,7 +15,6 @@ services:
             - ./api:/api
         ports:
             - 5000:5000
-        tty: true
 
     db:
         container_name: mysql
