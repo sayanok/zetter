@@ -36,7 +36,6 @@ model Tweet {
   favorities Favorite[]
   numberOfFavorite Int @default(0)
   numberOfReply Int @default(0)
-  isFavorite Boolean @default(false)
 }
 
 model Favorite {

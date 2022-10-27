@@ -66,33 +66,37 @@ export const getSpecificUsersTweets = async (req: Request, res: Response) => {
     }
 };
 
-export const getSpecificUsersFavoriteTweets = (req: Request, res: Response) => {
+export const getSpecificUsersFavoriteTweets = async (req: Request, res: Response) => {
     const limit: number = 10;
-    const user: ProfileType | undefined = users.find(({ username }) => username === req.params.username);
+    const user: User | null = await prisma.user.findUnique({
+        where: { username: req.params.username },
+    });
     if (!user) {
         throw Error;
     }
-    const favoriteTweets: Array<FavoriteType> = favorities.filter((favorite) => favorite.userId === user.id);
+
+    const favoriteTweets = await prisma.favorite.findMany({
+        where: { userId: user.id },
+    });
     const favoriteTweetIds: Array<number> = favoriteTweets.map((obj) => obj.tweetId);
 
-    let favoriteTweetList: Array<TweetType> = [];
-
-    tweets.forEach((tweet) => {
-        if (favoriteTweetIds.includes(tweet.id)) {
-            favoriteTweetList.push(tweet);
-        }
+    const favoriteTweetList: Array<Tweet> = await prisma.tweet.findMany({
+        where: {
+            id: {
+                in: favoriteTweetIds,
+            },
+        },
+        include: {
+            user: true,
+            favorities: true,
+        },
+        orderBy: {
+            createdAt: 'desc',
+        },
+        take: limit,
     });
 
-    const sortedFavoriteTweetList: Array<TweetType> = favoriteTweetList.sort(function (a, b) {
-        if (a.createdAt > b.createdAt) {
-            return -1;
-        } else {
-            return 1;
-        }
-    });
-    const result: Array<String> = [];
-
-    // const result: Array<TweetType> = addInformationToTweet(sortedFavoriteTweetList, req);
+    const result: Array<TweetType> = addInformationToTweet(favoriteTweetList, req);
     res.json(result.slice(0, limit));
 };
 
@@ -380,7 +384,7 @@ function addInformationToTweet(tweetList: Array<Tweet>, req: Request) {
 module.exports = {
     getTweets, //おきかえた
     getSpecificUsersTweets, //おきかえた
-    getSpecificUsersFavoriteTweets,
+    getSpecificUsersFavoriteTweets, //おきかえた
     getTweet, // おきかえた
     getReplys,
     createTweet, //おきかえた
