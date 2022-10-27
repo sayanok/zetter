@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { TweetType } from './utils/types';
+import { TweetType, ProfileType } from './utils/types';
+import { useCallApi } from './utils/api';
 import ReplyButton from './ReplyButton';
 import FavButton from './FavButton';
 import dayjs from 'dayjs';
@@ -22,6 +23,20 @@ type SingleTweetProps = {
 };
 
 const SingleTweet: React.FC<SingleTweetProps> = (props) => {
+    const callApi = useCallApi();
+    const userIds: Array<number | undefined> = props.tweet.favorities
+        ? props.tweet.favorities.map((obj) => obj.userId)
+        : [];
+    const [myProfile, setMyProfile] = useState<ProfileType>();
+
+    useEffect(() => {
+        getMyProfile()?.then(setMyProfile);
+    }, []);
+
+    function getMyProfile(): Promise<ProfileType> | undefined {
+        return callApi('http://localhost:5000/api/zetter/profile');
+    }
+
     function formatDate(createdAt: Date): string {
         const now: dayjs.Dayjs = dayjs();
         if (dayjs(createdAt).isBefore(now.subtract(1, 'd'))) {
@@ -58,7 +73,7 @@ const SingleTweet: React.FC<SingleTweetProps> = (props) => {
                                 </Button>
                                 <FavButton
                                     numberOfFavorite={props.tweet.numberOfFavorite}
-                                    isFavorite={props.tweet.isFavorite}
+                                    isFavorite={(props.tweet.isFavorite = userIds.includes(myProfile?.id))}
                                     onClick={() => props.updateFavoriteState(props.tweet)}
                                 />
                                 <Button variant="text">

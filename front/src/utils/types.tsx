@@ -19,6 +19,7 @@ export type TweetType = {
     numberOfFavorite: number;
     isFavorite: boolean;
     favoriteNotification: FavoriteType;
+    favorities: Array<FavoriteType>;
 };
 
 export type FavoriteType = {

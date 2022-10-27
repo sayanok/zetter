@@ -20,7 +20,6 @@ export type TweetType = {
     user?: ProfileType;
     numberOfFavorite?: number;
     numberOfReply?: number;
-    isFavorite?: boolean;
     favoriteNotification?: FavoriteType;
 };
 

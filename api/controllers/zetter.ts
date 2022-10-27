@@ -30,32 +30,38 @@ export const getTweets = async (req: Request, res: Response) => {
         },
         include: {
             user: true,
+            favorities: true,
         },
         orderBy: {
             createdAt: 'desc',
         },
+        take: limit,
     });
-    res.json(followingUsersTweetsList.slice(0, limit));
+    res.json(followingUsersTweetsList);
 };
 
 export const getSpecificUsersTweets = async (req: Request, res: Response) => {
     const limit: number = 10;
     const user: User | null = await prisma.user.findUnique({
-        where: { username: req.user.username },
-    });
-    const sortedTweets: Array<TweetType> = tweets.sort(function (a: TweetType, b: TweetType) {
-        if (Number(a.createdAt) - Number(b.createdAt)) {
-            return -1;
-        } else {
-            return 1;
-        }
+        where: { username: req.params.username },
     });
 
     if (user) {
-        const specificUsersTweets: Array<TweetType> = sortedTweets.filter((tweet) => tweet.createdBy === user.id);
-        const result: Array<String> = [];
+        const specificUsersTweets = await prisma.tweet.findMany({
+            where: {
+                createdBy: user.id,
+            },
+            include: {
+                user: true,
+                favorities: true,
+            },
+            orderBy: {
+                createdAt: 'desc',
+            },
+            take: limit,
+        });
 
-        // const result: Array<TweetType> = addInformationToTweet(specificUsersTweets, req);
+        const result: Array<TweetType> = addInformationToTweet(specificUsersTweets, req);
         res.json(result.slice(0, limit));
     }
 };
@@ -137,6 +143,10 @@ export const updateTweet = async (req: Request, res: Response) => {
         where: {
             id: req.body.tweet.id,
         },
+        include: {
+            user: true,
+            favorities: true,
+        },
     });
 
     if (!tweet) {
@@ -157,7 +167,6 @@ export const updateTweet = async (req: Request, res: Response) => {
             },
             data: {
                 numberOfFavorite: tweet.numberOfFavorite + 1,
-                isFavorite: true,
             },
         });
     } else {
@@ -176,7 +185,6 @@ export const updateTweet = async (req: Request, res: Response) => {
             },
             data: {
                 numberOfFavorite: tweet.numberOfFavorite - 1,
-                isFavorite: false,
             },
         });
     }
@@ -342,10 +350,6 @@ export const login = async (req: Request, res: Response) => {
 };
 
 function addInformationToTweet(tweetList: Array<Tweet>, req: Request) {
-    // ツイートに自分がfavしているかの情報を付加するための準備
-    const usersFavoriteTweets: Array<FavoriteType> = favorities.filter((favorite) => favorite.userId === req.user.id);
-    const favoriteTweetIds: Array<number> = usersFavoriteTweets.map((obj) => obj.tweetId);
-
     tweetList.forEach(async (tweet) => {
         const numberOfFavorite = await prisma.favorite.count({
             where: {
@@ -368,16 +372,14 @@ function addInformationToTweet(tweetList: Array<Tweet>, req: Request) {
                 numberOfReply: numberOfReply,
             },
         });
-
-        // tweet.isFavorite = favoriteTweetIds.includes(tweet.id);
     });
 
     return tweetList;
 }
 
 module.exports = {
-    getTweets, //とちゅうまでおきかえた
-    getSpecificUsersTweets,
+    getTweets, //おきかえた
+    getSpecificUsersTweets, //おきかえた
     getSpecificUsersFavoriteTweets,
     getTweet, // おきかえた
     getReplys,

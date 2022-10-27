@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { TweetType } from './utils/types';
+import { TweetType, ProfileType } from './utils/types';
+import { useCallApi } from './utils/api';
 import ReplyButton from './ReplyButton';
 import FavButton from './FavButton';
 
@@ -20,6 +21,20 @@ type FavoriteNotificationProps = {
 };
 
 const FavoriteNotification: React.FC<FavoriteNotificationProps> = (props) => {
+    const callApi = useCallApi();
+    const userIds: Array<number | undefined> = props.tweet.favorities
+        ? props.tweet.favorities.map((obj) => obj.userId)
+        : [];
+    const [myProfile, setMyProfile] = useState<ProfileType>();
+
+    useEffect(() => {
+        getMyProfile()?.then(setMyProfile);
+    }, []);
+
+    function getMyProfile(): Promise<ProfileType> | undefined {
+        return callApi('http://localhost:5000/api/zetter/profile');
+    }
+
     return (
         <>
             <Link to={'/tweet/' + props.tweet.id}>
@@ -52,7 +67,7 @@ const FavoriteNotification: React.FC<FavoriteNotificationProps> = (props) => {
                                 </Button>
                                 <FavButton
                                     numberOfFavorite={props.tweet.numberOfFavorite}
-                                    isFavorite={props.tweet.isFavorite}
+                                    isFavorite={(props.tweet.isFavorite = userIds.includes(myProfile?.id))}
                                     onClick={() => props.updateFavoriteState(props.tweet)}
                                 />
                                 <Button variant="text">
