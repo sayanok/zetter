@@ -29,11 +29,3 @@ export type FavoriteType = {
     createdAt: string;
     user: ProfileType;
 };
-
-export type FollowerType = {
-    id: number;
-    to: number;
-    from: number;
-    createdAt: string;
-    user: ProfileType;
-};
