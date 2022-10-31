@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useCallApi } from './utils/api';
-import { TweetType } from './utils/types';
+import { FavoriteType, TweetType } from './utils/types';
 import TweetTree from './TweetTree';
 import FavoriteNotification from './FavoriteNotification';
 
@@ -105,19 +105,19 @@ const Notifications: React.FC = () => {
             </Box>
             <TabPanel value={value} index={0}>
                 <List sx={{ width: '100%', maxWidth: 1000, bgcolor: 'background.paper' }}>
-                    {notificationsList.map((tweet: TweetType, index) => (
+                    {notificationsList.map((notification: TweetType | FavoriteType, index) => (
                         <ListItem key={index} alignItems="flex-start">
-                            {'favoriteNotification' in tweet ? (
-                                <FavoriteNotification
-                                    tweet={tweet}
+                            {'replyTo' in notification ? (
+                                <TweetTree
+                                    tweet={notification}
                                     afterPostTweet={() => getAndSetTweets()}
-                                    updateFavoriteState={() => updateFavoriteState(tweet)}
+                                    updateFavoriteState={() => updateFavoriteState(notification)}
                                 />
                             ) : (
-                                <TweetTree
-                                    tweet={tweet}
+                                <FavoriteNotification
+                                    favorite={notification}
                                     afterPostTweet={() => getAndSetTweets()}
-                                    updateFavoriteState={() => updateFavoriteState(tweet)}
+                                    updateFavoriteState={() => updateFavoriteState(notification.tweet)}
                                 />
                             )}
                         </ListItem>
@@ -127,13 +127,13 @@ const Notifications: React.FC = () => {
             <TabPanel value={value} index={1}>
                 {notificationsList.map((tweet: TweetType, index) => (
                     <ListItem key={index} alignItems="flex-start">
-                        {'favoriteNotification' in tweet ? null : (
+                        {tweet.replyTo ? (
                             <TweetTree
                                 tweet={tweet}
                                 afterPostTweet={() => getAndSetTweets()}
                                 updateFavoriteState={() => updateFavoriteState(tweet)}
                             />
-                        )}
+                        ) : null}
                     </ListItem>
                 ))}
             </TabPanel>

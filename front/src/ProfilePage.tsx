@@ -152,7 +152,6 @@ const ProfilePage: React.FC<ProfilePageProps> = (props) => {
                     </CardActions>
                 ) : (
                     <CardActions>
-                        <>{console.log(followers)}</>
                         {followers?.find((follower) => follower.username === props.myProfile?.username) ? (
                             <Button
                                 size="small"

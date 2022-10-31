@@ -31,6 +31,7 @@ model Tweet {
   user User @relation(fields: [createdBy], references: [id])
   createdBy Int
   replyTo Int?
+  // replyToTweet Tweet @relation(fields: [replyTo], references: [id])
   content String
   createdAt DateTime @default(now())
   favorities Favorite[]

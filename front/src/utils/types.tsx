@@ -28,4 +28,5 @@ export type FavoriteType = {
     userId: number;
     createdAt: string;
     user: ProfileType;
+    tweet: TweetType;
 };

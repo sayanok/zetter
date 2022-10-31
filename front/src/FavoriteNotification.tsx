@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { TweetType, ProfileType } from './utils/types';
+import { TweetType, ProfileType, FavoriteType } from './utils/types';
 import { useCallApi } from './utils/api';
 import ReplyButton from './ReplyButton';
 import FavButton from './FavButton';
@@ -15,16 +15,13 @@ import Button from '@mui/material/Button';
 import StarIcon from '@mui/icons-material/Star';
 
 type FavoriteNotificationProps = {
-    tweet: TweetType;
+    favorite: FavoriteType;
     afterPostTweet: () => void;
     updateFavoriteState: (tweet: TweetType) => void;
 };
 
 const FavoriteNotification: React.FC<FavoriteNotificationProps> = (props) => {
     const callApi = useCallApi();
-    const userIds: Array<number | undefined> = props.tweet.favorities
-        ? props.tweet.favorities.map((obj) => obj.userId)
-        : [];
     const [myProfile, setMyProfile] = useState<ProfileType>();
 
     useEffect(() => {
@@ -37,20 +34,17 @@ const FavoriteNotification: React.FC<FavoriteNotificationProps> = (props) => {
 
     return (
         <>
-            <Link to={'/tweet/' + props.tweet.id}>
+            <Link to={'/tweet/' + props.favorite.id}>
                 <ListItemText
                     primary={
                         <>
-                            <Link to={'/' + props.tweet.favoriteNotification.user.username}>
+                            <Link to={'/' + props.favorite.user.username}>
                                 <ListItemIcon>
                                     <StarIcon color="primary" fontSize="large" />
-                                    <Avatar
-                                        alt={props.tweet.favoriteNotification.user.username}
-                                        src={props.tweet.favoriteNotification.user.icon}
-                                    />
+                                    <Avatar alt={props.favorite.user.username} src={props.favorite.user.icon} />
                                 </ListItemIcon>
                                 <p>
-                                    {props.tweet.favoriteNotification.user.username}
+                                    {props.favorite.user.username}
                                     さんがあなたのツイートをいいねしました
                                 </p>
                             </Link>
@@ -58,17 +52,20 @@ const FavoriteNotification: React.FC<FavoriteNotificationProps> = (props) => {
                     }
                     secondary={
                         <>
-                            {props.tweet.content}
+                            {props.favorite.tweet.content}
                             <br />
                             <ListItemIcon>
-                                <ReplyButton tweet={props.tweet} afterPostTweet={() => props.afterPostTweet()} />
+                                <ReplyButton
+                                    tweet={props.favorite.tweet}
+                                    afterPostTweet={() => props.afterPostTweet()}
+                                />
                                 <Button variant="text">
                                     <CompareArrowsIcon />
                                 </Button>
                                 <FavButton
-                                    numberOfFavorite={props.tweet.numberOfFavorite}
-                                    isFavorite={(props.tweet.isFavorite = userIds.includes(myProfile?.id))}
-                                    onClick={() => props.updateFavoriteState(props.tweet)}
+                                    numberOfFavorite={props.favorite.tweet.numberOfFavorite}
+                                    isFavorite={props.favorite.userId === myProfile?.id}
+                                    onClick={() => props.updateFavoriteState(props.favorite.tweet)}
                                 />
                                 <Button variant="text">
                                     <IosShareIcon />
