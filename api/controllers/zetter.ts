@@ -204,7 +204,7 @@ export const getNotifications = async (req: Request, res: Response) => {
     // favを取得
     const favoriteNotifications = await prisma.favorite.findMany({
         where: { tweetId: { in: specificUsersTweetsIds } },
-        include: { tweet: true, user: true },
+        include: { tweet: { include: { user: true } }, user: true },
     });
 
     const notifications: Array<(Favorite & { user: User; tweet: Tweet }) | (Tweet & { user: User })> = [
@@ -340,19 +340,19 @@ export const login = async (req: Request, res: Response) => {
 };
 
 module.exports = {
-    getTweets, //おきかえた
-    getSpecificUsersTweets, //おきかえた
-    getSpecificUsersFavoriteTweets, //おきかえた
-    getTweet, // おきかえた
-    getReplys, // おきかえた
-    createTweet, //おきかえた
-    updateTweet, //おきかえた
+    getTweets,
+    getSpecificUsersTweets,
+    getSpecificUsersFavoriteTweets,
+    getTweet,
+    getReplys,
+    createTweet,
+    updateTweet,
     getNotifications,
-    getMyProfile, // おきかえた
-    getProfile, // おきかえた
-    updateProfile, // おきかえた
-    getFollowings, // おきかえた
-    getFollowers, // おきかえた
-    updateFollowings, // おきかえた
+    getMyProfile,
+    getProfile,
+    updateProfile,
+    getFollowings,
+    getFollowers,
+    updateFollowings,
     login,
 };
