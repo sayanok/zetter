@@ -6,18 +6,17 @@ import { Tweet, User, Favorite } from '@prisma/client';
 
 export const getTweets = async (req: Request, res: Response) => {
     const limit: number = 10;
-    const user = await prisma.user.findUnique({
-        where: { id: req.user.id },
-        include: { following: true },
+    const followings = await prisma.user.findMany({
+        where: {
+            followedBy: {
+                some: { id: req.user.id },
+            },
+        },
     });
-    if (!user) {
-        throw Error('getTweetsでユーザーが存在してないっぽいよ');
-    }
-
     const timelineTweetsList: Array<Tweet> = await prisma.tweet.findMany({
         where: {
             createdBy: {
-                in: [user.id, ...user.following.map((following) => following.id)],
+                in: [req.user.id, ...followings.map((following) => following.id)],
             },
         },
         include: {
