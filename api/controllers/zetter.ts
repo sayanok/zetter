@@ -11,17 +11,13 @@ export const getTweets = async (req: Request, res: Response) => {
         include: { following: true },
     });
     if (!user) {
-        throw Error;
+        throw Error('getTweetsでユーザーが存在してないっぽいよ');
     }
 
-    const followingUsers = user.following;
-    const followingUsersAndMyIds: Array<number> = followingUsers.map((following) => following.id);
-
-    followingUsersAndMyIds.push(req.user.id);
-    const followingUsersTweetsList: Array<Tweet> = await prisma.tweet.findMany({
+    const timelineTweetsList: Array<Tweet> = await prisma.tweet.findMany({
         where: {
             createdBy: {
-                in: followingUsersAndMyIds,
+                in: [user.id, ...user.following.map((following) => following.id)],
             },
         },
         include: {
@@ -33,7 +29,7 @@ export const getTweets = async (req: Request, res: Response) => {
         },
         take: limit,
     });
-    res.json(followingUsersTweetsList);
+    res.json(timelineTweetsList);
 };
 
 export const getSpecificUsersTweets = async (req: Request, res: Response) => {
@@ -41,24 +37,25 @@ export const getSpecificUsersTweets = async (req: Request, res: Response) => {
     const user: User | null = await prisma.user.findUnique({
         where: { username: req.params.username },
     });
-
-    if (user) {
-        const specificUsersTweets = await prisma.tweet.findMany({
-            where: {
-                createdBy: user.id,
-            },
-            include: {
-                user: true,
-                favorities: true,
-            },
-            orderBy: {
-                createdAt: 'desc',
-            },
-            take: limit,
-        });
-
-        res.json(specificUsersTweets);
+    if (!user) {
+        throw Error('getSpecificUsersTweetsでユーザーが存在してないっぽいよ');
     }
+
+    const specificUsersTweets = await prisma.tweet.findMany({
+        where: {
+            createdBy: user.id,
+        },
+        include: {
+            user: true,
+            favorities: true,
+        },
+        orderBy: {
+            createdAt: 'desc',
+        },
+        take: limit,
+    });
+
+    res.json(specificUsersTweets);
 };
 
 export const getSpecificUsersFavoriteTweets = async (req: Request, res: Response) => {
@@ -67,7 +64,7 @@ export const getSpecificUsersFavoriteTweets = async (req: Request, res: Response
         where: { username: req.params.username },
     });
     if (!user) {
-        throw Error;
+        throw Error('getSpecificUsersFavoriteTweetsでユーザーが存在してないっぽいよ');
     }
 
     const favoriteTweets = await prisma.favorite.findMany({
@@ -105,7 +102,7 @@ export const getTweet = async (req: Request, res: Response) => {
         },
     });
     if (!tweet) {
-        throw Error;
+        throw Error('getTweetでtweetが存在してないっぽいよ');
     }
 
     res.json(tweet);
@@ -144,9 +141,8 @@ export const updateTweet = async (req: Request, res: Response) => {
             favorities: true,
         },
     });
-
     if (!tweet) {
-        throw Error;
+        throw Error('updateTweetでtweetが存在してないっぽいよ');
     }
 
     if (req.body.order === 'add') {
@@ -188,8 +184,6 @@ export const updateTweet = async (req: Request, res: Response) => {
 };
 
 export const getNotifications = async (req: Request, res: Response) => {
-    const limit: number = 10;
-
     const specificUsersTweets = await prisma.tweet.findMany({
         where: { createdBy: req.user.id },
     });
@@ -263,9 +257,8 @@ export const getFollowings = async (req: Request, res: Response) => {
         where: { username: req.params.username },
         include: { following: true },
     });
-
     if (!requestUser) {
-        throw Error;
+        throw Error('getFollowingでrequestUserが存在してないっぽいよ');
     }
 
     res.json(requestUser.following);
@@ -278,7 +271,7 @@ export const getFollowers = async (req: Request, res: Response) => {
         include: { followedBy: true },
     });
     if (!requestUser) {
-        throw Error;
+        throw Error('getFollowingでrequestUserが存在してないっぽいよ');
     }
     res.json(requestUser.followedBy);
 };
@@ -324,7 +317,9 @@ export const login = async (req: Request, res: Response) => {
         },
     });
     const hashedInputPassword: string = createHash('sha256').update(input.password).digest('base64');
-    if (user && user.password === hashedInputPassword) {
+    if (!user) {
+        throw Error('getFollowingでrequestUserが存在してないっぽいよ');
+    } else if (user.password === hashedInputPassword) {
         const token: string = sign(
             {
                 userId: user.id,
