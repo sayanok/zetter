@@ -107,7 +107,7 @@ const Notifications: React.FC = () => {
                 <List sx={{ width: '100%', maxWidth: 1000, bgcolor: 'background.paper' }}>
                     {notificationsList.map((notification: TweetType | FavoriteType, index) => (
                         <ListItem key={index} alignItems="flex-start">
-                            {'replyTo' in notification ? (
+                            {'replyToId' in notification ? (
                                 <TweetTree
                                     tweet={notification}
                                     afterPostTweet={() => getAndSetTweets()}
@@ -127,7 +127,7 @@ const Notifications: React.FC = () => {
             <TabPanel value={value} index={1}>
                 {notificationsList.map((tweet: TweetType, index) => (
                     <ListItem key={index} alignItems="flex-start">
-                        {tweet.replyTo ? (
+                        {tweet.replyToId ? (
                             <TweetTree
                                 tweet={tweet}
                                 afterPostTweet={() => getAndSetTweets()}

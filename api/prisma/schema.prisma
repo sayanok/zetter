@@ -30,13 +30,13 @@ model Tweet {
   id Int @id @default(autoincrement())
   user User @relation(fields: [createdBy], references: [id])
   createdBy Int
-  replyTo Int?
-  // replyToTweet Tweet @relation(fields: [replyTo], references: [id])
+  replyToId Int?
+  replyTo Tweet? @relation("reply", fields: [replyToId], references: [id])
+  replyFrom Tweet[] @relation("reply")
   content String
   createdAt DateTime @default(now())
   favorities Favorite[]
   numberOfFavorite Int @default(0)
-  numberOfReply Int @default(0)
 }
 
 model Favorite {

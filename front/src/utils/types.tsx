@@ -11,11 +11,11 @@ export type ProfileType = {
 export type TweetType = {
     id: number;
     createdBy: number;
-    replyTo: null | number;
     content: string;
+    replyToId: null | number;
+    replyFrom: Array<Number>;
     createdAt: Date;
     user: ProfileType;
-    numberOfReply: number;
     numberOfFavorite: number;
     isFavorite: boolean;
     favoriteNotification: FavoriteType;

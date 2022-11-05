@@ -23,6 +23,7 @@ export const getTweets = async (req: Request, res: Response) => {
         include: {
             user: true,
             favorities: true,
+            replyFrom: true,
         },
         orderBy: {
             createdAt: 'desc',
@@ -48,6 +49,7 @@ export const getSpecificUsersTweets = async (req: Request, res: Response) => {
         include: {
             user: true,
             favorities: true,
+            replyFrom: true,
         },
         orderBy: {
             createdAt: 'desc',
@@ -76,6 +78,7 @@ export const getSpecificUsersFavoriteTweets = async (req: Request, res: Response
         include: {
             user: true,
             favorities: true,
+            replyFrom: true,
         },
         orderBy: {
             createdAt: 'desc',
@@ -106,11 +109,10 @@ export const getTweet = async (req: Request, res: Response) => {
 export const getReplys = async (req: Request, res: Response) => {
     const replys = await prisma.tweet.findMany({
         where: {
-            replyTo: parseInt(req.params.tweetId),
+            replyToId: parseInt(req.params.tweetId),
         },
-        include: { user: true, favorities: true },
+        include: { user: true, favorities: true, replyFrom: true },
     });
-
     res.json(replys);
 };
 
@@ -118,7 +120,7 @@ export const createTweet = async (req: Request, res: Response) => {
     const newTweet: Tweet = await prisma.tweet.create({
         data: {
             createdBy: req.user.id,
-            replyTo: req.body.replyTo,
+            replyToId: req.body.replyToId,
             content: req.body.content,
             createdAt: new Date(),
         },
@@ -186,8 +188,8 @@ export const getNotifications = async (req: Request, res: Response) => {
 
     // リプライを取得
     const replyNotifications = await prisma.tweet.findMany({
-        where: { replyTo: { in: specificUsersTweetsIds } },
-        include: { user: true },
+        where: { replyToId: { in: specificUsersTweetsIds } },
+        include: { user: true, replyFrom: true },
     });
 
     // favを取得

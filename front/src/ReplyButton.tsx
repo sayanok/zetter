@@ -41,7 +41,7 @@ const ReplyButton: React.FC<ReplyButtonProps> = (props) => {
             >
                 <ChatBubbleOutlineIcon />
             </Button>
-            {props.tweet.numberOfReply}
+            {props.tweet.replyFrom.length}
             <Modal
                 open={open}
                 onClose={(e: Event) => {
