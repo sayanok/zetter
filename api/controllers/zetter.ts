@@ -96,6 +96,7 @@ export const getTweet = async (req: Request, res: Response) => {
         include: {
             user: true,
             favorities: true,
+            replyFrom: true,
         },
     });
     if (!tweet) {
@@ -135,6 +136,7 @@ export const updateTweet = async (req: Request, res: Response) => {
         include: {
             user: true,
             favorities: true,
+            replyFrom: true,
         },
     });
     if (!tweet) {
