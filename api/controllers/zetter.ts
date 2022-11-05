@@ -67,15 +67,10 @@ export const getSpecificUsersFavoriteTweets = async (req: Request, res: Response
         throw Error('getSpecificUsersFavoriteTweetsでユーザーが存在してないっぽいよ');
     }
 
-    const favoriteTweets = await prisma.favorite.findMany({
-        where: { userId: user.id },
-    });
-    const favoriteTweetIds: Array<number> = favoriteTweets.map((favoriteTweet) => favoriteTweet.tweetId);
-
     const favoriteTweetList: Array<Tweet> = await prisma.tweet.findMany({
         where: {
-            id: {
-                in: favoriteTweetIds,
+            favorities: {
+                some: { userId: user.id },
             },
         },
         include: {
