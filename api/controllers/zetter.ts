@@ -153,7 +153,7 @@ export const updateTweet = async (req: Request, res: Response) => {
                 id: tweet.id,
             },
             data: {
-                numberOfFavorite: tweet.numberOfFavorite + 1,
+                numberOfFavorite: { increment: 1 },
             },
         });
     } else {
@@ -171,7 +171,7 @@ export const updateTweet = async (req: Request, res: Response) => {
                 id: tweet.id,
             },
             data: {
-                numberOfFavorite: tweet.numberOfFavorite - 1,
+                numberOfFavorite: { decrement: 1 },
             },
         });
     }
