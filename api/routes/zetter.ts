@@ -63,6 +63,7 @@ async function auth(req: Request, res: Response, next: NextFunction) {
         where: {
             id: verifyUser.userId,
         },
+        include: { following: true },
     });
     if (user) {
         req.user = user;

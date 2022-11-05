@@ -25,7 +25,7 @@ type SingleTweetProps = {
 const SingleTweet: React.FC<SingleTweetProps> = (props) => {
     const callApi = useCallApi();
     const userIds: Array<number | undefined> = props.tweet.favorities
-        ? props.tweet.favorities.map((obj) => obj.userId)
+        ? props.tweet.favorities.map((favorite) => favorite.userId)
         : [];
     const [myProfile, setMyProfile] = useState<ProfileType>();
 

@@ -15,7 +15,7 @@ export const getTweets = async (req: Request, res: Response) => {
     }
 
     const followingUsers = user.following;
-    const followingUsersAndMyIds: Array<number> = followingUsers.map((obj) => obj.id);
+    const followingUsersAndMyIds: Array<number> = followingUsers.map((following) => following.id);
 
     followingUsersAndMyIds.push(req.user.id);
     const followingUsersTweetsList: Array<Tweet> = await prisma.tweet.findMany({
@@ -73,7 +73,7 @@ export const getSpecificUsersFavoriteTweets = async (req: Request, res: Response
     const favoriteTweets = await prisma.favorite.findMany({
         where: { userId: user.id },
     });
-    const favoriteTweetIds: Array<number> = favoriteTweets.map((obj) => obj.tweetId);
+    const favoriteTweetIds: Array<number> = favoriteTweets.map((favoriteTweet) => favoriteTweet.tweetId);
 
     const favoriteTweetList: Array<Tweet> = await prisma.tweet.findMany({
         where: {
@@ -193,7 +193,7 @@ export const getNotifications = async (req: Request, res: Response) => {
     const specificUsersTweets = await prisma.tweet.findMany({
         where: { createdBy: req.user.id },
     });
-    const specificUsersTweetsIds = specificUsersTweets.map((obj) => obj.id);
+    const specificUsersTweetsIds = specificUsersTweets.map((specificUsersTweet) => specificUsersTweet.id);
 
     // リプライを取得
     const replyNotifications = await prisma.tweet.findMany({
