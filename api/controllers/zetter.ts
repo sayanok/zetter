@@ -181,27 +181,20 @@ export const updateTweet = async (req: Request, res: Response) => {
 };
 
 export const getNotifications = async (req: Request, res: Response) => {
-    const specificUsersTweets = await prisma.tweet.findMany({
-        where: { createdBy: req.user.id },
-    });
-    const specificUsersTweetsIds = specificUsersTweets.map((specificUsersTweet) => specificUsersTweet.id);
-
     // リプライを取得
     const replyNotifications = await prisma.tweet.findMany({
-        where: { replyToId: { in: specificUsersTweetsIds } },
+        where: { replyTo: { createdBy: req.user.id } },
         include: { user: true, replyFrom: true },
     });
 
     // favを取得
     const favoriteNotifications = await prisma.favorite.findMany({
-        where: { tweetId: { in: specificUsersTweetsIds } },
+        where: { tweet: { createdBy: req.user.id } },
         include: { tweet: { include: { user: true } }, user: true },
     });
 
-    const notifications: Array<(Favorite & { user: User; tweet: Tweet }) | (Tweet & { user: User })> = [
-        ...favoriteNotifications,
-        ...replyNotifications,
-    ];
+    const notifications: Array<(Favorite & { user: User; tweet: Tweet & { user: User } }) | (Tweet & { user: User })> =
+        [...favoriteNotifications, ...replyNotifications];
 
     const sortedNotifications = notifications.sort(function (a, b) {
         if (a.createdAt > b.createdAt) {
@@ -282,25 +275,15 @@ export const updateFollowings = async (req: Request, res: Response) => {
     });
 
     if (user && userToEdit) {
-        if (req.body.action === 'follow') {
-            await prisma.user.update({
-                where: { username: user.username },
-                data: {
-                    following: {
-                        connect: [{ id: userToEdit.id }],
-                    },
-                },
-            });
-        } else {
-            await prisma.user.update({
-                where: { username: user.username },
-                data: {
-                    following: {
-                        disconnect: [{ id: userToEdit.id }],
-                    },
-                },
-            });
-        }
+        await prisma.user.update({
+            where: { username: user.username },
+            data: {
+                following:
+                    req.body.action === 'follow'
+                        ? { connect: [{ id: userToEdit.id }] }
+                        : { disconnect: [{ id: userToEdit.id }] },
+            },
+        });
         res.status(200);
     }
 };
