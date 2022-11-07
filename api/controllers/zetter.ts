@@ -3,20 +3,14 @@ import { createHash } from 'crypto';
 import { Request, Response } from 'express';
 import { prisma } from '../utils/prisma';
 import { Tweet, User, Favorite } from '@prisma/client';
+import { userInfo } from 'os';
 
 export const getTweets = async (req: Request, res: Response) => {
     const limit: number = 10;
-    const followings = await prisma.user.findMany({
-        where: {
-            followedBy: {
-                some: { id: req.user.id },
-            },
-        },
-    });
     const timelineTweetsList: Array<Tweet> = await prisma.tweet.findMany({
         where: {
-            createdBy: {
-                in: [req.user.id, ...followings.map((following) => following.id)],
+            user: {
+                OR: [{ id: req.user.id }, { followedBy: { some: { id: req.user.id } } }],
             },
         },
         include: {
@@ -34,58 +28,52 @@ export const getTweets = async (req: Request, res: Response) => {
 
 export const getSpecificUsersTweets = async (req: Request, res: Response) => {
     const limit: number = 10;
-    const user: User | null = await prisma.user.findUnique({
+    const userAndTweets = await prisma.user.findUnique({
         where: { username: req.params.username },
-    });
-    if (!user) {
-        throw Error('getSpecificUsersTweetsでユーザーが存在してないっぽいよ');
-    }
-
-    const specificUsersTweets = await prisma.tweet.findMany({
-        where: {
-            createdBy: user.id,
-        },
         include: {
-            user: true,
-            favorities: true,
-            replyFrom: true,
+            tweets: {
+                orderBy: { createdAt: 'desc' },
+                take: limit,
+                include: {
+                    user: true,
+                    favorities: true,
+                    replyFrom: true,
+                },
+            },
         },
-        orderBy: {
-            createdAt: 'desc',
-        },
-        take: limit,
     });
-
-    res.json(specificUsersTweets);
+    if (!userAndTweets) {
+        throw Error('getSpecificUsersTweetsでuserAndTweetsが存在してないっぽいよ');
+    }
+    res.json(userAndTweets.tweets);
 };
 
 export const getSpecificUsersFavoriteTweets = async (req: Request, res: Response) => {
     const limit: number = 10;
-    const user: User | null = await prisma.user.findUnique({
-        where: { username: req.params.username },
-    });
-    if (!user) {
-        throw Error('getSpecificUsersFavoriteTweetsでユーザーが存在してないっぽいよ');
-    }
-
-    const favoriteTweetList: Array<Tweet> = await prisma.tweet.findMany({
-        where: {
+    const userAndFavoriteTweets = await prisma.user.findUnique({
+        where: { username: req.user.username },
+        include: {
             favorities: {
-                some: { userId: user.id },
+                where: { userId: req.user.id },
+                include: {
+                    tweet: {
+                        include: {
+                            user: true,
+                            favorities: true,
+                            replyFrom: true,
+                        },
+                    },
+                },
+                orderBy: { createdAt: 'desc' },
+                take: limit,
             },
         },
-        include: {
-            user: true,
-            favorities: true,
-            replyFrom: true,
-        },
-        orderBy: {
-            createdAt: 'desc',
-        },
-        take: limit,
     });
+    if (!userAndFavoriteTweets) {
+        throw Error('getSpecificUsersFavoriteTweetsでuserAndFavoriteTweetsが存在してないっぽいよ');
+    }
 
-    res.json(favoriteTweetList);
+    res.json(userAndFavoriteTweets.favorities.map((favorite) => favorite.tweet));
 };
 
 export const getTweet = async (req: Request, res: Response) => {
@@ -178,7 +166,18 @@ export const updateTweet = async (req: Request, res: Response) => {
             },
         });
     }
-    res.status(200).json(tweet);
+    const updatedTweet = await prisma.tweet.findUnique({
+        where: {
+            id: req.body.tweet.id,
+        },
+        include: {
+            user: true,
+            favorities: true,
+            replyFrom: true,
+        },
+    });
+
+    res.status(200).json(updatedTweet);
 };
 
 export const getNotifications = async (req: Request, res: Response) => {
@@ -242,7 +241,7 @@ export const updateProfile = async (req: Request, res: Response) => {
     res.status(200).json(user);
 };
 
-// フォローしているユーザー
+// 指定されたユーザーのフォローしているユーザー
 export const getFollowings = async (req: Request, res: Response) => {
     const requestUser = await prisma.user.findUnique({
         where: { username: req.params.username },
@@ -255,7 +254,7 @@ export const getFollowings = async (req: Request, res: Response) => {
     res.json(requestUser.following);
 };
 
-// 自分のフォロワー
+// 指定されたユーザーのフォロワー
 export const getFollowers = async (req: Request, res: Response) => {
     const requestUser = await prisma.user.findUnique({
         where: { username: req.params.username },
@@ -268,25 +267,23 @@ export const getFollowers = async (req: Request, res: Response) => {
 };
 
 export const updateFollowings = async (req: Request, res: Response) => {
-    const user: User | null = await prisma.user.findUnique({
-        where: { username: req.user.username },
-    });
     const userToEdit: User | null = await prisma.user.findUnique({
         where: { username: req.body.followingUsername },
     });
 
-    if (user && userToEdit) {
-        await prisma.user.update({
-            where: { username: user.username },
-            data: {
-                following:
-                    req.body.action === 'follow'
-                        ? { connect: [{ id: userToEdit.id }] }
-                        : { disconnect: [{ id: userToEdit.id }] },
-            },
-        });
-        res.status(200);
+    if (!userToEdit) {
+        throw Error('updateFollowingsでuserToEditが存在してないっぽいよ');
     }
+    await prisma.user.update({
+        where: { username: req.user.username },
+        data: {
+            following:
+                req.body.action === 'follow'
+                    ? { connect: [{ id: userToEdit.id }] }
+                    : { disconnect: [{ id: userToEdit.id }] },
+        },
+    });
+    res.status(200);
 };
 
 export const login = async (req: Request, res: Response) => {
