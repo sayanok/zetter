@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useCallApi } from './utils/api';
-import { FollowerType, ProfileType, TweetType } from './utils/types';
+import { ProfileType, TweetType } from './utils/types';
 import TweetTrees from './TweetTrees';
 
 import Card from '@mui/material/Card';
@@ -24,8 +24,8 @@ const ProfilePage: React.FC<ProfilePageProps> = (props) => {
     const [favoriteTweetList, setFavoriteTweetList] = useState<Array<TweetType>>([]);
     const [followingsNumber, setFollowingsNumber] = useState<number>();
     const [followersNumber, setFollowersNumber] = useState<number>();
-    const [followings, setFollowings] = useState<Array<FollowerType>>();
-    const [followers, setFollowers] = useState<Array<FollowerType>>();
+    const [followings, setFollowings] = useState<Array<ProfileType>>();
+    const [followers, setFollowers] = useState<Array<ProfileType>>();
     // タブ関連のstate
     const [value, setValue] = React.useState(0);
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -66,11 +66,11 @@ const ProfilePage: React.FC<ProfilePageProps> = (props) => {
         getFavoriteTweets()?.then(setFavoriteTweetList);
     }
 
-    function getFollowings(): Promise<Array<FollowerType>> | undefined {
+    function getFollowings(): Promise<Array<ProfileType>> | undefined {
         return callApi('http://localhost:5000/api/zetter/' + params.username + '/followings');
     }
 
-    function getFollowers(): Promise<Array<FollowerType>> | undefined {
+    function getFollowers(): Promise<Array<ProfileType>> | undefined {
         return callApi('http://localhost:5000/api/zetter/' + params.username + '/followers');
     }
 
@@ -152,7 +152,7 @@ const ProfilePage: React.FC<ProfilePageProps> = (props) => {
                     </CardActions>
                 ) : (
                     <CardActions>
-                        {followers?.find((follower) => follower.user.username === props.myProfile?.username) ? (
+                        {followers?.find((follower) => follower.username === props.myProfile?.username) ? (
                             <Button
                                 size="small"
                                 onClick={() => {

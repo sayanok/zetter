@@ -1,41 +1,40 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { TweetType } from './utils/types';
-import ReplyButton from './ReplyButton';
-import FavButton from './FavButton';
+import { TweetType, ProfileType, FavoriteType } from './utils/types';
+import { useCallApi } from './utils/api';
 
 import Avatar from '@mui/material/Avatar';
-import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
-import IosShareIcon from '@mui/icons-material/IosShare';
 import Divider from '@mui/material/Divider';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import Button from '@mui/material/Button';
 import StarIcon from '@mui/icons-material/Star';
 
 type FavoriteNotificationProps = {
-    tweet: TweetType;
+    favorite: FavoriteType;
     afterPostTweet: () => void;
     updateFavoriteState: (tweet: TweetType) => void;
 };
 
 const FavoriteNotification: React.FC<FavoriteNotificationProps> = (props) => {
+    const callApi = useCallApi();
+
+    function getMyProfile(): Promise<ProfileType> | undefined {
+        return callApi('http://localhost:5000/api/zetter/profile');
+    }
+
     return (
         <>
-            <Link to={'/tweet/' + props.tweet.id}>
+            <Link to={'/tweet/' + props.favorite.id}>
                 <ListItemText
                     primary={
                         <>
-                            <Link to={'/' + props.tweet.favoriteNotification.user.username}>
+                            <Link to={'/' + props.favorite.user.username}>
                                 <ListItemIcon>
                                     <StarIcon color="primary" fontSize="large" />
-                                    <Avatar
-                                        alt={props.tweet.favoriteNotification.user.username}
-                                        src={props.tweet.favoriteNotification.user.icon}
-                                    />
+                                    <Avatar alt={props.favorite.user.username} src={props.favorite.user.icon} />
                                 </ListItemIcon>
                                 <p>
-                                    {props.tweet.favoriteNotification.user.username}
+                                    {props.favorite.user.username}
                                     さんがあなたのツイートをいいねしました
                                 </p>
                             </Link>
@@ -43,22 +42,7 @@ const FavoriteNotification: React.FC<FavoriteNotificationProps> = (props) => {
                     }
                     secondary={
                         <>
-                            {props.tweet.content}
-                            <br />
-                            <ListItemIcon>
-                                <ReplyButton tweet={props.tweet} afterPostTweet={() => props.afterPostTweet()} />
-                                <Button variant="text">
-                                    <CompareArrowsIcon />
-                                </Button>
-                                <FavButton
-                                    numberOfFavorite={props.tweet.numberOfFavorite}
-                                    isFavorite={props.tweet.isFavorite}
-                                    onClick={() => props.updateFavoriteState(props.tweet)}
-                                />
-                                <Button variant="text">
-                                    <IosShareIcon />
-                                </Button>
-                            </ListItemIcon>
+                            {props.favorite.tweet.content}
                             <Divider />
                         </>
                     }

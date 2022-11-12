@@ -11,7 +11,7 @@ const TweetForm: React.FC<TweetFormProps> = (props) => {
     const [content, setContent] = useState<string>(
         props.replySourceTweet ? '@' + props.replySourceTweet?.user.username : ''
     );
-    const [replyTo, setReplyTo] = useState<null | number>();
+    const [replyToId, setReplyTo] = useState<null | number>();
     const placeholder = props.replySourceTweet ? '返信をツイートする' : '今然ぴどうしてる？';
     const callApi = useCallApi();
 
@@ -24,7 +24,7 @@ const TweetForm: React.FC<TweetFormProps> = (props) => {
     function postTweet(): void {
         callApi('http://localhost:5000/api/zetter', {
             method: 'POST',
-            body: JSON.stringify({ content: content, replyTo: replyTo }),
+            body: JSON.stringify({ content: content, replyToId: replyToId }),
         });
         props.afterPostTweet();
         CleanForm();

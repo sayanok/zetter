@@ -52,7 +52,7 @@ const TweetTree: React.FC<TweetTreeProps> = (props) => {
                     updateFavoriteState={() => props.updateFavoriteState(props.tweet)}
                 />
                 <br />
-                {props.tweet.numberOfReply > 0 && location.pathname === '/' ? (
+                {props.tweet.replyFrom.length > 0 && location.pathname === '/' ? (
                     <Accordion>
                         <AccordionSummary aria-controls="panel1a-content" id="panel1a-header" onClick={getAndSetReplys}>
                             返信を表示する

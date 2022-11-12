@@ -11,14 +11,15 @@ export type ProfileType = {
 export type TweetType = {
     id: number;
     createdBy: number;
-    replyTo: null | number;
     content: string;
+    replyToId: null | number;
+    replyFrom: Array<Number>;
     createdAt: Date;
     user: ProfileType;
-    numberOfReply: number;
     numberOfFavorite: number;
     isFavorite: boolean;
     favoriteNotification: FavoriteType;
+    favorities: Array<FavoriteType>;
 };
 
 export type FavoriteType = {
@@ -27,12 +28,5 @@ export type FavoriteType = {
     userId: number;
     createdAt: string;
     user: ProfileType;
-};
-
-export type FollowerType = {
-    id: number;
-    to: number;
-    from: number;
-    createdAt: string;
-    user: ProfileType;
+    tweet: TweetType;
 };

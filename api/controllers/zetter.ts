@@ -1,296 +1,303 @@
-import tweets from '../data/tweets';
-import users from '../data/users';
-import followers from '../data/followers';
-import favorities from '../data/favorities';
 import { sign } from 'jsonwebtoken';
 import { createHash } from 'crypto';
 import { Request, Response } from 'express';
-import { FavoriteType, FollowerType, ProfileType, TweetType } from '../utils/types';
+import { prisma } from '../utils/prisma';
+import { Tweet, User, Favorite } from '@prisma/client';
+import { userInfo } from 'os';
 
-export const getTweets = (req: Request, res: Response) => {
+export const getTweets = async (req: Request, res: Response) => {
     const limit: number = 10;
-    const followingUsers: Array<FollowerType> = followers.filter((follower) => follower.from === req.user.id);
-    const followingUsersAndMyIds: Array<number> = followingUsers.map((obj) => obj.to);
-    let followingUsersTweetsList: Array<TweetType> = [];
-
-    followingUsersAndMyIds.push(req.user.id);
-    tweets.forEach((tweet) => {
-        if (followingUsersAndMyIds.includes(tweet.createdBy)) {
-            followingUsersTweetsList.push(tweet);
-        }
+    const timelineTweetsList: Array<Tweet> = await prisma.tweet.findMany({
+        where: {
+            user: {
+                OR: [{ id: req.user.id }, { followedBy: { some: { id: req.user.id } } }],
+            },
+        },
+        include: {
+            user: true,
+            favorities: true,
+            replyFrom: true,
+        },
+        orderBy: {
+            createdAt: 'desc',
+        },
+        take: limit,
     });
-
-    followingUsersTweetsList.sort(function (a: TweetType, b: TweetType) {
-        return Number(b.createdAt) - Number(a.createdAt);
-    });
-
-    const result: Array<TweetType> = addInformationToTweet(followingUsersTweetsList, req);
-    res.json(result.slice(0, limit));
+    res.json(timelineTweetsList);
 };
 
-export const getSpecificUsersTweets = (req: Request, res: Response) => {
+export const getSpecificUsersTweets = async (req: Request, res: Response) => {
     const limit: number = 10;
-    const user: ProfileType | undefined = users.find(({ username }) => username === req.params.username);
-    const sortedTweets: Array<TweetType> = tweets.sort(function (a: TweetType, b: TweetType) {
-        if (Number(a.createdAt) - Number(b.createdAt)) {
-            return -1;
-        } else {
-            return 1;
-        }
+    const userAndTweets = await prisma.user.findUnique({
+        where: { username: req.params.username },
+        include: {
+            tweets: {
+                orderBy: { createdAt: 'desc' },
+                take: limit,
+                include: {
+                    user: true,
+                    favorities: true,
+                    replyFrom: true,
+                },
+            },
+        },
     });
-
-    if (user) {
-        const specificUsersTweets: Array<TweetType> = sortedTweets.filter((tweet) => tweet.createdBy === user.id);
-        const result: Array<TweetType> = addInformationToTweet(specificUsersTweets, req);
-        res.json(result.slice(0, limit));
+    if (!userAndTweets) {
+        throw Error('getSpecificUsersTweetsでuserAndTweetsが存在してないっぽいよ');
     }
+    res.json(userAndTweets.tweets);
 };
 
-export const getSpecificUsersFavoriteTweets = (req: Request, res: Response) => {
+export const getSpecificUsersFavoriteTweets = async (req: Request, res: Response) => {
     const limit: number = 10;
-    const user: ProfileType | undefined = users.find(({ username }) => username === req.params.username);
-    if (!user) {
-        throw Error;
+    const userAndFavoriteTweets = await prisma.user.findUnique({
+        where: { username: req.user.username },
+        include: {
+            favorities: {
+                where: { userId: req.user.id },
+                include: {
+                    tweet: {
+                        include: {
+                            user: true,
+                            favorities: true,
+                            replyFrom: true,
+                        },
+                    },
+                },
+                orderBy: { createdAt: 'desc' },
+                take: limit,
+            },
+        },
+    });
+    if (!userAndFavoriteTweets) {
+        throw Error('getSpecificUsersFavoriteTweetsでuserAndFavoriteTweetsが存在してないっぽいよ');
     }
-    const favoriteTweets: Array<FavoriteType> = favorities.filter((favorite) => favorite.userId === user.id);
-    const favoriteTweetIds: Array<number> = favoriteTweets.map((obj) => obj.tweetId);
 
-    let favoriteTweetList: Array<TweetType> = [];
-
-    tweets.forEach((tweet) => {
-        if (favoriteTweetIds.includes(tweet.id)) {
-            favoriteTweetList.push(tweet);
-        }
-    });
-
-    const sortedFavoriteTweetList: Array<TweetType> = favoriteTweetList.sort(function (a, b) {
-        if (a.createdAt > b.createdAt) {
-            return -1;
-        } else {
-            return 1;
-        }
-    });
-
-    const result: Array<TweetType> = addInformationToTweet(sortedFavoriteTweetList, req);
-    res.json(result.slice(0, limit));
+    res.json(userAndFavoriteTweets.favorities.map((favorite) => favorite.tweet));
 };
 
-export const getTweet = (req: Request, res: Response) => {
-    const tweet: TweetType | undefined = tweets.find((tweet) => tweet.id === parseInt(req.params.tweetId));
-
+export const getTweet = async (req: Request, res: Response) => {
+    const tweet: Tweet | null = await prisma.tweet.findUnique({
+        where: {
+            id: Number(req.params.tweetId),
+        },
+        include: {
+            user: true,
+            favorities: true,
+            replyFrom: true,
+        },
+    });
     if (!tweet) {
-        throw Error;
+        throw Error('getTweetでtweetが存在してないっぽいよ');
     }
-
-    const numberOfFavorite: Array<FavoriteType> = favorities.filter((favorite) => favorite.tweetId === tweet.id);
-    tweet['numberOfFavorite'] = numberOfFavorite.length;
-
-    const numberOfReply: Array<TweetType> = tweets.filter((replyTweet) => replyTweet.replyTo === tweet.id);
-    tweet['numberOfReply'] = numberOfReply.length;
-
-    // ツイートに自分がfavしているかの情報を付加するための準備
-    const favoriteTweetIds: Array<number> = favorities
-        .filter((favorite) => favorite.userId === req.user.id)
-        .map((obj) => obj.tweetId);
-    tweet.isFavorite = favoriteTweetIds.includes(tweet.id);
 
     res.json(tweet);
 };
 
-export const getReplys = (req: Request, res: Response) => {
-    let replys: Array<TweetType> = [];
-    tweets.forEach((tweet) => {
-        if (tweet.replyTo === parseInt(req.params.tweetId)) {
-            replys.push(tweet);
-        }
+export const getReplys = async (req: Request, res: Response) => {
+    const replys = await prisma.tweet.findMany({
+        where: {
+            replyToId: parseInt(req.params.tweetId),
+        },
+        include: { user: true, favorities: true, replyFrom: true },
     });
-
-    const result: Array<TweetType> = addInformationToTweet(replys, req);
-    res.json(result);
+    res.json(replys);
 };
 
-export const createTweet = (req: Request, res: Response) => {
-    const newTweet: TweetType = {
-        id: tweets.length + 1,
-        createdBy: req.user.id,
-        replyTo: req.body.replyTo,
-        content: req.body.content,
-        createdAt: new Date(),
-    };
-    tweets.push(newTweet);
+export const createTweet = async (req: Request, res: Response) => {
+    const newTweet: Tweet = await prisma.tweet.create({
+        data: {
+            createdBy: req.user.id,
+            replyToId: req.body.replyToId,
+            content: req.body.content,
+            createdAt: new Date(),
+        },
+    });
     res.status(201).json(newTweet);
 };
 
-export const updateTweet = (req: Request, res: Response) => {
-    const tweet: TweetType = req.body.tweet;
-    if (!tweet.numberOfFavorite) {
-        tweet.numberOfFavorite = 0;
+export const updateTweet = async (req: Request, res: Response) => {
+    const tweet: Tweet | null = await prisma.tweet.findUnique({
+        where: {
+            id: req.body.tweet.id,
+        },
+        include: {
+            user: true,
+            favorities: true,
+            replyFrom: true,
+        },
+    });
+    if (!tweet) {
+        throw Error('updateTweetでtweetが存在してないっぽいよ');
     }
 
     if (req.body.order === 'add') {
-        favorities.push({
-            id: favorities.length + 1,
-            // TODO: DBとつなぐときなおしたい
-            tweetId: tweet.id,
-            userId: req.user.id,
-            createdAt: new Date(),
+        await prisma.favorite.create({
+            data: {
+                tweetId: tweet.id,
+                userId: req.user.id,
+            },
         });
-        tweet.isFavorite = true;
-        tweet.numberOfFavorite++;
+
+        await prisma.tweet.update({
+            where: {
+                id: tweet.id,
+            },
+            data: {
+                numberOfFavorite: { increment: 1 },
+            },
+        });
     } else {
-        // favorities = favorities.filter(
-        //     (favorite) => favorite.tweetId !== req.body.tweet.id || favorite.userId !== req.user.id
-        // );
-        tweet.isFavorite = false;
-        tweet.numberOfFavorite--;
-    }
-    res.status(200).json(tweet);
-};
-
-export const getNotifications = (req: Request, res: Response) => {
-    const limit: number = 10;
-    let notifications: Array<TweetType> = [];
-    let favoriteNotifications: Array<TweetType> = [];
-
-    const specificUsersTweets: Array<TweetType> = tweets.filter((tweet) => tweet.createdBy === req.user.id);
-
-    // リプライを取得
-    const replyNotifications: Array<TweetType> = tweets.filter((tweet) =>
-        specificUsersTweets.some((specificUsersTweet) => specificUsersTweet.id === tweet.replyTo)
-    );
-
-    // favを取得
-    favorities.forEach((favorite) => {
-        specificUsersTweets.forEach((specificUsersTweet) => {
-            if (favorite.tweetId === specificUsersTweet.id) {
-                const user: ProfileType | undefined = users.find((user) => user.id === favorite.userId);
-                const copied: TweetType = { ...specificUsersTweet };
-
-                copied['favoriteNotification'] = favorite;
-                copied['favoriteNotification']['user'] = user;
-
-                favoriteNotifications.push(copied);
-            }
+        await prisma.favorite.delete({
+            where: {
+                tweetId_userId: {
+                    tweetId: tweet.id,
+                    userId: req.user.id,
+                },
+            },
         });
+
+        await prisma.tweet.update({
+            where: {
+                id: tweet.id,
+            },
+            data: {
+                numberOfFavorite: { decrement: 1 },
+            },
+        });
+    }
+    const updatedTweet = await prisma.tweet.findUnique({
+        where: {
+            id: req.body.tweet.id,
+        },
+        include: {
+            user: true,
+            favorities: true,
+            replyFrom: true,
+        },
     });
 
-    notifications = replyNotifications.concat(favoriteNotifications);
+    res.status(200).json(updatedTweet);
+};
 
-    const sortedTweets: Array<TweetType> = notifications.sort(function (a: TweetType, b: TweetType) {
+export const getNotifications = async (req: Request, res: Response) => {
+    // リプライを取得
+    const replyNotifications = await prisma.tweet.findMany({
+        where: { replyTo: { createdBy: req.user.id } },
+        include: { user: true, replyFrom: true },
+    });
+
+    // favを取得
+    const favoriteNotifications = await prisma.favorite.findMany({
+        where: { tweet: { createdBy: req.user.id } },
+        include: { tweet: { include: { user: true } }, user: true },
+    });
+
+    const notifications: Array<(Favorite & { user: User; tweet: Tweet & { user: User } }) | (Tweet & { user: User })> =
+        [...favoriteNotifications, ...replyNotifications];
+
+    const sortedNotifications = notifications.sort(function (a, b) {
         if (a.createdAt > b.createdAt) {
             return -1;
         } else {
             return 1;
         }
     });
-    const result: Array<TweetType> = addInformationToTweet(sortedTweets, req);
-    res.json(result.slice(0, limit));
+    res.json(sortedNotifications);
 };
 
-export const getMyProfile = (req: Request, res: Response) => {
+export const getMyProfile = async (req: Request, res: Response) => {
     const username: string = req.user.username;
-    const user: ProfileType | undefined = users.find((user) => user.username === username);
+    const user: User | null = await prisma.user.findUnique({
+        where: {
+            username: username,
+        },
+    });
     res.json(user);
 };
 
-export const getProfile = (req: Request, res: Response) => {
+export const getProfile = async (req: Request, res: Response) => {
     const username: string = req.params.username;
-    const user: ProfileType | undefined = users.find((user) => user.username === username);
+    const user: User | null = await prisma.user.findUnique({
+        where: {
+            username: username,
+        },
+    });
     res.json(user);
 };
 
-export const updateProfile = (req: Request, res: Response) => {
-    const user: ProfileType | undefined = users.find((user) => user.username === req.user.username);
-    if (user) {
-        user.username = req.body.username;
-        user.introduction = req.body.introduction;
-        user.email = req.body.email;
-        // もっとスマートにかけそう
-        res.status(200).json(user);
-    }
+export const updateProfile = async (req: Request, res: Response) => {
+    const user: User | null = await prisma.user.update({
+        where: {
+            username: req.user.username,
+        },
+        data: {
+            username: req.body.username,
+            introduction: req.body.introduction,
+            email: req.body.email,
+        },
+    });
+
+    res.status(200).json(user);
 };
 
-// フォローしているユーザー
-export const getFollowings = (req: Request, res: Response) => {
-    const requestUser: ProfileType | undefined = users.find(({ username }) => username === req.params.username);
-    let specificUserFollowingUsersList: Array<FollowerType> = [];
-    let specificUserFollowingUsersListWithUserInformation: Array<FollowerType> = [];
-    if (requestUser) {
-        followers.forEach((follower) => {
-            if (follower.from === requestUser.id) {
-                specificUserFollowingUsersList.push(follower);
-            }
-        });
-
-        specificUserFollowingUsersList.forEach((specificUserFollowingUser) => {
-            let valueOfInsert: FollowerType;
-            users.forEach((user) => {
-                if (specificUserFollowingUser.to === user.id) {
-                    specificUserFollowingUser['user'] = user;
-
-                    valueOfInsert = JSON.parse(JSON.stringify(specificUserFollowingUser));
-                    specificUserFollowingUsersListWithUserInformation.push(valueOfInsert);
-                }
-            });
-        });
-        res.json(specificUserFollowingUsersList);
+// 指定されたユーザーのフォローしているユーザー
+export const getFollowings = async (req: Request, res: Response) => {
+    const requestUser = await prisma.user.findUnique({
+        where: { username: req.params.username },
+        include: { following: true },
+    });
+    if (!requestUser) {
+        throw Error('getFollowingでrequestUserが存在してないっぽいよ');
     }
+
+    res.json(requestUser.following);
 };
 
-// 自分のフォロワー
-export const getFollowers = (req: Request, res: Response) => {
-    const requestUser: ProfileType | undefined = users.find(({ username }) => username === req.params.username);
-    let specificUserFollowersUsersList: Array<FollowerType> = [];
-    let specificUserFollowersUsersListWithUserInformation: Array<FollowerType> = [];
-    if (requestUser) {
-        followers.forEach((follower) => {
-            if (follower.to === requestUser.id) {
-                specificUserFollowersUsersList.push(follower);
-            }
-        });
-
-        specificUserFollowersUsersList.forEach((specificUserFollowerdUser) => {
-            let valueOfInsert: FollowerType;
-            users.forEach((user) => {
-                if (specificUserFollowerdUser.from === user.id) {
-                    specificUserFollowerdUser['user'] = user;
-
-                    valueOfInsert = JSON.parse(JSON.stringify(specificUserFollowerdUser));
-                    specificUserFollowersUsersListWithUserInformation.push(valueOfInsert);
-                }
-            });
-        });
-
-        res.json(specificUserFollowersUsersList);
+// 指定されたユーザーのフォロワー
+export const getFollowers = async (req: Request, res: Response) => {
+    const requestUser = await prisma.user.findUnique({
+        where: { username: req.params.username },
+        include: { followedBy: true },
+    });
+    if (!requestUser) {
+        throw Error('getFollowingでrequestUserが存在してないっぽいよ');
     }
+    res.json(requestUser.followedBy);
 };
 
-export const updateFollowings = (req: Request, res: Response) => {
-    const followings: string = req.body.followings;
-    const user: ProfileType | undefined = req.user;
-    const userToEdit: ProfileType | undefined = users.find(({ username }) => username === req.body.followingUsername);
+export const updateFollowings = async (req: Request, res: Response) => {
+    const userToEdit: User | null = await prisma.user.findUnique({
+        where: { username: req.body.followingUsername },
+    });
 
-    if (user && userToEdit) {
-        if (req.body.action === 'follow') {
-            followers.push({
-                id: followers.length + 1,
-                // TODO: DBとつなぐときなおしたい
-                to: userToEdit.id,
-                from: user.id,
-                createdAt: new Date(),
-            });
-        } else {
-            // followers = followers.filter((follower) => follower.to !== userToEdit.id || follower.from !== user.id);
-        }
-        res.status(200).json(followings);
+    if (!userToEdit) {
+        throw Error('updateFollowingsでuserToEditが存在してないっぽいよ');
     }
+    await prisma.user.update({
+        where: { username: req.user.username },
+        data: {
+            following:
+                req.body.action === 'follow'
+                    ? { connect: [{ id: userToEdit.id }] }
+                    : { disconnect: [{ id: userToEdit.id }] },
+        },
+    });
+    res.status(200);
 };
 
-export const login = (req: Request, res: Response) => {
+export const login = async (req: Request, res: Response) => {
     const input: any = req.body;
-    const user: ProfileType | undefined = users.find((user) => user.username === input.username);
+    const username: string = input.username;
+    const user: User | null = await prisma.user.findUnique({
+        where: {
+            username: username,
+        },
+    });
     const hashedInputPassword: string = createHash('sha256').update(input.password).digest('base64');
-    if (user && user.password === hashedInputPassword) {
+    if (!user) {
+        throw Error('getFollowingでrequestUserが存在してないっぽいよ');
+    } else if (user.password === hashedInputPassword) {
         const token: string = sign(
             {
                 userId: user.id,
@@ -304,27 +311,6 @@ export const login = (req: Request, res: Response) => {
     }
     return res.status(400).json({ code: 400 });
 };
-
-function addInformationToTweet(tweetList: Array<TweetType>, req: Request) {
-    // ツイートに自分がfavしているかの情報を付加するための準備
-    const usersFavoriteTweets: Array<FavoriteType> = favorities.filter((favorite) => favorite.userId === req.user.id);
-    const favoriteTweetIds: Array<number> = usersFavoriteTweets.map((obj) => obj.tweetId);
-
-    tweetList.forEach((tweet) => {
-        const user: ProfileType | undefined = users.find(({ id }) => id === tweet.createdBy);
-        tweet['user'] = user;
-
-        const numberOfFavorite: Array<FavoriteType> = favorities.filter((favorite) => favorite.tweetId === tweet.id);
-        tweet['numberOfFavorite'] = numberOfFavorite.length;
-
-        const numberOfReply: Array<TweetType> = tweets.filter((replyTweet) => replyTweet.replyTo === tweet.id);
-        tweet['numberOfReply'] = numberOfReply.length;
-
-        tweet.isFavorite = favoriteTweetIds.includes(tweet.id);
-    });
-
-    return tweetList;
-}
 
 module.exports = {
     getTweets,
