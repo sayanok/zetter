@@ -38,19 +38,19 @@ const Follow: React.FC<FollowProps> = (props) => {
     }, []);
 
     function getFollowings(): Promise<Array<ProfileType>> | undefined {
-        return callApi('http://localhost:5000/api/zetter/' + params.username + '/followings');
+        return callApi('/' + params.username + '/followings');
     }
 
     function getFollowers(): Promise<Array<ProfileType>> | undefined {
-        return callApi('http://localhost:5000/api/zetter/' + params.username + '/followers');
+        return callApi('/' + params.username + '/followers');
     }
 
     function getMyFollowings(): Promise<Array<ProfileType>> | undefined {
-        return callApi('http://localhost:5000/api/zetter/' + props.myProfile?.username + '/followings');
+        return callApi('/' + props.myProfile?.username + '/followings');
     }
 
     function updateFollowings(username: string, action: 'follow' | 'unFollow'): void {
-        callApi('http://localhost:5000/api/zetter/updateFollowings', {
+        callApi('/updateFollowings', {
             method: 'PATCH',
             body: JSON.stringify({ followings: followingsList, followingUsername: username, action: action }),
         });

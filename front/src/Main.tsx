@@ -23,7 +23,7 @@ const Main: React.FC = () => {
     }
 
     function getMyProfile(): Promise<ProfileType> | undefined {
-        return callApi('http://localhost:5000/api/zetter/profile');
+        return callApi('/profile');
     }
 
     return (

@@ -23,7 +23,7 @@ const TweetTree: React.FC<TweetTreeProps> = (props) => {
     const [replyTweetsList, setReplyTweetsList] = useState<Array<TweetType>>([]);
 
     function getReplys(): Promise<Array<TweetType>> | undefined {
-        return callApi('http://localhost:5000/api/zetter/replys/' + props.tweet.id);
+        return callApi('/replys/' + props.tweet.id);
     }
 
     function getAndSetReplys(): void {

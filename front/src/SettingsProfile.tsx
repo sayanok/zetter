@@ -29,7 +29,7 @@ const SettingsProfile: React.FC<SettingsProfileType> = (props) => {
     }, []);
 
     function updateProfile(): void {
-        callApi('http://localhost:5000/api/zetter/profile', {
+        callApi('/profile', {
             method: 'PATCH',
             body: JSON.stringify({ username: username, introduction: introduction, email: email }),
         });

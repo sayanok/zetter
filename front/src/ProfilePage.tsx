@@ -47,15 +47,15 @@ const ProfilePage: React.FC<ProfilePageProps> = (props) => {
     }, [params.username, value]);
 
     function getProfile(): Promise<ProfileType> | undefined {
-        return callApi('http://localhost:5000/api/zetter/profile/' + params.username);
+        return callApi('/profile/' + params.username);
     }
 
     function getSpecificUsersTweets(): Promise<Array<TweetType>> | undefined {
-        return callApi('http://localhost:5000/api/zetter/specificUsersTweets/' + params.username);
+        return callApi('/specificUsersTweets/' + params.username);
     }
 
     function getFavoriteTweets(): Promise<Array<TweetType>> | undefined {
-        return callApi('http://localhost:5000/api/zetter/specificUsersFavoriteTweets/' + params.username);
+        return callApi('/specificUsersFavoriteTweets/' + params.username);
     }
 
     function getAndSetTweetsListOfSpecificUser(): void {
@@ -67,15 +67,15 @@ const ProfilePage: React.FC<ProfilePageProps> = (props) => {
     }
 
     function getFollowings(): Promise<Array<ProfileType>> | undefined {
-        return callApi('http://localhost:5000/api/zetter/' + params.username + '/followings');
+        return callApi('/' + params.username + '/followings');
     }
 
     function getFollowers(): Promise<Array<ProfileType>> | undefined {
-        return callApi('http://localhost:5000/api/zetter/' + params.username + '/followers');
+        return callApi('/' + params.username + '/followers');
     }
 
     function updateFollowings(order: string): void {
-        callApi('http://localhost:5000/api/zetter/updateFollowings', {
+        callApi('/updateFollowings', {
             method: 'PATCH',
             body: JSON.stringify({ followings: followings, followingUsername: params.username, order: order }),
         });

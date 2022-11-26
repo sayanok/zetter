@@ -22,7 +22,7 @@ const TweetForm: React.FC<TweetFormProps> = (props) => {
     }, []);
 
     function postTweet(): void {
-        callApi('http://localhost:5000/api/zetter', {
+        callApi('/', {
             method: 'POST',
             body: JSON.stringify({ content: content, replyToId: replyToId }),
         });
