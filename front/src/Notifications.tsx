@@ -25,13 +25,13 @@ const Notifications: React.FC = () => {
     }, []);
 
     function getTweets(): Promise<Array<TweetType>> | undefined {
-        return callApi('http://localhost:5000/api/zetter/notifications');
+        return callApi('/notifications');
     }
 
     function updateFavoriteState(tweet: TweetType): void {
         if (tweet.isFavorite) {
             // favから削除する
-            callApi('http://localhost:5000/api/zetter', {
+            callApi('/', {
                 method: 'PATCH',
                 body: JSON.stringify({ tweet: tweet, order: 'delete' }),
             })?.then((data) => {
@@ -46,7 +46,7 @@ const Notifications: React.FC = () => {
             });
         } else {
             // favに追加する
-            callApi('http://localhost:5000/api/zetter', {
+            callApi('/', {
                 method: 'PATCH',
                 body: JSON.stringify({ tweet: tweet, order: 'add' }),
             })?.then((data) => {

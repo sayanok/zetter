@@ -9,6 +9,7 @@ type CallApiType = (
 
 export function useCallApi(): CallApiType {
     const navigate = useNavigate();
+    const baseUrl = process.env.REACT_APP_BASE_URL;
 
     const callApi: CallApiType = (url, config = {}) => {
         if (token.value) {
@@ -17,7 +18,7 @@ export function useCallApi(): CallApiType {
             }
             config.headers.Authorization = token.value;
             config.headers['Content-Type'] = 'application/json';
-            return fetch(url, config).then((response) => response.json());
+            return fetch(baseUrl + url, config).then((response) => response.json());
         } else {
             console.log('ログインしてください');
             navigate('/login');
@@ -31,7 +32,7 @@ export function useCallUpdateFavoriteApi(): (tweet: TweetType) => Promise<TweetT
     const callApi = useCallApi();
 
     function callUpdateFavoriteApi(tweet: TweetType) {
-        return callApi('http://localhost:5000/api/zetter', {
+        return callApi('/', {
             method: 'PATCH',
             body: JSON.stringify({ tweet: tweet, order: tweet.isFavorite ? 'delete' : 'add' }),
         });

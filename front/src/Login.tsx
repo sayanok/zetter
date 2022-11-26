@@ -14,9 +14,10 @@ const Login: React.FC<LoginType> = (props) => {
     const [password, setPassword] = useState<string>('');
     const [errorMessage, setErrorMessage] = useState<string>('');
     const navigate = useNavigate();
+    const baseUrl = process.env.REACT_APP_BASE_URL;
 
     function login(): void {
-        fetch('http://localhost:5000/api/zetter/login', {
+        fetch(baseUrl + '/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username: username, password: password }),

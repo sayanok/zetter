@@ -34,7 +34,7 @@ const SingleTweet: React.FC<SingleTweetProps> = (props) => {
     }, []);
 
     function getMyProfile(): Promise<ProfileType> | undefined {
-        return callApi('http://localhost:5000/api/zetter/profile');
+        return callApi('/profile');
     }
 
     function formatDate(createdAt: Date): string {

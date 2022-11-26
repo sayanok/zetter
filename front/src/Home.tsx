@@ -17,7 +17,7 @@ const Home: React.FC = () => {
     }, []);
 
     function getTweets(): Promise<Array<TweetType>> | undefined {
-        return callApi('http://localhost:5000/api/zetter');
+        return callApi('/');
     }
 
     function getAndSetTweets(): void {

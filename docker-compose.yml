@@ -7,6 +7,8 @@ services:
             - ./front:/front
         ports:
             - 3000:3000
+        environment:
+            - REACT_APP_BASE_URL=http://localhost:5000/api/zetter
 
     api:
         build: ./api
