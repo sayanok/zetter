@@ -17,6 +17,8 @@ services:
             - ./api:/api
         ports:
             - 5000:5000
+        environment:
+            - DATABASE_URL: 'mysql://root@db:3306/mydb'
 
     db:
         container_name: mysql

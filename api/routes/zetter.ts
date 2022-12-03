@@ -59,18 +59,22 @@ async function auth(req: Request, res: Response, next: NextFunction) {
         return;
     }
 
-    const user: User | null = await prisma.user.findUnique({
-        where: {
-            id: verifyUser.userId,
-        },
-        include: { following: true },
-    });
-    if (user) {
-        req.user = user;
-        next();
-    } else {
-        res.status(401).end();
-        return;
+    try {
+        const user: User | null = await prisma.user.findUnique({
+            where: {
+                id: verifyUser.userId,
+            },
+            include: { following: true },
+        });
+        if (user) {
+            req.user = user;
+            next();
+        } else {
+            res.status(401).end();
+            return;
+        }
+    } catch (error) {
+        res.status(500).json('findUnque失敗したよ');
     }
 }
 
